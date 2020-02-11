@@ -3,7 +3,7 @@ Material para la asignatura de Ingeniería Web, edición 2019-20, de la Facultad
 
 ## Contenido
 
-* en [/doc/](https://github.com/manuel-freire/iw1920/tree/master/doc) tienes las transparencias, en Markdown. Puedes leerlas tal cual están (es texto), o convertirlas a PDF u otro formato usando, por ejemplo, Pandoc. Tengo un [script llamado markdown-to-beamer](https://github.com/manuel-freire/fdi-utils) que es el que uso para generar las transparencias que subo a Campus Virtual y uso en clase.
+* en [/doc/](https://github.com/manuel-freire/iw1920/tree/master/doc) tienes las transparencias, en Markdown. Puedes leerlas tal cual están (es texto), o convertirlas a PDF u otro formato usando, por ejemplo, [Pandoc](https://pandoc.org). Tengo un [script](https://github.com/manuel-freire/fdi-utils) en python llamado `markdown-to-beamer` que es el que uso para generar las transparencias que subo a Campus Virtual y uso en clase.
 
 * en [/demo](https://github.com/manuel-freire/iw1920/tree/master/demo) está el proyecto de demostración explicado en el [tutorial](https://github.com/manuel-freire/iw1920/blob/master/doc/05-tutorial.md)
 
