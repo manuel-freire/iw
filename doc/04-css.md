@@ -1,6 +1,6 @@
 % Introducción a css
 % (manuel.freire@fdi.ucm.es)
-% 2019.02.03
+% 2020.02.03
 
 ## Objetivo
 
@@ -762,7 +762,7 @@ html, body {
 }
 #capaMadre {
     width: 790px; background-color: #6cc;
-    margin: 0 auto; /* centrado */
+    margin: 0 auto;         /* <-- margin auto = centrado */
     position: relative;
     height: auto!important;
     min-height: 100%;
@@ -856,13 +856,123 @@ html, body {
     - recuerda al `GridbagLayout` de Java Swing
     - hay muchos [ejemplos y detalles de grid en la MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column)
 
-## Layout de 3 columnas con flex
+## Flex: ejes principales y secundarios
 
-![https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox](img/flexbox-mdn.png "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox"){ width=70% }
+* eje principal ("línea") puede ser
+    - `row`, `column` siguiendo posicionamiento inline y de bloque, respectivamente
+    - `row-reverse`, `column-reverse` para invertir el orden de los elementos
+* eje secundario permite justificar y alinear elementos
 
-- añadir más columnas no requiere tocar el CSS
-- se adapta al ancho disponible
-- posible reflejar dirección de lectura LTR / RTL
+![Direcciones inline y bloque en flujo estándar, según [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Block_and_Inline_Layout_in_Normal_Flow)](img/mdn-writing-mode.png){ height=50% }
+
+- - - 
+
+![Posibles direcciones usando el atributo writing-mode, según [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/writing-mode)](img/mdn-writing-mode-2.png){ width=80% }
+
+- - - 
+
+* si no caben más elementos en una línea del eje principal
+    - por defecto, o encogen bien o no se ven
+    - posible usar `wrap`
+
+~~~{.css} 
+    .box { 
+        display: flex; 
+        flex-flow: row wrap;  /* flex-direction + flex-wrap */         
+    }
+~~~
+
+* controlas cuánto espacio se lleva cada uno usando `grow`, `shrink` y `basis`:
+    - `grow`: cuando sobra espacio, cuánto compite por crecer
+    - `shrink`: cuando falta espacio, cuánto compite por encoger
+    - `basis`: tamaño de base, donde `auto` es /lo normal/
+
+~~~{.css} 
+.box   { display: flex; }  /* por defecto, row & no-wrap */
+.one   { flex: 1 0 auto; } /* 1/3 de espacio sobrante, no encoge */
+.two   { flex: 2 1 auto; } /* 2/3 de espacio sobrante, encoge  */
+.three { flex: none; }     /* como 0 0 auto: su tamaño y punto */
+~~~
+
+## Flexbox: alineamiento
+
+* eje principal: 
+    - `justify-content` para repartir espacio vacío en *este* eje
+    - `align-content` si resulta tener varias filas\footnote{o, si usamos columnas, para controlar cómo se reparten el espacio horizontal}, \
+    para controlar cómo se reparten el espacio vertical
+* eje secundario: 
+    - `justify-items` para repartir espacio vacío en *este* eje \
+    (por ejemplo, si esto es una fila, en horizontal)
+    - `align-items` para repartir espacio vacío a contraeje \
+    (por ejemplo, si esto es una columna, en vertical)
+    - `align-self` para modificar el alineamiento a contra-eje de 1 único elemento
+* opciones:
+    - `space-around` & `space-between`: espaciando, incluyendo o no los extremos
+    - `flex-start` & `flex-end` & `center`: apelotonarlos a un lado, al otro, o al centro
+    - `stretch`: intenta estirarlos para ocupar todo el espacio
+
+
+## Ejemplo de alineación del eje secundario
+
+
+![Alineando el eje secundario, según [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Aligning_Items_in_a_Flex_Container)](img/mdn-flex-align.png){ width=60% }
+
+
+~~~{.html}
+<div class="box">
+  <div>One</div>
+  <div>Two</div>
+  <div class="selected">Three</div>
+  <div>Four</div>
+</div>
+~~~
+
+~~~{.css} 
+/* css */
+.box {  display: flex;
+        align-items: flex-start;
+        height: 200px; }
+.box>*:first-child { align-self: stretch; }
+.box .selected     { align-self: center; }     
+~~~
+
+## Separando vía margin
+
+~~~{.css}
+    /* en el css */
+    .push { margin-left: auto; }
+~~~
+
+~~~{.html}
+    <!-- html, un div de varios dentro de un flex -->
+    <div class="push">Four</div>
+~~~
+
+![Introduciendo espacio con `margin`, según [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Aligning_Items_in_a_Flex_Container)](img/mdn-flex-margin.png){ width=80% }
+
+## Layout responsive con flex
+
+* Usa `wrap` para que quepan más o menos elementos por línea\footnote{o columna, que para gustos colores}
+* Usa `@media` para hacer que ciertas reglas sólo se apliquen a partir de ciertos puntos:
+
+~~~{.css}
+.row {                                 /* flex con wrap activado */
+  display: flex;
+  flex-flow: row, wrap;
+  width: 100%;
+}
+.column, .double-column {              /* items ocupan todo el ancho */
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 100%;
+}
+@media screen and (min-width: 800px) { /* excepto en pantalla grande */
+  .column { flex: 1 }
+  .double-column { flex: 2 }
+}
+~~~
+
+(ejemplo disponible [online](https://codepen.io/drews256/pen/bjzpvd), sacado del [blog de \@drews256](https://dev.to/drews256/ridiculously-easy-row-and-column-layouts-with-flexbox-1k01) )
 
 ## Layout complejo con grid
 
