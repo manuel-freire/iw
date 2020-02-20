@@ -14,14 +14,16 @@ spring.profiles.active: default
 spring.datasource.username: sa
 spring.datasource.password:
 
-spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.HSQLDialect
+spring.jpa.properties.hibernate.dialect: \
+      org.hibernate.dialect.HSQLDialect
 spring.jpa.database: HSQL
 spring.jpa.show-sql: true
-spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor:\ org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
+spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor: \
+      org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
 
 logging.level.root: INFO
 logging.level.org.hibernate: ERROR
-logging.level.org.springframework.web=DEBUG
+logging.level.org.springframework.web: DEBUG
 
 es.ucm.fdi.base-path: /tmp/iw
 ~~~~ 
@@ -31,6 +33,8 @@ es.ucm.fdi.base-path: /tmp/iw
 ## import.sql
 
 - Ejecutado tras conectar, después de actualizar esquema (si procede)
+
+\small
 
 ~~~~ {.sql}
 INSERT INTO user(id,enabled,login,password,roles) VALUES (
@@ -46,35 +50,40 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
     + @Entity en la clase
     + @Id en un getter (recomiendo que sea "long" y use @GeneratedValue)
     + constructor de clase público vacío (o no hay constructores, o hay uno vacío)
-    + getters y setters para todo; *anotaciones JPA: en los getters*
+    + getters y setters para todo; *ponemos anotaciones JPA en los getters*
 
 - - -
 
 ## Entity 
+
+Marca una clase como persistible, y crea las tablas correspondientes
+
+\small
+
 ~~~~ {.java}
-    @Entity
-    public class Book {
-      private long id;
-      private String title;
+@Entity
+public class Book {
+  private long id;
+  private String title;
 
-      @Id
-      @GeneratedValue
-      public long getId() {
-        return id;
-      }
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  public long getId() {
+    return id;
+  }
 
-      public void setId(long id) {
-        this.id = id;
-      }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-      public String getTitle() {
-        return title;
-      }
+  public String getTitle() {
+    return title;
+  }
 
-      public void setTitle(String title) {
-        this.title = title;
-      }
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
+}
 ~~~~
 
 ## Más anotaciones 
@@ -82,7 +91,7 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 "Un libro tiene un dueño, y un dueño puede tener muchos libros"
 
 ~~~~ {.java}
-    // Book
+    // en Book
     private User owner;
 
     @ManyToOne(targetEntity=User.class)
@@ -98,11 +107,11 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 - - - 
 
 ~~~~ {.java}
-    // User
+    // en User
     private List<Book> ownedBooks;
   
     @OneToMany(targetEntity=Book.class)
-    @JoinColumn(name="owner_id") // <-- avoids creating an extra User_Book table
+    @JoinColumn(name="owner_id") // <-- evita crear User_Book
     public List<Book> getOwnedBooks() {
       return ownedBooks;
     }
@@ -115,7 +124,7 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 - - - 
 
 - Otras opciones:
-    + ManyToMany: crea tabla intermedia (User_Book); no uses JoinColumn
+    + ManyToMany: crea tabla intermedia (User_Book); *no uses JoinColumn*
     + OneToOne
     + ... (posible especificar nombres de tablas, columnas, anchos, ...)
 - Referencias
@@ -124,7 +133,7 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 
 ## Accediendo a la BD
 
-- En tu HomeController, verás:
+- En tu controlador, usa:
 
 ~~~~ {.java}
     @AutoWired
@@ -138,30 +147,30 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 ## Accediendo a la BD
 
 ~~~~ {.java}
-    // en User
-    @NamedQueries({
-        @NamedQuery(name="userByLogin",
-            query="select u from User u where u.login = :loginParam")
-    })
-    ...
+// en User
+@NamedQueries({
+    @NamedQuery(name="userByLogin",
+        query="select u from User u where u.login = :loginParam")
+})
+...
 
-    // en HomeController
-    ...
-        User u = null;
-        try {
-          u = (User)entityManager.createNamedQuery("userByLogin")
-              .setParameter("loginParam", formLogin).getSingleResult();
-    ...
+// en el controlador
+...
+    User u = null;
+    try {
+      u = (User)entityManager.createNamedQuery("userByLogin")
+          .setParameter("loginParam", formLogin).getSingleResult();
+...
 ~~~~ 
 
 ## Modificando la BD
 
 ~~~~ {.java}
-    @Transactional // en la cabecera de la función que va a hacer cambios
-    ...
-          User user = User.createUser(formLogin, formPass, "user");
-          entityManager.persist(user); 
-          entityManager.flush(); // <- implicito al final de la transaccion
+@Transactional // en la cabecera de la función que va a hacer cambios
+...
+    User user = User.createUser(formLogin, formPass, "user");
+    entityManager.persist(user); 
+    entityManager.flush(); // <- implicito al final de la transaccion
 ~~~~ 
 
 - Si no existe, lo crea; si existe, lo modifica 
@@ -169,31 +178,38 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 ## Consultas "impromptu" 
     
 ~~~~ {.java}
-    List<User> us = entityManager
-        .createQuery("select u from User u").getResultList();
+List<User> us = entityManager
+    .createQuery("select u from User u").getResultList();
 ~~~~ 
 
-- No hace falta @Transactional (a no ser que requieras el aislamiento adicional que ofrece)
-- OJO: prohibido usarlas si tienen argumentos que puedan estar contaminados. *Usa namedQueries parametrizadas en su lugar*
+- No hace falta `@Transactional` (a no ser que requieras el aislamiento adicional que ofrece)
+- OJO: **prohibido** usarlas si tienen **argumentos manipulables** por usuarios de la aplicación. 
+    * argumentos sin escapar en consultas resultan en **inyección SQL**
+    * usa **namedQuerie**s parametrizadas en su lugar
 
 ## Tipos de relaciones
 
-- OneToMany / ManyToOne: un empleado puede tener varios móviles, pero cada móvil tiene 1 dueño
-- ManyToMany: un autor puede escribir muchos libros, pero un libro puede estar escrito por varios autores
+- OneToMany / ManyToOne: no generan tabla auxiliar\footnote{si usas bien @JoinColumn}
+    * **un** jugador puede tener licencias de **varios** juegos (OneToMany)
+    * **una** licencia de juego tiene **un** propietario (ManyToOne, \
+    porque viceversa no es cierto)
+- ManyToMany: generan 1 tabla auxiliar
+    * **un** autor puede escribir **varios** libros
+    * **un** libro puede estar escrito por **varios** autores
 
 ## OneToMany / ManyToOne
 
-empleados y móviles
+jugadores y juegos (en tienda online de juegos)
 
 ~~~~ {.java}
-    // 1 empleado tiene **muchos** teléfonos
-    @OneToMany(targetEntity=Telefono.class)
-    @JoinColum(name="propietario")
-    List<Telefono> getTelefonos() { ... }
-    
-    // 1 teléfono tiene 1 dueño
-    @ManyToOne(targetEntity=Empleado.class)
-    Empleado getPropietario() { ... }
+// Jugador.java -- 1 jugador tiene varias licencias de juegos
+@OneToMany(targetEntity=Juego.class)
+@JoinColum(name="propietario_id")   // <-- evita tabla auxiliar
+List<Juego> getJuegos() { ... }
+
+// Juego.java -- 1 licencia de juego tiene 1 propietario
+@ManyToOne(targetEntity=Jugador.class)
+Jugador getPropietario() { ... }
 ~~~~
         
 ## ManyToMany
@@ -201,18 +217,19 @@ empleados y móviles
 autores y libros
 
 ~~~~ {.java}
-    // 1 autor puede escribir **muchos** libros; 
-    @ManyToOne(targetEntity=Libro.class)
-    List<Libro> getObras() { ... }
-    
-    // 1 libro puede estar escrito por **muchos** autores)
-    @ManyToMany(targetEntity=Autor.class, mappedBy="obras")
-    List<Autor> getAutores() { ... }
+// Autor.java -- 1 autor puede escribir varios libros; 
+@ManyToOne(targetEntity=Libro.class)
+List<Libro> getObras() { ... }
+
+// Libro.java -- 1 libro puede estar escrito por varios autores)
+@ManyToMany(targetEntity=Autor.class, 
+    mappedBy="obras")           // <-- propietario: el autor
+List<Autor> getAutores() { ... }
 ~~~~
 
 - - -
 
-Propietario de la relación: el autor
+Propietario de la relación: el autor\
 tabla generada: AUTOR_LIBRO
 
 ~~~~ {.java}
@@ -223,7 +240,7 @@ tabla generada: AUTOR_LIBRO
 
 . . .
 
-Propietario de la relación: el libro
+Propietario de la relación: el libro\
 tabla generada: LIBRO_AUTOR
 
 ~~~~ {.java}
@@ -250,27 +267,29 @@ Si usas resolución "a demanda", **sólo funciona desde dentro del controlador**
 
 ## Acceso a BD via JPA
 
-- Obtener objetos por ID (ver [esta pregunta](http://stackoverflow.com/questions/1607532/when-to-use-entitymanager-find-vs-entitymanager-getreference))
-    - con todos sus campos vs sólo para escribir en él:
+- Obtener objetos por ID (ver [esta pregunta](http://stackoverflow.com/questions/1607532/when-to-use-entitymanager-find-vs-entitymanager-getreference)) \
+con todos sus campos vs sólo para escribir en él:
 
 ~~~~ {.java}
-// realiza un SELECT * FROM BOOK internamente
+// realiza un SELECT * FROM BOOK WHERE id coincide
 Book b = entityManager.find(Book.class, id);
 
-// permite evitar un SELECT * FROM BOOK 
+// hace el mismo select, pero evita cargar atributos
 Book b = entityManager.getReference(Book.class, id);
 ~~~~
 
 - Modificar un objeto de la BD:
 
 ~~~~ {.java}
-b.setTitle("Momo"); entityManager.update(b)
+b.setTitle("Momo"); 
+entityManager.update(b)   // <-- innecesario si en transacción
 ~~~~
 
 - Insertar un objeto en la BD:
 
 ~~~~ {.java}
-Book b = new Book(); entityManager.persist(b)
+Book b = new Book(); 
+entityManager.persist(b)  // <-- siempre necesario; asigna ID
 ~~~~
 
 - - -
@@ -299,6 +318,8 @@ Book b = new Book(); entityManager.persist(b)
   }
   entityManager.remove(b);
 ~~~~
+
+- también puedes usar modos de CASCADE para que eliminar un objeto elimine referencias
 
 # Consultas JPA
 
@@ -384,14 +405,14 @@ puedes abrirlo (*una vez cerrado el servidor web*)
 usando el cliente Swing que viene dentro de HSQLDB
 
 ~~~~ {.sh}
-    java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.4.1/hsqldb-2.4.1.jar \
+    java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.5.0/hsqldb-2.5.0.jar \
         org.hsqldb.util.DatabaseManagerSwing
 ~~~~ 
 
 (nota: el `\` es por legibilidad - mejor si todo en la misma línea)
 
 El mismo cliente GUI se puede lanzar desde STS, buscando en "dependencias Maven" 
-el paquete `hsqldb-2.4.1.jar`, y con click derecho, ejecutando "Run As > Java Application"
+el paquete `hsqldb-2.5.0.jar`, y con click derecho, ejecutando "Run As > Java Application"
 
 ## Cómo usar una BD con servidor independiente
 
@@ -404,7 +425,7 @@ en src/main/resources/application-externaldb.properties...
 Pero antes, lanza el servidor, usando
 
 ~~~~ {.sh}
-    java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.4.1/hsqldb-2.4.1.jar \
+    java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.5.0/hsqldb-2.5.0.jar \
         org.hsqldb.server.Server
 ~~~~ 
 
