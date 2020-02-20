@@ -1,6 +1,6 @@
 % Thymeleaf
 % (manuel.freire@fdi.ucm.es)
-% 2019.02.18
+% 2020.02.17
 
 ## Objetivo
 
@@ -155,8 +155,8 @@ Tras thymeleaf ...
 
 ## Enlaces con `@`
 
-- Thymeleaf genera enlaces relativos al *contexto* de tu aplicación web
-- Es decir, el 1er `/` representa la URL de tu aplicación
+- Thymeleaf genera enlaces relativos al *contexto* de tu aplicación web: \
+    el primer `/` representa la URL de tu aplicación
 
 ~~~{.html}
   <!-- se remplaza con th:href -->
@@ -164,6 +164,33 @@ Tras thymeleaf ...
     th:href="@{/css/main.css}" 
     href="../static/css/main.css" type="text/css"/>
 ~~~
+
+- Problemas de no usar `th:href`
+    - si usas enlaces absolutos (empiezan por `/`), no puedes meter varias apliaciones en un mismo servidor. Si despliego la aplicación en \
+    `http://localhost:8080/miApp/`, `<a href="/logout">salir<a>` falla.
+    - si usas enlaces relativos (no empiezan por `/`), tienes un problema para usar URLs RESTful. Por ejemplo, con `<a href="/logout">salir<a>` desde... 
+        - `http://localhost:8080/perfil`, el enlace va a \
+        `http://localhost:8080/logout`, que seguramente es lo que quieres
+        - `http://localhost:8080/usuario/42/pedidos`, el enlace va a \
+        `http://localhost:8080/usuario/42/logout`, que no esperabas
+
+- **Todos tus enlaces internos deberían ser de tipo th:href**, porque \
+    *las vistas no deberían conocer su contexto de uso*. 
+
+## Argumentos en enlaces
+
+- Es posible generar enlaces con argumentos
+
+~~~{.html}
+  <a th:href="@{/product/comments(prodId=${prod.id},lang=${lang})}">...</a>
+  
+  <!-- genera, para /raiz/, prod.id=12, lang=es -->
+  <a th:href="/raiz/product/comments?prodId=12&amp;lang=es">...</a>
+~~~
+
+- **Si tus enlaces tienen argumentos, usa esta notación**, porque Thymeleaf
+    * sabe cuándo usar `?` ó `&amp;` (y no `&`, porque `&` está prohibido en atributos).
+    * url-escapa correctamente los valores correspondientes.
 
 ## Fragmentos con `~`
 
@@ -178,26 +205,54 @@ Tras thymeleaf ...
 ~~~{.html}
 <!-- en fragments/nav.html ... -->
 <nav th:fragment="nav">
-    <a class="logo" href="" th:href="@{/}"></a>
+    <a class="logo" href="/" th:href="@{/}"></a>
     <span class="sitename">Karmómetro</span>
     <!-- ... -->
 </nav>
 <!-- ... -->
 ~~~
 
+## Fragmentos sin etiqueta: \<th:block\>
+
+- en general, Thymeleaf funciona con anotaciones `th:algo` \
+*dentro* de una etiqueta `html` existente, como *atributos*
+- a veces no quieres move o reemplazar etiquetas completas; usa \
+`<th:block>` como etiqueta (desaparece en el html resultante)
+
+~~~{.html}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>IW 2918-19</title>
+	<th:block th:fragment="header">
+	... esto es lo que se va a insertar ... 
+	</th:block>
+</head>
+<body> Fragmento de cabecera </body>
+</html>
+~~~
+
+~~~{.html}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><th:block th:replace="fragments/head :: header"/> 
+...
+~~~
+
 ## Magia entre `{}`
 
 - literales
-    - `'texto'``entre comillas simples; puedes escaparlo una comilla con `\`
+    - `'texto'` entre comillas simples; puedes escapar comillas con `\`
     - `123` (números) tal cual
     - `true` y `false` como ellos mismos, booleanos
     - `null` también está disponible
 - operadores
-    - `+` concatena textos
-    - en un contexto delimitado por `|`, ni siquiera hace falta
-    - `+`, `-`, `*`, `%`, `/`, etcétera siguen haciendo lo que hacían en Java.
+    - `+` concatena textos\
+    `|` usado como delimitador hace que no hagan falta `'` ó `+`
+    - `+`, `-`, `*`, `%`, `/`, etcétera: operadores matemáticos Java.
     - las comparaciones también funcionan, pero tienes que **escapar** `<` y `>` (vía `&lt;` y `&gt;`). Como queda feo, puedes usar `ge` para `<=`, etcétera.
-    - también tienes el operador ternario
+    - también tienes el operador ternario, donde \
+    `condición?siCierto:siFalso` evalúa a `siCierto` ó `siFalso`
 
 ~~~{.html}
 <span th:text="'Welcome to our application, ' + ${user.name} + '!'">
@@ -229,37 +284,56 @@ Tras thymeleaf ...
 
 ## Más magia en un `${}`
 
-- por debajo, Thymeleaf usa [Spring Expression Language](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions-properties-arrays) \
+Por debajo, Thymeleaf usa [Spring Expression Language](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions-properties-arrays) \
 (ó OGNL, si fuera de Spring) para evaluar expresiones
-- incluido el *operador Elvis*: `x?.y` -- evalua *y* si *x* es no-*null*; ó devuelve *null*
 
 ~~~{.java}
-// Java                                Spring EL
-   x.getAlgo().isCosaBooleana();    // x.algo.cosaBooleana
-   "abc".substring(1,3);            // 'abc'.substring(1,3)
-   x == null ? null : x.getAlgo();  // x?.algo
-   mapaDeX.get(y);                  // mapaDeX[y]
-   listaDeX.get(y);                 // listaDeX[y]
-   arrayDeX[y];                     // arrayDeX[y]
-   Arrays.stream(enteros)           // enteros.?[#this<3]
-    .filter(p -> p < 3).collect(Collectors.toList())                                    
-   Arrays.stream(enteros)           // enteros.![#this*2]
-    .map(n -> 2*n).collect(Collectors.toList())                                    
-   Arrays.stream(personas)          // personas.![dni]
-    .map(p -> p.getDni()).collect(Collectors.toList())
-                                    
+// Java                          vs Spring EL
+"abc".substring(1,3);            // 'abc'.substring(1,3)
+mapaDeX.get(y);                  // mapaDeX[y]
+listaDeX.get(y);                 // listaDeX[y]
+arrayDeX[y];                     // arrayDeX[y]
+x.getAlgo();                     // x.algo
+x.getAlgo().isCosaBooleana();    // x.algo.cosaBooleana
+~~~
+
+## Operadores raros
+
+* `?.` - también llamado "operador Elvis", \
+    evita `NullPointerException` cuando operas sobre un objeto `null`.
+* `.?` - filtra un iterable (array, lista, ...). Usa `#this` en la condición para referirse a cada elemento
+* `.!` - *map* sobre un iterable, devolviendo el resultado de aplicar una expresión a cada elemento (también usando `#this`)
+
+~~~{.java}
+// thymeleaf, usando ?. para evitar excepciones
+x.getAlgo()?.cosaBooleana   // vs Java ...
+x.getAlgo() == null ? null : x.getAlgo().isCosaBooleana();
+
+// thymeleaf, usando ?. para filtrar
+enteros.?[#this<3]          // vs Java ...
+Arrays.stream(enteros).filter(p -> p < 3).collect(Collectors.toList());                         
+
+// thymeleaf,  usando .! para aplicar una expresión
+personas.![dni]
+enteros.![#this*2]          // vs Java ...
+Arrays.stream(personas).map(p -> p.getDni())
+    .collect(Collectors.toList());
+Arrays.stream(enteros).map(n -> 2*n).collect(Collectors.toList());
 ~~~
 
 ## Preprocesamiento de expresiones
 
-- expresiones entre `__` se evalúan antes que el resto, y se reemplazan literalmente. Así,
+- expresiones entre `__` 
+    - se evalúan antes que el resto, 
+    - y se reemplazan literalmente
 
-~~~
-    #{selection.__${sel.code}__}
+- esto permite expresiones más dinámicas:
 
-    ... equivale a ...
+~~~{.html}    
+    <span th:text="${selection.__${sel.code}__}"></span>
 
-    #{selection.resultado}
+    <!-- si ${sel.code} evalúa a `patata`, equivale a ... -->
+    <span th:text="${selection.patata}"></span>
 ~~~
 
 ## Más etiquetas `th:`
@@ -373,11 +447,12 @@ th:xmlbase 	th:xmllang 	th:xmlspace
         - el primer (`first`) ó último (`last`) elemento
 
 ~~~{.html}
-<tr th:each="${xs}">
+<!-- plantilla -->
+<tr th:each="new String[]{'uno', 'dos', 'tres', 'cuatro', 'cinco'}">
     <td th:text="|${index} ${count} ${size} ${current}|"
     th:class="|c${odd}-${first}-${last}|">hola!</td>
 </tr>
-<!-- resultado con ["uno", "dos", "tres", "cuatro", "cinco"] -->
+<!-- resultado -->
 <tr><td class="ctrue-true-false">0 1 5 uno</td></tr>
 <tr><td class="cfalse-false-false">1 2 5 dos</td></tr>
 <tr><td class="ctrue-false-false">2 3 5 tres</td></tr>
@@ -404,12 +479,64 @@ th:xmlbase 	th:xmllang 	th:xmlspace
 
 ## Codicionales con `th:switch`
 
+* la *primera* condición que evalúe como cierta hace que
+    - se muestre el contenido correspondiente
+    - **no** se evalúen más condiciones, y se salga del switch
+* usa **`*`** como `default`
+
 ~~~{.html}
 <div th:switch="${user.role}">
   <p th:case="'admin'">User is an administrator</p>
   <p th:case="#{roles.manager}">User is a manager</p>
-  <p th:case="*">I have no idea what the user is</p> <!-- ! -->
+  <p th:case="*">I have no idea what the user is</p> <!-- default -->
 </div>
+~~~
+
+## Accediendo al modelo en JS-en-html
+
+~~~{.html}
+<script th:inline="javascript">
+    var username = /*[[${session.user.name}]]*/ "Gertrud Kiwifruit";
+</script>
+
+<!-- sin Thymeleaf, equivale a -->
+<script> var username = "Gertrud Kiwifruit";    </script>
+
+<!-- con Thymeleaf, si session.user.name es "María Ejémplez" -->
+<script> var username = "María Ejémplez";       </script>
+~~~
+
+* Con sintaxis `/*[[ expresión ]]*/ texto ;` Thymeleaf ...
+    - reemplaza *expresión* por su valor
+    - elimina *texto* (lo que haya entre el `*/` y `;`)
+
+## Convirtiendo objetos Java a JS
+
+* Thymeleaf sabe convertir a literales JS (JSON) los siguientes tipos:
+    - cadenas, números, booleanos - como los equivalentes JS
+    - iterables (arrays, listas, colecciones) - como arrays JS
+    - mapas y objetos\footnote{vía sus métodos \emph{get} y \emph{set}} - como objetos JS:\
+    `{clave1: valor1, ... claveN: valorN}`
+* Bajo Spring, usa Jackson.
+
+* Por ejemplo, dado un user con ...
+    * getAge - devuelve una fecha
+    * getFirstName, getLastName, getName - devuelve un String
+    * getNationality - devuelve un tipo enumerado
+* ... obtendrías algo similar a 
+
+~~~{.html}
+<script th:inline="javascript">
+    ...
+    var user = {"age":null,"firstName":"John","lastName":"Apricot",
+                "name":"John Apricot","nationality":"Antarctica"};
+</script>
+~~~
+
+## Ejemplos comentados
+
+~~~{.html}
+
 ~~~
 
 ## Referencias
