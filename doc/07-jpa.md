@@ -1,6 +1,6 @@
 % JPA
 % (manuel.freire@fdi.ucm.es)
-% 2018.02.25
+% 2019.02.24
 
 ## Objetivo
 
@@ -8,7 +8,9 @@
 
 ## application.properties
 
-~~~~ {.properties}
+\small
+
+~~~{.properties}
 spring.profiles.active: default
 
 spring.datasource.username: sa
@@ -25,10 +27,15 @@ logging.level.root: INFO
 logging.level.org.hibernate: ERROR
 logging.level.org.springframework.web: DEBUG
 
+spring.thymeleaf.cache: false
 es.ucm.fdi.base-path: /tmp/iw
-~~~~ 
+~~~ 
 
-- *Modificando esto, podrías conectarte a otra BD no-embebida o no-hsqldb*
+\normal
+
+- *Modificando `spring.profiles.active`, puedes cambiar entre distintos __perfiles__ de BD*
+
+- *Las propiedades `spring.datasource.*` y  `spring.jpa.properties.*` definen el - tipo de BD a usar*
 
 ## import.sql
 
