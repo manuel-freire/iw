@@ -1,0 +1,18 @@
+input[name=id] {
+	width: 30px;
+}
+
+th {
+	font-weight: 150%;
+	text-align: center;
+	border-bottom: 1px solid black;	
+	margin: 1em;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+td {
+	border: 1px solid gray;
+}

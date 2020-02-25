@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/form.css"></link>
+	<script src="js/form.js"></script>	
+</head>
+<body>
+
+
+	<h1>Car</h1>
+	(este formulario muestra todo el contenido de la tabla, y permite eliminar o editar filas independientemente)
+	<form method="post">
+	<input type="hidden" name="tableName" value="com.example.demo.model.Car"/>
+	<table>
+		<tr>
+			<th>id
+			<th>company
+			<th>model
+			<th>drivers
+			<th>wheels
+		</tr>
+		<tr th:each="x, i: ${Car}" th:object="${x}" th:id="|car_*{id}|" class="datarow">
+		    <td th:text="*{id}">id
+		    <td th:text="*{company}">company
+		    <td th:text="*{model}">model
+		    <td th:text="*{drivers}">drivers
+		    <td th:text="*{wheels}">wheels
+		</tr>
+		<tr>
+			<td><button class='addrow'>➕</button><input name="id" value="0" readonly>
+			<td><input name="company" placeholder="company">
+			<td><input name="model" placeholder="model">
+			<td><select name="drivers_id" multiple>
+					<option th:each="y: ${DriverMap}" th:value="${y.key}" th:text="${y.value}">Billy</option>
+				</select>
+			<td><select name="wheels_id" multiple>
+					<option th:each="z: ${WheelMap}" th:value="${z.key}" th:text="${z.value}">Xyz</option>
+				</select>
+		</tr>
+	</table>
+	<button type="submit">Do it! (if id == 0, will add new; othewise will edit)</button>
+	</form>
+	
+	<!-- Formulario mucho más sencillo -->
+	(este formulario llama a addCar1, que usa @RequestParam)
+	<form action="addCar1" method="post">
+	<table>
+		<tr>
+		<td><input name="company" placeholder="company">
+		<td><input name="model" placeholder="model">
+		<td><button type="submit">Send</button>
+		</tr>
+	</table>
+	</form>
+
+	<!-- Formulario mucho más sencillo, para probar ModelAttribute -->
+	(este formulario llama a addCar2, que usa @ModelAttribute)
+	<form action="addCar2" method="post">
+	<table>
+		<tr>
+		<td><input name="company" placeholder="company">
+		<td><input name="model" placeholder="model">
+		<td><button type="submit">Send</button>
+		</tr>
+	</table>
+	</form>	
+
+	<h1>Driver</h1>
+	<form method="post">
+	<input type="hidden" name="tableName" value="com.example.demo.model.Driver"/>
+	<table>
+		<tr>
+			<th>id
+			<th>name
+			<th>rides
+		</tr>
+		<tr th:each="x, i: ${Driver}" th:object="${x}" th:id="|driver_*{id}|" class="datarow">
+		    <td th:text="*{id}">id
+		    <td th:text="*{name}">name
+		    <td th:text="*{rides}">rides
+		</tr>
+		<tr>
+			<td><button class='addrow'>➕</button><input name="id" value="0" readonly>
+			<td><input name="name" placeholder="name">
+			<td><select name="rides_id" multiple>
+					<option th:each="y: ${CarMap}" th:value="${y.key}" th:text="${y.value}">Toyota</option>
+				</select>
+		</tr>
+	</table>
+	<button type="submit">Do it! (if id == 0, will add new; othewise will edit)</button>
+	</form>
+
+	<h1>Wheel</h1>
+	<form method="post">
+	<input type="hidden" name="tableName" value="com.example.demo.model.Wheel"/>
+	<table>
+		<tr>
+			<th>id
+			<th>position
+			<th>car
+		</tr>
+		<tr th:each="x, i: ${Wheel}" th:object="${x}" th:id="|wheel_*{id}|" class="datarow">
+		    <td th:text="*{id}">id
+		    <td th:text="*{position}">position
+		    <td th:text="*{car}">car
+		</tr>
+		<tr>
+			<td><button class='addrow'>➕</button><input name="id" value="0" readonly>
+			<td><select name="position">
+				<option>FrontLeft</option>
+				<option>FrontRight</option>
+				<option>RearLeft</option>
+				<option>RearRight</option>
+			</select>
+			<td><select name="car_id">
+					<option value="">(none)</option>
+					<option th:each="y: ${CarMap}" th:value="${y.key}" th:text="${y.value}">Toyota</option>
+				</select>
+		</tr>
+	</table>
+	<button type="submit">Do it! (if id == 0, will add new; othewise will edit)</button>
+	</form>	
+</body>
+</html>
