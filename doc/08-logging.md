@@ -1,6 +1,6 @@
 % Logging
 % (manuel.freire@fdi.ucm.es)
-% 2019.02.12
+% 2020.03.02
 
 ## Objetivo
 
@@ -11,16 +11,14 @@
 
 * Log file = cuaderno de abordo, bitácora
 
-    + logging = el acto de apuntar algo* en la bitácora. 
-    + *ojo*: login / log-in = cuando te apuntas /a/ algo. Típicamente te meten en el libro de visitas.
+    + logging = el acto de apuntar algo\footnote{Por ejemplo, trazas sobre el funcionamiento de programas que permiten reconstruir qué pasó cuándo, y así poder depurarlo.} en la bitácora. 
+    + *ojo*: login ó log-in = cuando te apuntas /*a*/ algo. \
+    Típicamente, como resultado, te meten en el libro de visitas:\
+    "your login has been logged"
     
 * Log también es "tronco"
 
     + logging = tala
-
-. . . 
-
-(*) Por ejemplo, trazas sobre el funcionamiento de programas que permiten reconstruir qué pasó cuándo, y así poder depurarlo.
 
 ## Logging sin logs
 
@@ -40,89 +38,116 @@ o bien
 
 Diferencias entre `System.out` y `System.err`:
 
-* stdout usa búferes (y no se escribe hasta que ve un `'\n'`); stderr no.
+* stdout usa búferes (y no se escribe hasta que ve un `'\n'`); stderr **no**.
 * stdout y stderr se pueden redirigir a lugares distintos
+
+~~~{.bash}
+echo "patata" >salida.txt 2>&1
+~~~
+
 * muchos entornos sacan stderr en rojo por su consola integrada
 
-## Problemas de System.x.println para depurar ejecución
+## Problemas de `System.x.println` para depurar ejecución
 
-* no son fáciles de desactivar una vez te pones a depurar algo distinto
+* `println`s no son fáciles de 
+    + desactivar una vez te pones a depurar algo distinto
+    + reactivar cuando vuelves a tener problemas allí
 * no es fácil pasar la salida a un lugar distinto \
     (out, err, fichero, correos, Telegram)
-* sacar dónde se produce cada traza de depuración exige copiar y pegar mucho código:
+* sacar detalles sobre cada traza es muy repetitivo\footnote{DRY dice: copiar y pegar es siempre evitable. \textbf{D}on't \textbf{R}epeat \textbf{Y}ourself}:
     + **hilo** donde se produce
     + **momento** en el que se produce
     + **clase y método** en el que se produce
-    + y luego, algún mensaje que te de información más específica ("usuario no encontrado")
+    + y luego, algún mensaje que te de información más específica\
+    "usuario López no encontrado", "error insertando zuncho", ...
 
 ## Escribiendo una clase sencilla para gestionar trazas
 
+\small 
+
 ~~~ {.java}
 public enum Log {
-  INSTANCE;
+  INSTANCE;  // creado al cargarse la clase; usado para Singleton desde JDK5
   private PrintStream stream = System.out;
-  private int level;
+  private int level = 0;
   private long t0 = System.currentTimeMillis();
-  public void setWriter(PrintStream stream) { 
+  public void setWriter(PrintStream stream) {               // cambia destino
     INSTANCE.stream = stream;
   }
-  public static void setLevel(int level) {
+  public static void setLevel(int level) {                  // cambia detalle
     INSTANCE.level = level;
-  }    
-  public static void log(int level, Object ... messages) {
-    if (level < INSTANCE.level) return;
-      StackTraceElement[] stes = Thread.currentThread().getStackTrace();
-      StringBuilder sb = new StringBuilder(
-          Thread.currentThread().getName() + "@" + 
-          stes[stes.length-1] + ",t=" + 
-          (System.currentTimeMillis()-t0) + ":");
-      for (Object o : messages) sb.append(" " + o);
-      INSTANCE.stream.println(sb.toString());
+  }
+  public static void log(int level, Object ... messages) {  // llamada de log
+    if (level < INSTANCE.level) {
+      return;
+    }
+    StackTraceElement[] frames = Thread.currentThread().getStackTrace();
+    StringBuilder sb = new StringBuilder(
+        Thread.currentThread().getName() + "@" +   // nombre del hilo
+        frames[frames.length-1] + ",t=" +          // clase y línea
+        (System.currentTimeMillis()-t0) + ":");    // tiempo desde t0
+    for (Object o : messages) sb.append(" " + o);  // mensaje
+    INSTANCE.stream.println(sb.toString());
   }
 }    
 ~~~
 
 ## Usando nuestra clase sencilla
 
-~~~ {.java}
-    Log.log(1, "y el número es... el ", 42);
-~~~
-
-... resulta en ...
 
 ~~~ {.java}
-    main@Log.main(Log.java:27),t=1: y el número es... el  42
+    // main@Log.main(Log.java:27),t=1: y el número es... el  42
+    Log.log(1, "calculando respuesta... ", calculaRespuesta());
 ~~~
 
-por `stdout`; podemos desactivarlo todo si ponemos un `level` mínimo lo bastante alto, y es posible también modificar fácilmente a dónde se escriben las cosas. No obstante,
+Funcionamiento:
+
+- Por defecto, escribe por `stdout`. 
+- Podemos desactivarlo todo si ponemos un `level` mínimo más alto
+- Podemos redirigirlo usando `setWriter`
+
+~~~ {.java}
+    Log.setWriter(new PrintWriter(new File("log.txt"));
+~~~
+
+Fallos:
 
 * a veces queremos activar trazas en un sitio sí y en otros no
-* algunas trazas son caras, y no queremos tener que construirlas a no ser que sea imprescindible
+* algunas trazas son caras, y no queremos tener que construirlas a no ser que sea imprescindible; en el ejemplo anterior, \
+ `calculaRespuesta()` se evaluaría aunque `Log.level` fuera > 1
 * sería bueno tener un soporte especial para excepciones, para que se muestren con todos sus detalles... o no.
 * ¿esto no estaría mejor como una librería bien escrita y documentada?
 
-## Logging vs system.out.println
+## Ventajas de Logging vs system.out.println
 
 * casi igual de fácil de escribir
 * soporte para excepciones
-* mucho más útil durante depuración (muestra más información sin tener que meterla en el println)
-* mucho más fácil de limpiar una vez todo parece funcionar
-* mucho más fácil de reactivar si resulta que algo no estaba tan bien como parecía
+* mucho más ágil durante depuración: \
+muestra más información sin tener que meterla en el `println`
+* mucho más fácil de limpiar una vez todo (parece que) funciona
+* mucho más fácil de reactivar cuando resulta que algo seguía sin funcionar 
 
-## Logging vs sesiones de depuración
+## Ventajas de Logging vs. sesiones de depuración
 
-* Puede usarse cuando no hay interfaz de depuración disponible (ej.: servidores a los que sólo tenemos acceso vía consola)
-* O cuando el programa tiene concurrencia y temporización que hace difíl el uso de un depurador (ej.: interfaces gráficas de usuario)
-* Una vez generada una traza, ahí está. En cambio, las sesiones de depuración se pierden muy fácilmente. 
-* Puedes comparar una traza contra otra - eso es más difícil con sesiones de depuración.
+* Puede usarse cuando no hay interfaz de depuración disponible
+    - servidores a los que sólo tenemos acceso vía consola
+    - cuando no hay un IDE a mano
+* O cuando el programa tiene concurrencia y temporización
+    - interfaces gráficas de usuario
+    - sistemas con usuarios concurrentes
+* Las trazas persisten
+    - Una vez generada una traza, puedes mirarla y remirarla. 
+    - Y compararla contra otras. 
+    - Las sesiones de depuración no permiten volver al pasado, \
+    y es difícil lanzarlas en paralelo
 * Todas las librerías de logging permiten trazar a fichero y a consola a la vez.
 
 ## Librerías de logging
 
-* jul - viene con la JDK. Algo lenta y obtusa de configurar (ver transparencia anterior).
-* log4j - inspiró a jul, más sencilla de usar/configurar. Recomendada para proyectos vuestros.
-* commons logging - variante Apache Commons, usada en muchos proyectos de Commons. Similar a log4j.
-* slf4j - fachada que permite escribir / leer de cualquiera de las anteriores, de forma que tu aplicación puede integrar componentes que usen distintas librerías de logging. Recomendada para proyectos que otros vayan a poder usar/integrar.
+* `jul` - viene con la JDK. Algo lenta y obtusa de configurar (ver transparencia anterior).
+* `log4j` - inspiró a jul, más sencilla de usar/configurar. Recomendada para proyectos vuestros.
+* `commons logging` - variante Apache Commons. Similar a log4j.
+* `slf4j` - fachada que permite escribir / leer de cualquiera de las anteriores, de forma que tu aplicación puede integrar componentes que usen distintas librerías de logging. Recomendada para proyectos que otros vayan a poder usar/integrar.
 
 ~~~ {.java}
   // log4j2
@@ -172,14 +197,57 @@ if (log.isDebugEnabled()) {
 
 Más detalles en la [api de log4j 2](https://logging.apache.org/log4j/2.x/manual/api.html) 
 
+## Logging en vuestras aplicaciones: librerías
+
+\tiny
+
+~~~{.txt}
+[INFO] +- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.3.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-thymeleaf:jar:2.1.3.RELEASE:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.1.3.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.1.3.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.1.3.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.1.3.RELEASE:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.3:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.11.2:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.11.2:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.25:compile
+...
+~~~
+
+\large 
+
+Es decir, tenemos disponible y cargadas:
+
+- logback-classic
+- log4j-to-slf4j
+- log4j-api
+- jul-to-slf4j
+
 ## Configurando logging
 
 ~~~~ {.properties}
-
 # en application.properties
 logging.level.root=INFO
 logging.level.es.ucm.fdi.iw.model=DEBUG
 logging.file=fichero-de-log.log
 ~~~~ 
 
+* `level.root`: nivel raíz 
+* `level.un.paquete.cualquiera`: nivel para ese paquete y subpaquetes
+* `file`: fichero de salida a usar (opcional; por defecto, consola)
+
 Más detalles en la [documentación de logging de spring](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html)
+
+# Fin
+
+## ¿?
+
+¡No te quedes con preguntas!
+
+------
+
+![](../img/cc-by-sa-4.png "Creative Commons Attribution-ShareAlike 4.0 International License"){ width=25% }
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/)

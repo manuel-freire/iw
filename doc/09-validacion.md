@@ -1,6 +1,6 @@
 % Validación
 % (manuel.freire@fdi.ucm.es)
-% 2019.03.05
+% 2020.03.02
 
 ## Objetivo
 
@@ -232,6 +232,6 @@ public class Car {
 
 ------
 
-![](../img/t06/cc-by-sa-4.png "Creative Commons Attribution-ShareAlike 4.0 International License"){ width=25% }
+![](./img/cc-by-sa-4.png "Creative Commons Attribution-ShareAlike 4.0 International License"){ width=25% }
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/)
