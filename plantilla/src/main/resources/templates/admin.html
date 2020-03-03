@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><th:block th:replace="fragments/head :: header"/>
+	<title>Admin</title>
+	<link rel="stylesheet" th:href="@{/css/admin.css}" href="css/admin.css" type="text/css"/>
+</head>
+<body>
+	<nav th:replace="fragments/nav.html :: nav">
+		Nav goes here
+	</nav>
+	
+	<div class="container">
+	<div class="main">
+	<h1 th:text="#{admin.welcome}">Ojo solo admines</h1>			
+	
+	<h4>Configuración</h4>
+	<ul>
+	<li>Directorio local para archivos de usuario: <span th:text="${basePath}">tal</span>
+	<li>Perfiles activos: <span th:each="a: ${activeProfiles}" th:text="${a}">tal</span>
+	</ul>
+		<h4>Usuarios (👤)</h4>
+	
+	<table class="adminTable">
+	<tr><th>Nombre & Enlace<th>Deshabilitar (🔒) ó Habilitar (🔓)
+	<tr th:each="u: ${users}">
+		<td><a th:href="@{/user/{id}(id=${u.id})}" th:text="${u.username}">Pepe</a>
+		<td><form method="post" th:action="@{/admin/toggleuser(id=${u.id})}">
+			<button th:text="${u.enabled eq 1 ? '🔓 → 🔒' : '🔒 → 🔓'}" type="submit">🗑</button>
+		</form>
+	</tr>
+	</table>
+	
+	</div>
+	</div>
+		
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
+</body>
+</html>

@@ -1,0 +1,18 @@
+/* admin */
+
+table.adminTable {
+	margin: 10px;	
+}
+
+button.addRow {
+	margin: 9px;
+}	
+
+.adminTable {
+	word-break: break-word;
+	border-collapse: collapse;
+}
+
+.adminTable td, .adminTable th {
+	border: 1px solid gray;
+}

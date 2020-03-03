@@ -1,0 +1,110 @@
+/* 
+ * simple css layout
+ * - wrapping flexbox for nav
+ * - flexbox trick from https://stackoverflow.com/a/20352949/15472 
+ *   to keep footer in its place
+ * - a grid for the content div and sidebar
+ */
+ 
+html, body{ 
+	min-height:100%; 
+	margin:0; 
+}
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+
+/* for debugging purposes - remove borders for a cleaner look */
+div, nav, footer {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+}
+
+/* setup nav & children */
+nav {	
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+}
+nav>*{
+	margin: 5px;
+}
+.sitename {
+	font-size: 240%;
+	font-weight: bold;
+}
+.logo {
+	background-image: url(../img/logo.png);
+	width: 64px;
+	height: 64px;
+}
+.logx {
+	margin-left: auto;
+}
+.logx form, .logx img {
+	display: inline;
+}
+
+/* setup main container */
+div.container {
+	display: flex;
+	flex-wrap: wrap-reverse;
+}
+div.main {
+	flex: auto;
+}
+div.sidebar {
+	flex: none;
+}
+
+/* setup footer */
+footer {
+  margin-top:auto; 
+}
+footer img {
+	vertical-align: middle;
+}
+
+/* for compact forms */
+.smallform input {
+	display: block;
+}
+
+/* to highlight debug elements */
+.debug {
+	padding: 5px;
+	border: 1px dashed red;
+}
+nav div.debug {
+	display: inline;
+}
+
+.userthumb {
+	width: 32px;
+	height: 32px;
+}
+
+/* for error debugging */
+.errKey {
+	display: block;
+	width: 10em;
+}
+.errTable {
+	word-break: break-word;
+	border-collapse: collapse;
+}
+.errTable td {
+	border: 1px solid gray;
+}
+.errTable tr>td:first-child {
+	background-color: #dddddd;
+	min-width: 5em;
+}
+.errTable div {
+	border: none;
+	margin: 0;
+	padding: 0;
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><th:block th:replace="fragments/head :: header"/>
+	<title>KM: Error</title>
+</head>
+<body>
+	<nav th:replace="fragments/nav.html :: nav">
+		Nav goes here
+	</nav>
+	
+	<div class="container">
+	<div class="main">
+		
+	<h4>Error <span th:text="${status}"></span></h4>
+	
+	<div th:unless="${application.debug}">
+		<img th:src="|https://http.cat/${status}|" alt="gato ilustrando problema"/>
+		<p>Los administradores están informados. Puedes volver a intentar hacer
+		lo que estabas haciendo de otra forma, o esperar a que solucionen el problema.</p>
+	</div>
+	<div th:if="${application.debug}">
+		<p>Ha pasado algo feo. Mira el log del servidor para saber más detalles.</p>
+
+	<h4>Detalles del error</h4>
+	<table class="errTable">
+		<tr><td>Date<td th:text="${timestamp}">
+		<tr><td>Path<td th:text="${path}">
+		<tr><td>Error<td th:text="${error}">
+		<tr><td>Status<td th:text="${status}">
+		<tr><td>Mensaje<td th:text="${message}">
+		<tr><td>Excepción<td th:text="${exception}">
+		<tr><td>Traza<td><pre th:text="${trace}"/>
+	</table>
+
+	<h4>Variables definidas en sesión</h4>
+	<table class="errTable">
+		<tr th:each="v: ${session}">
+		<td><span class="errKey" th:text="${v.key}"></span>
+		<td th:text="${v.value}">
+	</table>
+
+	<h4>Variables definidas en parámetros</h4>
+	<table class="errTable">
+		<tr th:each="v: ${param}">
+		<td th:text="${v.key}">
+		<td> <div th:each="v: ${v.value}"><div th:text="${v}"></div></div>
+	</table>
+
+	<h4>Otras</h4>
+	<table class="errTable">
+		<tr><td>req.url
+			<td th:text="${#request.requestURL}">
+		<tr><td>req.uri
+			<td th:text="${#request.requestURI}">
+		<tr><td>req.getHeader("User-Agent")
+			<td th:text="${#request.getHeader('User-Agent')}">			
+	</table>
+
+	</div>
+	
+	</div> <!-- end main div -->
+	</div> <!-- end container div -->
+	
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
+</body>
+</html>

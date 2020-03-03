@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<title>Nav fragment - rest intentionally left empty</title>
+</head>
+<body>
+	<nav th:fragment="nav">
+		<a class="logo" href="" th:href="@{/}"></a>
+		<span class="sitename">Plantilla de IW</span>
+
+		<div class="logx" th:if="${session.u}">			
+			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">admin</a>
+			<a th:if="${session.g} neq null" th:href="@{/clase/}">clase</a>
+			<a th:href="@{/logout}" href="/logout">logout</a>
+			<a th:href="@{/user/{id}(id=${session.u.id})}">
+				<img class="userthumb" th:src="@{/user/{id}/photo(id=${session.u.id})}">
+				<span th:text="${session.u.username}">Pepe</span></a>						
+		</div>
+		<div class="logx" th:unless="${session.u}">
+			<a th:href="@{/login}" href="/login">login</a>
+			<!--/*
+				Esto es un comentario "thymeleaf" - no se verá en el HTML
+				El bloque de "debug" sólo está activado si application.properties tiene debug a "true"
+				(ver StartupConfig.java para ver cómo se lee el atributo y se pone en ${application.debug})
+			*/-->
+			<div class="debug" th:if="${application.debug}">
+				<form th:action="@{/login}" method="post">
+					<input type="hidden" name="username" value="a">
+					<input type="hidden" name="password" value="aa">
+					<button type="submit">a</button>
+  				</form>				
+				<form th:action="@{/clase/enter}" method="post">
+					<input id="z" type="hidden" name="userName" value="z">
+					<input type="hidden" name="groupCode" value="test">
+					<button type="submit">z</button>
+  				</form> 
+				<script>
+				window.addEventListener('load', () => {
+					document.getElementById('z').value = "z" + Math.floor(Math.random()*1000);		        	
+				});
+				</script>  				
+  			</div>
+		</div>		
+	</nav>
+</body>
+</html>

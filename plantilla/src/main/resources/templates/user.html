@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><th:block th:replace="fragments/head :: header"/>
+	<title>Perfil</title>
+</head></head>
+<body>
+	<nav th:replace="fragments/nav.html :: nav">
+		Nav goes here
+	</nav>
+	
+	<div class="container">
+	<div class="main">
+	<h1 th:text="#{index.welcome}">Bienvenido a la plantilla de IW</h1>
+		
+	<h4>Información del usuario <span th:text="${user.username}">Pepe</span></h4>
+	
+	<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}">
+		<!-- puedes cambiar todo -->
+		<form id="usermod" class="smallform" th:action="@{/user/{id}(id=${user.id})}" method="POST">
+			
+			<label for="firstname">Nombre</label>
+			<input name="firstName" id="firstName" required placeholder="Nombre" th:value="${user.firstName}"/>
+			
+			<label for="lastname">Apellidos</label>
+			<input name="lastName" id="lastname" required placeholder="Apellidos" th:value="${user.lastName}"/>			
+			
+			<label for="username">Usuario</label>
+			<input name="username" id="username" required placeholder="username" th:value="${user.username}"/>
+			
+			<label for="password">Contraseña</label>
+			<input type="password" id="password" required name="password" placeholder="Contraseña"/>
+			<label for="pass2">(repetida)</label>
+			<input type="password" id="pass2" required name="pass2" placeholder="Confirmación"/>
+			
+			<label for="password">Roles</label>
+			<input id="roles" name="roles" required placeholder="Roles" th:value="${user.roles}"/>
+			<button type="submit">Modificar</button>
+		</form>
+		<form th:action="@{/user/{id}/photo(id=${user.id})}" method="POST" enctype="multipart/form-data">
+			Nueva foto <input type="file" name="photo"/>
+			<button type="submit">Actualizar</button>
+		</form>
+	</div>
+	<img th:src="@{/user/{id}/photo(id=${user.id})}">
+	</div>
+
+	<div class="sidebar">
+	<table>
+		<tr th:each="x, i: ${xs}">
+		    <td th:text="|${i.index} ${i.count} ${i.size} ${i.current}|"
+		    th:class="|c${i.odd}-${i.first}-${i.last}|">hola!</td>
+		</tr>
+	</table>
+	</div>
+	</div>
+	
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
+	
+	<script>
+// esto es algo feo, y se podría sacar a un JS externo
+document.addEventListener("DOMContentLoaded", () => {
+	// selecciona los campos de contraseña
+	let ps = document.querySelectorAll('#usermod > input[type="password"]')
+	// cada vez que cambie uno de ellos...
+	ps[0].oninput = ps[0].onchange = ps[1].oninput = ps[1].onchange = () => {
+		// dice que si no son iguales, el segundo no es válido
+		ps[1].setCustomValidity(ps[0].value === ps[1].value ? 
+				"" : "Ambas contraseñas tienen que coincidir");
+	}
+});	
+	</script>	
+</body>
+</html>

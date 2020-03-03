@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>IW 2019-20</title>
+	<th:block th:fragment="header">
+	<meta charset="utf-8">
+	<link rel="stylesheet" th:href="@{/css/main.css}" href="css/main.css" type="text/css"/>
+	<script type="text/javascript">
+		const config = {
+			socketUrl: '[[${session.ws}?:false]]',
+			apiUrl: '[[${session.ws}?@{/api/v/}:false]]',
+			csrf: {
+				name: "[[${_csrf.parameterName}]]",
+				value: "[[${_csrf.token}]]"
+			},
+			admin: [[${session.u != null && session.u.hasRole('ADMIN')}?'true':'false']],
+			userId: [[${session.u != null}?${session.u.id}:-1]]
+		};
+	</script>
+	<script th:src="@{/js/iwclient.js}" src="js/iwclient.js" type="text/javascript"></script>
+	</th:block>
+</head>
+<body>
+	Head fragment - rest intentionally left empty.
+</body>
+</html>
