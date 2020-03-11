@@ -1,6 +1,5 @@
 package es.ucm.fdi.iw.model;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,21 +9,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
- * A user; can be an Admin, a User, or a Moderator
+ * A user; can be an Admin, a Student, or a Teacher
  *
- * Users can log in and send each other messages.
+ * Teacher can create classes and contest and organize students into groups
  *
- * @author mfreire
+ * @author aitorcay
  */
+
 @Entity
 @NamedQueries({
 	@NamedQuery(name="User.byUsername",
@@ -38,7 +37,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class User {
 
-	private static Logger log = LogManager.getLogger(User.class);	
 	private static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 	public enum Role {
@@ -54,6 +52,15 @@ public class User {
 	private String password;
 	private String roles; // split by ',' to separate roles
 	private byte enabled;
+	
+	private String image;
+	private String color;
+	private int elo;
+	private StClass stClass;
+	
+	// application-specific fields
+		private String firstName;
+		private String lastName;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -66,13 +73,6 @@ public class User {
 				.anyMatch(r -> r.equals(roleName));
 	}
 	
-	// application-specific fields
-	private String firstName;
-	private String lastName;
-
-	private List<Message> sent = new ArrayList<>();
-	private List<Message> received = new ArrayList<>();
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
@@ -81,11 +81,6 @@ public class User {
 	
 	public void setId(long id) {
 		this.id = id;
-	}	
-
-	@Column(nullable = false)
-	public String getPassword() {
-		return password;
 	}
 
 	public String getUsername() {
@@ -94,6 +89,11 @@ public class User {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}	
+
+	@Column(nullable = false)
+	public String getPassword() {
+		return password;
 	}
 
 	/**
@@ -145,6 +145,47 @@ public class User {
 		this.enabled = enabled;
 	}
 
+	public static BCryptPasswordEncoder getEncoder() {
+		return encoder;
+	}
+
+	public static void setEncoder(BCryptPasswordEncoder encoder) {
+		User.encoder = encoder;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public int getElo() {
+		return elo;
+	}
+
+	public void setElo(int elo) {
+		this.elo = elo;
+	}
+
+	@ManyToOne(targetEntity = StClass.class)
+	public StClass getStClass() {
+		return stClass;
+	}
+
+	public void setStClass(StClass stClass) {
+		this.stClass = stClass;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -160,24 +201,6 @@ public class User {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
-	@OneToMany(targetEntity = Message.class)
-	@JoinColumn(name = "sender_id")
-	public List<Message> getSent() {
-		return sent;
-	}
-
-	public void setSent(List<Message> sent) {
-		this.sent = sent;
-	}
-
-	@OneToMany(targetEntity = Message.class)
-	@JoinColumn(name = "recipient_id")
-	public List<Message> getReceived() {
-		return received;
-	}
-
-	public void setReceived(List<Message> received) {
-		this.received = received;
-	}
+	
+	
 }
