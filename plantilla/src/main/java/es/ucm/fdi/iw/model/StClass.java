@@ -33,7 +33,7 @@ public class StClass {
 	private String className;
 //	private User teacher;
 
-	private List<User> students = new ArrayList<>();
+//	private List<User> students = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,13 +63,13 @@ public class StClass {
 //		return teacher;
 //	}
 //	
-	@OneToMany(targetEntity = User.class)
-	@JoinColumn(name = "stClass")
-	public List<User> getStudents() {
-		return students;
-	}
-
-	public void setStudents(List<User> students) {
-		this.students = students;
-	}
+//	@OneToMany(targetEntity = User.class)
+//	@JoinColumn(name = "st_class")
+//	public List<User> getStudents() {
+//		return students;
+//	}
+//
+//	public void setStudents(List<User> students) {
+//		this.students = students;
+//	}
 }

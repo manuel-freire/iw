@@ -4,17 +4,21 @@
 --
 
 -- Usuario de ejemplo con username = b y contraseña = aa  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo,stClass) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo) VALUES (
 	1, 1, 'a', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER,ADMIN',
-	'Abundio', 'Ejémplez', "A", "255255255", 1000, null
+	'Abundio', 'Ejémplez', 'A', '255255255', 1000
 );
 
 -- Otro usuario de ejemplo con username = b y contraseña = aa  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo,stClass) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo) VALUES (
 	2, 1, 'b', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Berta', 'Muéstrez', "B", "255255255", 1000, null
+	'Berta', 'Muéstrez', 'B', '255255255', 1000
+);
+
+INSERT INTO st_class(id,class_name) VALUES (
+	1, 'c'
 );

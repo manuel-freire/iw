@@ -56,11 +56,11 @@ public class User {
 	private String image;
 	private String color;
 	private int elo;
-	private StClass stClass;
+//	private StClass stClass;
 	
 	// application-specific fields
-		private String firstName;
-		private String lastName;
+	private String firstName;
+	private String lastName;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -177,14 +177,14 @@ public class User {
 		this.elo = elo;
 	}
 
-	@ManyToOne(targetEntity = StClass.class)
-	public StClass getStClass() {
-		return stClass;
-	}
-
-	public void setStClass(StClass stClass) {
-		this.stClass = stClass;
-	}
+//	@ManyToOne(targetEntity = StClass.class)
+//	public StClass getStClass() {
+//		return stClass;
+//	}
+//
+//	public void setStClass(StClass stClass) {
+//		this.stClass = stClass;
+//	}
 
 	public String getFirstName() {
 		return firstName;
