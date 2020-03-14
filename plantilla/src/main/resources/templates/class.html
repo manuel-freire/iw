@@ -13,12 +13,20 @@
 	<div class="container">
 	<div class="main">
 		
-	<p>
-	Vista de clases
-	</p>
+	<h1>
+		Vista de clases
+	</h1>
+
+	<form th:action="@{/class}" method="POST" enctype="multipart/form-data">
+		Fichero de clase <input type="file" name="classfile"/>
+		<button type="submit">Crear clase</button>
+	</form>
 		
 	<footer th:replace="fragments/footer.html :: footer">
 		Footer goes here
 	</footer>
+	
+	</div>
+	</div>
 </body>
 </html>

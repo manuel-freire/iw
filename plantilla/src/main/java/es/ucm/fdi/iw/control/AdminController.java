@@ -1,9 +1,12 @@
 package es.ucm.fdi.iw.control;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,12 +16,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.User.Role;
 
 /**
  * Admin-only controller
@@ -68,4 +74,78 @@ public class AdminController {
 		}
 		return index(model);
 	}
+	
+	@GetMapping("/error")
+	public String error(Model model) {
+		return "error";
+	}
+	
+	@GetMapping("/class")
+	public String classes(Model model) {
+		return "class";
+	}
+
+	@GetMapping("/contest")
+	public String contest(Model model) {
+		return "contest";
+	}
+	
+	@GetMapping("/play")
+	public String play(Model model) {
+		return "play";
+	}	
+
+	@PostMapping("/class")
+	public String postPhoto(
+			HttpServletResponse response,
+			@RequestParam("classfile") MultipartFile classFile,
+			Model model, HttpSession session) throws IOException {
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
+					"No eres profesor, y éste no es tu perfil");
+			return "class";
+		}
+		
+
+		if (classFile.isEmpty()) {
+			log.info("failed to upload photo: emtpy file?");
+		} else {
+			String content = new String(classFile.getBytes(), "UTF-8");
+			log.info("El fichero con los datos se ha cargado correctamente");
+			log.info("El contenido del fichero es \n" + content);
+		}
+		return "class";
+	}
+	
+	@PostMapping("/profile")
+	public String postPhoto(
+			HttpServletResponse response,
+			@RequestParam("classFile") MultipartFile classFile,
+			@PathVariable("id") String id, Model model, HttpSession session) throws IOException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&
+				! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
+					"No eres administrador, y éste no es tu perfil");
+			return "profile";
+		}
+		
+		log.info("Updating photo for user {}", id);
+		if (classFile.isEmpty()) {
+			log.info("failed to upload photo: emtpy file?");
+		} else {
+			String content = new String(classFile.getBytes(), "UTF-8");
+			log.info("El fichero con los datos se ha cargado correctamente");
+			log.info("El contenido del fichero es \n" + content);
+		}
+		return "profile";
+	}
+	
 }

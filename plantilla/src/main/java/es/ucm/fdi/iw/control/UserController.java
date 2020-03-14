@@ -106,6 +106,21 @@ public class UserController {
 		};
 	}
 	
+	@GetMapping("/{id}/profile")
+	public String profile(Model model) {
+		return "profile";
+	}
+
+	@GetMapping("/{id}/team")
+	public String team(Model model) {
+		return "team";
+	}
+	
+	@GetMapping("/{id}/rankings")
+	public String rankings(Model model) {
+		return "rankings";
+	}	
+	
 	@PostMapping("/{id}/photo")
 	public String postPhoto(
 			HttpServletResponse response,
