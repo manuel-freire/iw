@@ -3,6 +3,7 @@ package es.ucm.fdi.iw.control;
 import java.io.File;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
@@ -66,5 +67,5 @@ public class AdminController {
 			target.setEnabled((byte)1);
 		}
 		return index(model);
-	}	
+	}
 }

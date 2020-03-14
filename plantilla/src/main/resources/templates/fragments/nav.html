@@ -8,7 +8,55 @@
 <body>
 	<nav th:fragment="nav">
 		<a class="logo" href="" th:href="@{/}"></a>
-		<span class="sitename">Plantilla de IW</span>
+		<span class="sitename">RPC - Role Playing Class</span>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('ADMIN')}">	
+				<form th:action="@{/class}">
+					<button type="submit">Mis clases</button>
+  				</form>	
+  			</div>			
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('ADMIN')}">	
+				<form th:action="@{/contest}">
+					<button type="submit">Mis pruebas</button>
+  				</form>  
+  			</div>				
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('ADMIN')}">	
+				<form th:action="@{/play}">
+					<button type="submit">Jugar</button>
+  				</form>		
+			</div>					
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('USER')}">	
+				<form th:action="@{/profile}">
+					<button type="submit">Mi perfil</button>
+  				</form>	
+  			</div>			
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('USER')}">	
+				<form th:action="@{/team}">
+					<button type="submit">Mi equipo</button>
+  				</form>  
+  			</div>				
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('USER')}">	
+				<form th:action="@{/rankings}">
+					<button type="submit">Rankings</button>
+  				</form>		
+			</div>					
+		</div>
 
 		<div class="logx" th:if="${session.u}">			
 			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">admin</a>

@@ -33,5 +33,35 @@ public class RootController {
 	@GetMapping("/error")
 	public String error(Model model) {
 		return "error";
-	}	
+	}
+
+	@GetMapping("/class")
+	public String classes(Model model) {
+		return "class";
+	}
+
+	@GetMapping("/contest")
+	public String contest(Model model) {
+		return "contest";
+	}
+	
+	@GetMapping("/play")
+	public String play(Model model) {
+		return "play";
+	}
+
+	@GetMapping("/profile")
+	public String profile(Model model) {
+		return "profile";
+	}
+
+	@GetMapping("/team")
+	public String team(Model model) {
+		return "team";
+	}
+	
+	@GetMapping("/rankings")
+	public String rankings(Model model) {
+		return "rankings";
+	}
 }
