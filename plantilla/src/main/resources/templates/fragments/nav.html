@@ -12,7 +12,7 @@
 
 		<div th:if="${session.u}">			
 			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/class}">
+				<form th:action="@{/admin/{id}/class(id=${session.u.id})}">
 					<button type="submit">Mis clases</button>
   				</form>	
   			</div>			
@@ -20,7 +20,7 @@
 
 		<div th:if="${session.u}">			
 			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/contest}">
+				<form th:action="@{/admin/{id}/contest(id=${session.u.id})}">
 					<button type="submit">Mis pruebas</button>
   				</form>  
   			</div>				
@@ -28,7 +28,7 @@
 
 		<div th:if="${session.u}">			
 			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/play}">
+				<form th:action="@{/admin/{id}/play(id=${session.u.id})}">
 					<button type="submit">Jugar</button>
   				</form>		
 			</div>					
@@ -59,7 +59,7 @@
 		</div>
 
 		<div class="logx" th:if="${session.u}">			
-			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">admin</a>
+			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/{id}(id=${session.u.id})}">admin</a>
 			<a th:if="${session.g} neq null" th:href="@{/clase/}">clase</a>
 			<a th:href="@{/logout}" href="/logout">logout</a>
 			<a th:href="@{/user/{id}(id=${session.u.id})}">

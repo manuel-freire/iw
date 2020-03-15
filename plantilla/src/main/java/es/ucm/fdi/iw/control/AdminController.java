@@ -56,6 +56,13 @@ public class AdminController {
 		return "admin";
 	}
 	
+	@GetMapping("/{id}")
+	public String getUser(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		return "admin";
+	}
+	
 	@PostMapping("/toggleuser")
 	@Transactional
 	public String delUser(Model model,	@RequestParam long id) {
@@ -80,22 +87,22 @@ public class AdminController {
 		return "error";
 	}
 	
-	@GetMapping("/class")
+	@GetMapping("/{id}/class")
 	public String classes(Model model) {
 		return "class";
 	}
 
-	@GetMapping("/contest")
+	@GetMapping("/{id}/contest")
 	public String contest(Model model) {
 		return "contest";
 	}
 	
-	@GetMapping("/play")
+	@GetMapping("/{id}/play")
 	public String play(Model model) {
 		return "play";
 	}	
 
-	@PostMapping("/class")
+	@PostMapping("/{id}/class")
 	public String postPhoto(
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
@@ -118,34 +125,5 @@ public class AdminController {
 			log.info("El contenido del fichero es \n" + content);
 		}
 		return "class";
-	}
-	
-	@PostMapping("/profile")
-	public String postPhoto(
-			HttpServletResponse response,
-			@RequestParam("classFile") MultipartFile classFile,
-			@PathVariable("id") String id, Model model, HttpSession session) throws IOException {
-		User target = entityManager.find(User.class, Long.parseLong(id));
-		model.addAttribute("user", target);
-		
-		// check permissions
-		User requester = (User)session.getAttribute("u");
-		if (requester.getId() != target.getId() &&
-				! requester.hasRole(Role.ADMIN)) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-					"No eres administrador, y éste no es tu perfil");
-			return "profile";
-		}
-		
-		log.info("Updating photo for user {}", id);
-		if (classFile.isEmpty()) {
-			log.info("failed to upload photo: emtpy file?");
-		} else {
-			String content = new String(classFile.getBytes(), "UTF-8");
-			log.info("El fichero con los datos se ha cargado correctamente");
-			log.info("El contenido del fichero es \n" + content);
-		}
-		return "profile";
-	}
-	
+	}	
 }
