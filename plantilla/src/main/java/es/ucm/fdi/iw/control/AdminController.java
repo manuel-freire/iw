@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,9 @@ public class AdminController {
 	
 	@Autowired
 	private LocalData localData;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private Environment env;
@@ -103,20 +107,24 @@ public class AdminController {
 	}	
 
 	@PostMapping("/{id}/class")
-	public String postPhoto(
+	public String postFile(
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
+			@PathVariable("id") String id,
 			Model model, HttpSession session) throws IOException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
 		
 		// check permissions
 		User requester = (User)session.getAttribute("u");
-		if (requester.hasRole(Role.ADMIN)) {
+		if (requester.getId() != target.getId() &&
+				! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
 					"No eres profesor, y éste no es tu perfil");
 			return "class";
 		}
 		
-
+		log.info("Profesor {} subiendo fichero de clase", id);
 		if (classFile.isEmpty()) {
 			log.info("failed to upload photo: emtpy file?");
 		} else {
@@ -124,6 +132,6 @@ public class AdminController {
 			log.info("El fichero con los datos se ha cargado correctamente");
 			log.info("El contenido del fichero es \n" + content);
 		}
-		return "class";
+		return classes(model);
 	}	
 }
