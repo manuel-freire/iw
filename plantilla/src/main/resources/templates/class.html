@@ -3,7 +3,17 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
-	<title>RPC - Profesor</title>
+	<title>RPC - Profesor</title>	
+	<style>
+	.droptarget {
+	  float: left; 
+	  width: 200px; 
+	  height: 20;
+	  margin: 15px;
+	  padding: 5px;
+	  border: 1px solid #aaaaaa;
+	}
+	</style>
 </head>
 <body>
 	<nav th:replace="fragments/nav.html :: nav">
@@ -21,12 +31,39 @@
 		Fichero de clase <input type="file" name="classfile"/>
 		<button type="submit">Crear clase</button>
 	</form>
-		
+
+	<table class="adminTable">
+	<tr><th>Clase de prueba
+	<tr th:each="u: ${users}">
+		<td><div class="droptarget" ondrop="drop(event)" ondragover="allowDrop(event)">
+				<div class="droptarget" ondragstart="dragStart(event)" draggable="true" id="dragtarget">
+					<p th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}">Drag me!</p>
+				</div>
+			</div>
+	</tr>
+	</table>	
+	
 	<footer th:replace="fragments/footer.html :: footer">
 		Footer goes here
 	</footer>
 	
 	</div>
 	</div>
+
+	<script type="text/javascript">
+		function dragStart(event) {
+		  event.dataTransfer.setData("Text", event.target.id);
+		}
+
+		function allowDrop(event) {
+		  event.preventDefault();
+		}
+
+		function drop(event) {
+		  event.preventDefault();
+		  var data = event.dataTransfer.getData("Text");
+		  event.target.appendChild(document.getElementById(data));
+		}
+	</script>
 </body>
 </html>

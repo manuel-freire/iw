@@ -95,6 +95,7 @@ public class AdminController {
 	
 	@GetMapping("/{id}/class")
 	public String classes(Model model) {
+		
 		return "class";
 	}
 
@@ -110,7 +111,7 @@ public class AdminController {
 
 	@PostMapping("/{id}/class")
 	@Transactional
-	public String postFile(
+	public String createFile(
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
 			@PathVariable("id") String id,
@@ -132,13 +133,17 @@ public class AdminController {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
 			saveToDb(content);
+
+			model.addAttribute("users", entityManager.createQuery(
+					"SELECT u FROM User u").getResultList());
+			model.addAttribute("stClass", entityManager.createQuery(
+					"SELECT c FROM StClass c WHERE id=2").getResultList());
 		}
 		
 		return classes(model);
 	}	
 	
-	private void saveToDb(String content) {		
-		String encodedPass;
+	private void saveToDb(String content) {	
 		User student;
 		log.info("Inicio del procesado del fichero de clase");		
 		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
