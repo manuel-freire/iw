@@ -4,27 +4,27 @@
 --
 
 -- Usuario de ejemplo con username = b y contraseña = aa  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo) VALUES (
 	1, 1, 'a', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER,ADMIN',
-	'Abundio', 'Ejémplez', 'A', '255255255', 1000
+	'Abundio', 'Ejémplez', 1000
 );
 
 -- Otro usuario de ejemplo con username = b y contraseña = aa  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo) VALUES (
 	2, 1, 'b', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Berta', 'Muéstrez', 'B', '255255255', 1000
+	'Berta', 'Muéstrez', 1000
 );
 
 -- Otro usuario de ejemplo con username = b y contraseña = aa  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,image,color,elo) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo) VALUES (
 	3, 1, 'pepe', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Pepe', 'Papa', 'C', '255255255', 1000
+	'Pepe', 'Papa', 1000
 );
 
 INSERT INTO st_class(id,class_name) VALUES (

@@ -53,8 +53,6 @@ public class User {
 	private String roles; // split by ',' to separate roles
 	private byte enabled;
 	
-	private String image;
-	private String color;
 	private int elo;
 //	private StClass stClass;
 	
@@ -152,23 +150,7 @@ public class User {
 	public static void setEncoder(BCryptPasswordEncoder encoder) {
 		User.encoder = encoder;
 	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public String getColor() {
-		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color;
-	}
-
+	
 	public int getElo() {
 		return elo;
 	}
@@ -202,5 +184,15 @@ public class User {
 		this.lastName = lastName;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder stb = new StringBuilder();
+		
+		stb.append("Nombre: " + this.getFirstName() + "\n");
+		stb.append("Apellidos: " + this.getLastName() + "\n");
+		stb.append("Usuario: " + this.getUsername() + "\n");
+		stb.append("Elo: " + Integer.toString(this.getElo()) + "\n");
+		
+	    return stb.toString();
+	}
 }

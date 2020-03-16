@@ -72,4 +72,13 @@ public class StClass {
 //	public void setStudents(List<User> students) {
 //		this.students = students;
 //	}
+	
+	@Override
+	public String toString() {
+		StringBuilder stb = new StringBuilder();
+		
+		stb.append("Clase: " + this.getClassName() + "\n");
+		
+	    return stb.toString();
+	}
 }

@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import es.ucm.fdi.iw.LocalData;
+import es.ucm.fdi.iw.constants.ClassFileDTO;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
+import es.ucm.fdi.iw.utils.ClassFileReader;
 
 /**
  * Admin-only controller
@@ -107,6 +109,7 @@ public class AdminController {
 	}	
 
 	@PostMapping("/{id}/class")
+	@Transactional
 	public String postFile(
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
@@ -117,21 +120,39 @@ public class AdminController {
 		
 		// check permissions
 		User requester = (User)session.getAttribute("u");
-		if (requester.getId() != target.getId() &&
-				! requester.hasRole(Role.ADMIN)) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-					"No eres profesor, y éste no es tu perfil");
-			return "class";
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return classes(model);
 		}
 		
 		log.info("Profesor {} subiendo fichero de clase", id);
 		if (classFile.isEmpty()) {
-			log.info("failed to upload photo: emtpy file?");
+			log.info("El fichero está vacío");
 		} else {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			log.info("El contenido del fichero es \n" + content);
+			saveToDb(content);
 		}
+		
 		return classes(model);
 	}	
+	
+	private void saveToDb(String content) {		
+		String encodedPass;
+		User student;
+		log.info("Inicio del procesado del fichero de clase");		
+		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
+		if (classInfo.getStClass() != null && classInfo.getStudents() != null) {
+			entityManager.persist(classInfo.getStClass());
+			for(int i = 0; i < classInfo.getStudents().size(); i++) {
+				student = classInfo.getStudents().get(i);
+				student.setPassword(passwordEncoder.encode(student.getPassword()));
+				entityManager.persist(student);
+			}
+			log.info("La información se ha cargado en la base de datos correctamente");				
+		} else {
+			log.warn("La información de la clase está incompleta");
+		}
+		
+	}
 }

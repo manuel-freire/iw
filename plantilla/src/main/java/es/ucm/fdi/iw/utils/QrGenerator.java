@@ -19,7 +19,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 public class QrGenerator {
 	
-	public static void main(String[] args) {
+	public static void generateCode(String[] args) {
 		String myCodeText = "https://localhost:8080/rpc/ST001";
 		String filePath = "CrunchifyQR-ST001.png";
 		int size = 250;
