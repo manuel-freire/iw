@@ -5,14 +5,27 @@
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC - Profesor</title>	
 	<style>
-	.droptarget {
-	  float: left; 
-	  width: 200px; 
-	  height: 20;
-	  margin: 15px;
-	  padding: 5px;
-	  border: 1px solid #aaaaaa;
-	}
+		.droptarget {
+		  float: left; 
+		  width: 175px; 
+		  height: 15px;
+		  margin: 5px;
+		  padding: 5px;
+		  text-align: center;
+		  border: 1px solid #aaaaaa;
+		}
+	    div.scroll { 
+	        margin:4px, 4px; 
+	        padding:4px; 
+	        width: 300px; 
+	        height: 400px; 
+	        overflow-x: hidden; 
+	        overflow-x: auto; 
+	        text-align:justify; 
+	    }
+        .container {
+	        display: flex;
+	    }
 	</style>
 </head>
 <body>
@@ -23,32 +36,46 @@
 	<div class="container">
 	<div class="main">
 		
-	<h1>
-		Vista de clases
-	</h1>
+		<h1>
+			Vista de clases
+		</h1>
 
-	<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-		Fichero de clase <input type="file" name="classfile"/>
-		<button type="submit">Crear clase</button>
-	</form>
+		<div class="container">
+			<div>
+				<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+					Fichero de clase <input type="file" name="classfile"/>
+					<button type="submit">Crear clase</button>
+				</form>
 
-	<table class="adminTable">
-	<tr><th>Clase de prueba
-	<tr th:each="u: ${users}">
-		<td><div class="droptarget" ondrop="drop(event)" ondragover="allowDrop(event)">
-				<div class="droptarget" ondragstart="dragStart(event)" draggable="true" id="dragtarget">
-					<p th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}">Drag me!</p>
+				<div class="scroll">
+					<table class="adminTable">
+					<tr><th>Clase de prueba
+					<tr th:each="u: ${users}">
+						<td><div class="droptarget" ondragstart="dragStart(event)" draggable="true" id="dragtarget" th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
+					</tr>
+					</table>
 				</div>
 			</div>
-	</tr>
-	</table>	
-	
+			<div>
+				<div class="container">
+					<label for="quantity">Número de equipos:</label>
+					<input type="number" id="quantity" name="quantity" min="1" max="99">
+					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
+				</div>					
+
+				<div class="scroll">
+					<table class="adminTable" id="teamTable" name="teamTable">
+					<tr><th>Lista de equipos
+					</table>
+				</div>	
+			</div>
+		</div>
+	</div>
+	</div>
+				
 	<footer th:replace="fragments/footer.html :: footer">
 		Footer goes here
-	</footer>
-	
-	</div>
-	</div>
+	</footer>		
 
 	<script type="text/javascript">
 		function dragStart(event) {
@@ -64,6 +91,36 @@
 		  var data = event.dataTransfer.getData("Text");
 		  event.target.appendChild(document.getElementById(data));
 		}
+
+		function createTeams(quantity) {
+			var i;
+			var container;
+			var title;
+			var wrapper;
+			var row;
+
+			wrapper = document.getElementById('teamTable');
+
+			for (i = 0; i < quantity; i++) {
+				wrapper = document.createElement('div');
+
+				title = document.createElement('h2');
+  				title.innerHTML = "Equipo " + i.toString();
+
+  				container = document.createElement('div');
+  				container.setAttribute("class", "droptarget");
+  				container.setAttribute("ondrop", "drop(event)");
+  				container.setAttribute("ondragover", "allowDrop(event)");
+
+  				row = document.createElement('tr');
+
+  				wrapper.appendChild(title);
+  				wrapper.appendChild(container);
+  				row.appendChild(wrapper);
+  				document.getElementById('teamTable').appendChild(row);
+  			}
+		}
+
 	</script>
 </body>
 </html>
