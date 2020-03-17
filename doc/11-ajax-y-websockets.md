@@ -1,6 +1,6 @@
 % Uso de AJAX y websockets
 % (manuel.freire@fdi.ucm.es)
-% 2019.03.18
+% 2020.03.17
 
 ## Objetivo
 
@@ -8,366 +8,304 @@
 
 # AJAX
 
+## Palabro
+
 - **A**synchronous **J**avascript **A**nd **X**ml
     + intercambio de datos entre cliente y servidor *sin* recargar página
     + en un comienzo, XML; ahora se usa mucho más con JSON
-    
+    + en un comienzo, asíncrono (= no bloqueante) \
+     (aunque, si quieres, puedes bloquearte esperando a la respuesta)
 
+## Orígenes
 
-# JSP vs PHP
+- objeto `XmlHttpRequest` expuesto por IE 5.0 ('99) para hacer peticiones "de fondo"
+- usando JS para interpretar sus resultados (que se suponían serían XML)
+- Evolución:
 
-- El uso de ficheros JSP es similar al que se hace de ficheros PHP ó ASP: permiten incluir código en páginas web.
-- En Java, está mal visto incluir código general:
+    - Copiado por Mozilla en el '00, Safari\footnote{Google Chrome aparece en el '08, basado en WebKit, el motor de Safari; luego se divorciaron, y ahora Blink $\neq$ WebKit, aunque ambos descienden del mismo tronco} en el '04, ...
+    - Estandarizado por el W3C en el '06
+    - Mejoras al estándar (progreso, ...) en el '08
+    - Incluido en HTML5 por WhatWG en el '12
 
-~~~~ {.jsp}
-    <%-- Java: FEO, NO HACER --%>
-    <% for (int i=0; i<10; i++) { %>
-        <li> <%= ""+ i %> 
-    <% } >
-~~~~ 
+## Evolución
 
-~~~~ {.php}
-    <?
-    // PHP: Ok, es lo normal 
-    for ($i=0; $i<10; $i++) { ?>
-        <li> <?= $i ?>
-    <? } ?>
-~~~~ 
+Los tiempos oscuros. Sacado de [stackoverflow.com/a/16800864](https://stackoverflow.com/a/16800864)
 
-- En lugar de eso, usamos etiquetas especiales para control, y un lenguaje de expresión ("EL") para acceder al modelo u otras variables.
+~~~{.javascript}
+// detección para ver qué tipo de Ajax había disponible
+if (typeof XMLHttpRequest === "undefined") {
+  XMLHttpRequest = function () {
+    try { return new ActiveXObject("Msxml2.XMLHTTP.6.0"); }
+    catch (e) {}
+    try { return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }
+    catch (e) {}
+    try { return new ActiveXObject("Microsoft.XMLHTTP"); }
+    catch (e) {}
+    // Microsoft.XMLHTTP points to Msxml2.XMLHTTP and is redundant
+    throw new Error(":-(");
+  };
+}
+~~~
 
-# JSP vs Thymeleaf
+---
 
-- Thymeleaf ("hoja de tomillo") no permite cosas tan feas: **sólo hace vistas**
-- Y además, **es html válido**: puede verse sin desplegarlo
+JQuery resolvía ésta y otras incompatibilidades entre navegadores, con múltiples [métodos de utilidad para Ajax](https://api.jquery.com/category/ajax/):
 
-~~~~ {.jsp}
-    <!-- muestra id, login de un iterable "users" en jsp -->
-    <c:forEach items="${users}" var="u">
-        <tr>
-        <td>${u.id}
-        <td>${u.login}
-        </tr>	
-    </c:forEach>
-~~~~ 
+~~~{.javascript}
+// envía un formulario de forma automática por post
+$.post( "test.php", $( "#testform" ).serialize() );
 
-~~~~ {.html}
-    <!-- mismo ejemplo con thymeleaf -->
-    <tr th:each="user: ${users}">
-        <td th:text="${user.id}">1234</td>
-        <td th:text="${user.login}">Pepe</td>
-    </tr>
-~~~~ 
+// solicita por get algo que tiene un tiempo y hora
+$.get( "test.php", { func: "getNameAndTime" },  function( data ) {
+  console.log( data.name ); // John
+  console.log( data.time ); // 2pm
+}, "json");
 
-# Primer contacto
+// parecido, pero en breve
+$.getJSON('test.php', (d) => console.log(d);
+~~~
 
-- Instala STS 3.9+ sobre Java 8+
-- Spring Starter project con 
-    + Security
-    + JPA
-    + HSQLDB
-    + Thymeleaf
-    + Web
-    + Websockets
-- mvn spring-boot:run > user 6b92fb5c-cbb2-4114-bb1c-0f4225e70dec (ó equivalente)
-- 404
+---
 
-# Integrando Thymeleaf
+Los estándares mejoraron, y apareció [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch), que tiene un formato bastante similar, pero basado en promesas asíncronas
 
-- https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html
-  innecesario, viene bien configurado de fábrica usando spring-boot-starter-thymeleaf
+~~~{.javascript}
+// mediante fetch, sin librerías externas
+fetch('http://example.com/movies.json')
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+    console.log(data);
+  });
+~~~
 
-- https://www.thymeleaf.org/doc/articles/springsecurity.html describe que se usa una 
-  alternativa al viejo spring security taglib (los taglibs son JSP-específicos):
+(no [disponible](https://caniuse.com/#feat=fetch) en IE, pero sí en Edge y todos los navegadores modernos)
 
-~~~~ {.html}
-    <!-- mismo ejemplo con thymeleaf -->
-    <tr th:each="user: ${users}">
-        <td th:text="${user.id}">1234</td>
-        <td th:text="${user.login}">Pepe</td>
-    </tr>
-~~~~ 
+## Usando fetch
 
-# Spring Security
+Podeis elegir usar `JQuery`\footnote{Si lo haceis, usad una copia descargada en local y servida desde /\texttt{js}}. En los ejemplos siguientes, uso Fetch.
 
-- Muy difícil hacer login bien
-    + manejo de contraseñas
-    + local vs SSO vs federado
-    + cómo evitas abusos: CSRF, ...
-- Spring security se encarga de evitar lo peor
-- A cambio, pide
-    + que dejes el login en sus manos
-    + que le digas qué roles hay
+- Moderno, usa promesas para gestionar asincronía
+- No requiere librerías externas
 
-ref: https://docs.spring.io/spring-security/site/docs/5.1.3.RELEASE/reference/htmlsingle/#hello-web-security-java-configuration
-    
-# Desconectando Spring Security
+## Envoltorio sencillo para fetch+JSON
 
-# Thymeleaf
+\small
 
-Basado en https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html
-
-~~~~ {.html}
-    <!-- th:xyz es ahora parte del namespace así definido -->
-    <html xmlns:th="http://www.thymeleaf.org">
-~~~~
-
-Esto sirve principalmente para evitar que el IDE se queje, y los navegadores tampoco protestan mucho si lo encuentran. No obstante, para html (thymeleaf puede gestionar también XML, texto, ...), también se puede usar 
-
-~~~~ {.html}
-    <!-- th:xyz equivale a data-th-xyz -->
-    <p th:text="#{home.welcome}">Welcome to our grocery store!</p>
-    <p data-th-text="#{home.welcome}">Welcome to our grocery store!</p>
-~~~~
-
-Internacionalización (i18n)
-
-Buscando en ficheros de propiedades en /templates/xyz.html:
-
-    /WEB-INF/templates/xyz_en.properties for English texts.
-    /WEB-INF/templates/xyz_es.properties for Spanish language texts.
-    /WEB-INF/templates/xyz_pt_BR.properties for Portuguese (Brazil) language texts.
-    /WEB-INF/templates/xyz.properties for default texts (if the locale is not matched).
-
-# text y utext
-
-~~~~ {.properties}
-home.welcome=Welcome to our <b>fantastic</b> grocery store!
-~~~~
-
-~~~~ {.html}
-<p>Welcome to our &lt;b&gt;fantastic&lt;/b&gt; grocery store!</p>
-<p th:utext="#{home.welcome}">Welcome to our grocery store!</p>
-
-<!-- una vez se muestra -->
-<p>Welcome to our &lt;b&gt;fantastic&lt;/b&gt; grocery store!</p>
-<p>Welcome to our <b>fantastic</b> grocery store!</p>
-~~~~
-
-# Expresiones simples
-
-- Variable Expressions: `${...}`
-- Selection Variable Expressions: `*{...}`
-- Message Expressions: `#{...}`
-- Link URL Expressions: `@{...}`
-- Fragment Expressions: `~{...}`
-
-# Literales
-
-
-- Text literals: 'one text', 'Another one!',…
-- Number literals: 0, 34, 3.0, 12.3,…
-- Boolean literals: true, false
-- Null literal: null
-- Literal tokens: one, sometext, main,…
-
-# Operadores
-
-- String concatenation: +
-- Literal substitutions: |The name is ${name}|
-- Binary operators: +, -, *, /, %
-- Minus sign (unary operator): -
-- Boolean binary operators: and, or
-- Boolean negation (unary operator): !, not
-- Comparators: >, <, >=, <= (gt, lt, ge, le)
-- Equality operators: ==, != (eq, ne)
-
-# Condicionales y NOP
-
-- If-then: (if) ? (then)
-- If-then-else: (if) ? (then) : (else)
-- Default: (value) ?: (defaultvalue)
-- No-Operation: _
-
-# OGNL
-
-Object-Graph Navigation Language
-
-http://commons.apache.org/proper/commons-ognl/language-guide.html
-
-- nombres de propiedad `usuario`
-- llamadas a métodos `usuario.id`
-- índices de iterables `usuario.amigos[0]`
-
-# Servlets y JSPs
-
-- Un servidor de aplicaciones (ej.: Tomcat, Pivotal TC) responde a peticiones HTTP devolviendo respuestas HTTP
-    + generalmente, páginas HTML
-    + pero también JSON, o cualquier otro elemento
-- El servidor de aplicaciones acoge uno o más "Servlets", que son clases Java que procesan peticiones HTTP.
-- Los servlets se pueden pasar la pelota (digo la petición) entre ellos de forma interna.
-- **Cuando se accede a un JSP, éste se compila automáticamente a un servlet**.
-
-- - - 
-
-~~~~ {.java}
-    // un servlet sencillo 
-    public final class Hello extends HttpServlet {
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response)
-      throws IOException, ServletException {
-        response.setContentType("text/html");
-        PrintWriter writer = response.getWriter();        
-    
-        writer.println("<html><head><title>Hola</title></head>")
-        writer.println("<body>Hola mundo!</body></html>");
+~~~{.javascript}
+// envía json, espera json de vuelta; lanza error si status != 200
+function go(url, method, data = {}) {
+  let params = {
+    method: method, // POST, GET, POST, PUT, DELETE, etc.
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify(data)
+  };
+  if (method === "GET") {
+	  // GET requests cannot have body
+	  delete params.body;
+  }
+  console.log("sending", url, params)
+  return fetch(url, params).then(response => {
+    if (response.ok) {
+        return data = response.json();
+    } else {
+        response.text().then(t => {throw new Error(t + ", at " + url)});
     }
-~~~~ 
+  })
+}
+~~~
 
-- - - 
+## Uso del fetch anterior
 
-~~~~ {.jsp}
-    <%-- El JSP equivalente --%>
-    <html><head><title>Hola</title></head>
-    <body>Hola mundo!</body></html>
-~~~~ 
+~~~{.javascript}
+function login(uid, pass) {
+  return go(serverApiUrl + "login", 'POST', 
+        {uid: uid, password: pass})
+    .then(d => {serverToken = d.token; updateState(d); return d;})
+    .catch(e => console.log(e))
+}
+~~~
 
-# Servlets, JSPs y Spring MVC
+Sacado de una [API Ajax](https://github.com/manuel-freire/iu1920/blob/master/server/src/main/resources/static/js/gbapi.js#L277) usada en IU 2019-20. Por abajo había Spring Boot, pero no usaba seguridad ni websockets.
 
-- Tus métodos del controlador de SpringMVC actúan como servlets
+## Introducción a promesas JS
 
-- Si devuelves un String _xyz_ desde un manejador del controlador, Spring MVC entenderá, que, al finalizar, debe mostrar webapp/WEB-INF/views/xyz.jsp
+* fetch devuelve una **promesa**
+* las promesas son **asíncronas** - no hay garantía de que el código que viene después se vaya a ejecutar después de que la promesa se resuelva:
 
-- Parámetros importantes:
-    + HttpServletRequest
-    + HttpServletResponse
-    + HttpSession
-    + Model
-    
-- - - 
+~~~{.javascript}
+fetch('https://no-such-server.blabla') // seguramente falle
+  .then(response => response.json())
+  .then(json => console.log(json.nombre_y_apellidos))
+  .catch(e => console.log(e))          // y por tanto se haga ésto
 
-- HttpServletRequest: información de la petición (parámetros que te pasan, IP del navegador, ...)
+// es casi seguro que el fetch todavía habrá acabado al llegar aquí
+console.log("Me imprimo antes de que el fetch acabe")
+~~~
 
-- HttpServletResponse, tendrás acceso a la respuesta que estás preparando (y podrás añadir códigos de error, cambiar el tipo MIME del mensaje, ...)
+* si hay fallos, se salta directamente al **`catch`**
+* mientras no hay fallos, se van ejecutando los **`then`** en orden, cada uno usando el `return` del anterior como argumento de entrada.
+* los datos del primer `then` son de tipo [`response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
+ 
+## Cosas que podemos sacar un objeto `Response`
 
-- - - 
+* `Response.status` - estado HTTP
+* `Response.ok` - true $\iff$ `Response.status == 200`
+* `Response.body` - cuerpo de la respuesta. \
+Se le pueden sacar las [siguientes promesas](https://developer.mozilla.org/en-US/docs/Web/API/Body):
+    * `.blob()` - contenido en binario, leído de un único golpe
+    * `.json()` - contenido interpretado como json
+    * `.text()` - contenido como texto plano
 
-- HttpSession, **sesión del usuario**, un almacén importante para mantener el estado de la aplicación entre peticiones del mismo usuario.
+## Complejidades
 
-- Model, almacén temporal que te permite compartir información con las vistas que procesan una petición concreta (el almacén se inicializa a vacío en cada nueva petición).
+Con Ajax es posible emular cualquier petición. Y con HTTP es posible hacer muchos tipos de peticiones. Por ejemplo,
 
-# Tags básicos en JSP
+- El método puede ser `GET`, `POST`, `PUT`, `DELETE`, ...
+- Las peticiones pueden incluir todo tipo de cabeceras
+- Los datos a enviar y recibir pueden ser cualquier cosa. 
+    - Para enviarlos, hay que informar de lo que envías, y de cómo lo envías. Por defecto, usa
+    `application/x-www-form-urlencoded; charset=UTF-8`
+    - Para recibirlos correctamente, hay que saber qué recibes y poder interpretarlo.
 
-- Es útil asegurarte de que la codificación y el tipo MIME son correctos. Ojo: ésto hace falta repetirlo en cada JSP ó fragmento:
-~~~~ {.jsp}
-<%@ page contentType="text/html; charset=UTF-8"%>
+## Cosas típicas que puedes recibir
+
+- Nada. Porque a menudo basta con ver el\
+código de estado del resultado para saber si la petición ha funcionado o no
+- `texto`. Y lo muestras por consola o lo usas para reemplazar un elemento
+- `html`. Y luego lo muestras reemplazando el contenido de cualquier elemento
+- `json`. Máxima flexibilidad
+
+## Usando AJAX
+
+En la asignatura, usaremos Ajax para:
+
+- **Validación**: por ejemplo, para evitar que los usuarios intenten registrarse con logins ya existentes. 
+
+- **Mensajería**: ¿recargar toda la página para enviar un mensaje?\
+¡Estamos en 2020!.
+
+- **Carga dinámica de resultados**: Paginar los resultados es una posibilidad. Pero usar algún tipo de carga dinámica es mucho más amigable.
+
+- **Botones**: Borrar un elemento de un listado no debería requerir recargar todo el listado.
+
+En general, siempre que quieras no recargar página (pero hacer una petición), un fetch estaría justificado. Y más si la página es cara de construir (ejemplo: listado)
+
+## Ajax para validación
+
+Recordamos el código de validación estándar:
+
+~~~{.javascript}
+// manejador que se ejecuta cuando la página se carga
+document.addEventListener("DOMContentLoaded", () => {
+    // selector para elegir sobre qué elementos validar
+	let u = document.querySelectorAll('#username')[0]
+    // cada vez que cambien, los revalidamos
+    u.oninput = u.onchange = 
+        () => u.setCustomValidity(  // si "", válido; si no, inválido
+            validaUsername(u.value))
+}
 ~~~~
 
-~~~~ {.jsp}
-<%@ include file="../fragments/header.jspf" %>
+---
+
+Y ahora, el ajax (asumimos uso de función `go` anterior)
+
+~~~{.java}
+function validaUsername(username) {
+    let params = {username: username};
+    // Spring Security inyecta esto en formularios html, pero no en Ajax
+    params[config.csrf.name] = config.csrf.value;
+    // petición en sí
+    return go(config.apiUrl + "/username", 'GET', params)
+        .then(d => "")
+        .catch(() => "nombre de usuario inválido o duplicado");
+}
 ~~~~
 
-# JSTL
+---
 
-- Proporcionan estructuras de control básicas
-    - iteración: forEach
-    - condicionales: if, choose
+Y en el servidor, un manejador normal y corriente (el servidor no distingue entre Ajax y no-Ajax; excepto en que no tiene sentido devolver vistas para peticiones que no las van a mostrar)
 
-- Muchas más facilidades, que no vamos a usar 
-    - c:out para escapar HTML, ...
-
-- Debes asegurarte de incluir la librería de tags para poder usarlos:
-
-~~~~ {.jsp}
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+~~~{.java}
+@GetMapping("/username")
+public String getUser(@RequestParam (required=false) String uname) {
+    User u = entityManager.find(User.class, id);
+    model.addAttribute("user", u);
+    return "user";
+}
 ~~~~
 
-- - - 
+## Ajax para carga dinámica de resultados
 
-- Usa forEach para iterar por todos los elementos de una colección (array, lista, mapa, ...)
+(falta por rellenar)
 
+## Ajax para botones
 
-~~~~ {.jsp}
-    <c:forEach var="i" items="${elementos}">
-	<li>${i}</li>
-    </c:forEach>
-~~~~
+En general, el lado cliente es sencillo...
 
-- - - 
+~~~{.html}
+<!-- Sin Ajax -->
+<td><form method="post" 
+  th:action="@{/admin/toggleuser(id=${u.id})}">
+  <button type="submit"
+     th:text="${u.enabled eq 1 ? 'inactivar' : 'activar'}" ></button>
+</form>
 
-- Usa if para condiciones simples
+<!-- Ajaxificado -->
+<td><form method="post" 
+  th:action="@{/admin/toggleuser(id=${u.id})}">
+  <button type="submit"
+     class="toggle" th:attr="data-el_id=${element.getId()}" 
+     th:text="${u.enabled eq 1 ? 'inactivar' : 'activar'}" ></button>
+</form>
+~~~
 
+~~~{.js}
+document.addEventListener("DOMContentLoaded", () => {
+	let bs = document.querySelectorAll('.toggle')
+    // falta: enviar la petición y gestionar el resultado
+}
+~~~
 
-~~~~ {.jsp}
-    <c:if test="${i > 0}">
-        ${i} es mayor que zero!
-    </c:if>
-~~~~
+---
 
-- - -
+... y el lado servidor, todavía más:
 
-- Usa choose para condiciones complejas:
+~~~{.java}
+// sin Ajax: devuelve una vista
+@PostMapping("/toggleuser")
+@Transactional
+public String delUser(Model model, @RequestParam long id) {
+    User target = entityManager.find(User.class, id);
+    // ...
+    // y devuelve una vista
+    return index(model);
+}	    
 
-~~~~ {.jsp}
-    <c:choose>
-        <c:when test="${i > 0}">
-            ${i} es mayor que zero!
-        </c:when>
-        <c:otherwise>
-            ${i} es zero o negativo!
-        </c:otherwise>
-    </c:choose>
-~~~~
+// con Ajax: sólo devuelve status ok, y un texto mínimo
+@PostMapping("/toggleuser")
+@Transactional
+@ResponseBody // <-- devuelve un texto literal
+public String delUser(Model model,	@RequestParam long id) {
+    // ...
+    // y devuelve un texto literal, y no un nombre de vista
+    return "ok";
+}
+~~~
 
-# Ejemplos JSP EL
+# Websockets
 
-- ${titulo} -> sacado de Model ó Session
-- ${persona.apellidos}
-- ${miArray[5]}
-- ${miHashMap["pedro"]}
+## Idea
 
-- - -
+* Comunicación bidireccional sin bloqueos ("tipo socket")
+* Muy útil para mensajería instantánea, juegos
+* Basada en renegociar protocolos sobre una conexión HTTP(S) ya establecida
 
-- ${1 > (4/2)} -> false
-- ${4.0 >= 3} -> true
-- ${100.0 == 100} -> true
-- ${(10*10) ne 100} -> false
-- ${'a' < 'b'} -> true
-- ${'hip' gt 'hit'} -> false
-- ${4 > 3} -> true
-- ${1.2E4 + 1.4} -> 12001.4
-- ${3 div 4} -> 0.75
-- ${10 mod 4} -> 2
-
-- - -
-
-- ${!empty param.Add} -> falso si parámetro Add es null ó ""
-- ${param['mycom.productId']} -> valor del parámetro "mycom.productId"
-- ${header["host"]} -> la URL de tu servidor (sólo hasta el /)
-- ${departments[deptName]} -> el valor de _deptName_ dentro del mapa _departments_
-
-# Recursos Flex
-
-- Intro sencilla: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
-- Similar a los BoxLayout de Java Swing. Es decir, ok, pero requiere más anidamiento para cosas complicadas.
-
-# Recursos Grid
-
-- Intro sencilla: https://css-tricks.com/snippets/css/complete-guide-grid/
-- Similar a los GridBagLayout de Java Swing (es decir, algo arcano)
-
-# Alinemiento en Flex
-
-- `margin-x: auto`: funciona tanto en filas como en columnas, para forzar mover al final del todo algo. Usado para login y para el footer. Hay muchas más formas de conseguirlo (pero son, a mi gusto, menos bonitas).
-
-# Planes
-
-- Escribir un modelo básico
-- Permitir crear clases vía formulario
-- Y borrarlas y tal
-- Conectarlo con un websocket para poder votar y ver
-- Añadir administración de profesores
-- Añadir poder subir fotos de profes
-- Añadir poder descargar csvs de acciones
-- Añadir BD real.
-
-# Sobre websockets
-
-https://docs.spring.io/spring/docs/5.0.0.BUILD-SNAPSHOT/spring-framework-reference/html/websocket.html
-
-
-https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket
-
+* Ejemplo de renegociación:
 
 ~~~
 GET /spring-websocket-portfolio/portfolio HTTP/1.1
@@ -388,12 +326,164 @@ Sec-WebSocket-Accept: 1qVdfYHU9hPOl4JYYNXF623Gzn0=
 Sec-WebSocket-Protocol: v10.stomp
 ~~~
 
-Descripción normativa:
-https://tools.ietf.org/html/rfc6455
 
-https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+## STOMP
+
+* La necesidad
+    - Por defecto, no hay protocolo de mensajes sobre Websockets
+    - Puedes enviar cualquier cosa; y recibir cualquier cosa. ¿Cómo poner orden?
+
+* El palabro
+    - **S**treaming **T**ext-Oriented **M**essaging **P**rotocol
+    - Otra acepción: sonido que hace dar un pisotón
+
+* El protocolo
+    - imita marcos ("frames") HTTP en texto, delimitados por bytes a 0 ('\0')
+    - al igual que HTTP, sus _frames_ tienen
+        - varias posibles peticiones (COMMAND)
+        - 0 o más cabeceras de tipo _clave_:_valor_
+        - una línea en blanco
+        - un contenido textual (posiblemente vacío)
+        - un carácter nulo (aquí uso `^@`)
+
+Ejemplo de frame:
+
+~~~{.txt}
+    COMMAND
+    header1:value1
+    header2:value2
+
+    Body^@
+~~~
+
+## Comandos STOMP Cliente
+
+* `SEND` - envía un mensaje a quien diga `destination`
+* `SUBSCRIBE` - se suscribe a mensajes de `destination`, y recibe un `id`
+* `UNSUBSCRIBE` - usa el `id` anterior para darse de baja
+* Sólo para gestión de transacciones:
+    - `BEGIN` - inicia una transacción, con un id dado por `transaction`
+    - `COMMIT` - lanza la transacción
+    - `ABORT` - la cancela
+* `ACK` - confirma una recepción (identificada por su `id`)
+* `NACK` - para pedir que el servidor haga como que algo no ha sido recibido
+* `DISCONNECT` - para salir bien (y luego espera a recibir un `RECEIPT`)
+
+## Comandos STOMP Servidor
+
+* `MESSAGE` - información de suscripciones (o de punto-a-punto) al cliente
+* `RECEIPT` - para confirmar que una _frame_ que lo requiere ha sido recibida
+* `ERROR` - para notificar errores
+
+## Una conversación típica
+
+Con el cliente a la izquierda, el servidor a la derecha, y 
+`^@` de carácter nulo
+
+\tiny
+
+~~~{.txt}
+Cliente     Servidor
+|           | 
+V           V
+
+CONNECT
+accept-version:1.0,1.1,2.0
+host:stomp.github.org
+
+^@
+            CONNECTED
+            version:1.1
+
+            ^@
+SEND
+destination:/queue/a
+content-type:text/plain
+
+hello queue a
+^@
+DISCONNECT
+receipt:77
+
+^@
+            RECEIPT
+            receipt-id:77
+
+            ^@
+~~~
+
+## STOMP vs no-STOMP
+
+* No es un protocolo muy pesado
+* Cubre muchos escenarios de uso frecuente: 
+    - unicast, y multicast vía suscripciones
+    - negociación, confirmaciones
+    - "heartbeat" para mantener conexiones abiertas
+* Soporte en Spring MVC, y en navegador sólo requiere algo de JS
+* Soporte para securizarlo vía Spring Security
+* Posible extenderlo en funcionalidad con colas de mensajes
+
+## Configurando Websockets
+
+* Cada página que quiera usarlos tiene que solicitar la conexión vía JS
+    - necesita la dirección `ws://aplicacion/ruta`
+    - necesita cargar una librería STOMP para gestionar el protocolo
+* El servidor tiene que ofrecer esas rutas, y saber gestionarlas
+* Necesita también 
+
+## Lo que usaremos de STOMP
+
+* Subscripciones para
+    - administradores haciendo seguimiento de la aplicación
+    - grupos de usuarios interesados en cosas que surgen
+* Mensajería punto-a-punto
+* Permisos (no todo el mundo se puede suscribir a todo)\
+  vía Spring (no es parte de STOMP)
+
+## Tipos de rutas
+
+* `/topic/algo` - suscripciones a canales
+
+~~~{.javascript}
+// en cliente
+ws.stompClient.subscribe('/topic/welcome', 
+        (m) => ws.receive(JSON.parse(m.body).content));
+~~~
+
+~~~{.javascript}
+// en un controlador
+@Autowired
+private SimpMessagingTemplate messagingTemplate;
+
+// en un controlador, dentro del @XyzMapping
+messagingTemplate.convertAndSend("/topic/welcome",
+        "{texto: \"hola mundo\"}");
+~~~
+
+## Suscripción desde un cliente
+
+~~~{.javascript}
+ws.stompClient.subscribe('/topic/welcome', 
+        (m) => ws.receive(JSON.parse(m.body).content));
+~~~
+
+## Controlando la suscripción en el servidor
+
+https://www.baeldung.com/spring-security-websockets
+
+https://dzone.com/articles/rest-api-error-handling-with-spring-boot
+
+## Referencias para websockets
+
+* Websockets según [Spring Framework](https://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html)
 
 
+* Más docs de [Spring MVC](https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket)
+
+* Según el estándar de la [IETF](https://tools.ietf.org/html/rfc6455)
+
+
+* Api de Websockets, [según Mozilla](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
 
 # Fin

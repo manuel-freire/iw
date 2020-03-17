@@ -1,6 +1,6 @@
 % Seguridad en aplicaciones Web Java
 % (manuel.freire@fdi.ucm.es)
-% 2019.03.11
+% 2020.03.07
 
 # Introducción
 
@@ -54,11 +54,14 @@
 
 * Usuarios a menudo
     + reutilizan contraseñas en muchos sitios
-    + usan un "esquema de contraseña" más o menos atacable (`cebra18`, `leon19`, ... ) para inventar nuevas contraseñas. 
+    + usan un "esquema de contraseña" más o menos atacable \
+    (`cebra18`, `leon19`, ... ) para inventar nuevas contraseñas. 
 
 * Con contraseñas en claro, atacante tiene vía libre
-    + contra tu sitio, como cualquier usuario (por ejemplo, admin)
-    + contra sitios externos, contra usuarios que reutilizan ó usan esquema
+    + contra tu sitio, como cualquier usuario (por ejemplo, *admin*)
+    + contra sitios externos, porque muchos usuarios 
+        - reutilizan contraseñas
+        - usan esquemas atacables
 
 ## qué NO hacer (x2)
 
@@ -76,9 +79,9 @@
     + no permite entrar con la modificación
 
 * Receta para un buen **formato modificado**
-    + sal
-    + clave
-    + pimienta (opcional)
+    + clave (elegida por el usuario)
+    + sal (generada aleatoriamente, fastidia ataques de diccionario)
+    + pimienta (igual para todos, pero no contenida en la BBDD)
     + y todo ello pasado por una buena batidora de bits (**hash**)
 
 ## Contraseñas: Hashes
@@ -87,48 +90,65 @@
     + consistente: $b_1 = b_2 \implies h(b_1) = h(b_2)$
     + longitud constante: $\forall b, |h(b)| = cte$
 * Como hay más claves que hashes, habrá _colisiones_
-    + colisión: $a \neq b \wedge h(a) = h(b)$ 
+    + colisión: $a \neq b \wedge h(a) = h(b)$ \
+    *mismo resultado, pero a partir de cosas distintas"
     
-* Para ser criptográficamente útil:
-    + dado $h(b_1)$, debe ser difícil encontrar $b_2 | h(b_1) = h(b_2)$ (pre-imagen)
-    + dado $b_1$, debe ser difícil encontrar $b_2 | h(b_1) = h(b_2)$ (segunda pre-imagen)
-    + y, en general, debe ser difícil encontrar colisiones (resistencia fuerte)
+* Para ser criptográficamente útil, debe ser difícil\footnote{por ejemplo, con probabilidades del orden de $2^{-128}$}
+    + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $h(b_1)$ (pre-imagen)
+    + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $b_1$ (segunda pre-imagen)
+    + encontrar cualquier colisión, en general (resistencia fuerte)
 
 - - - 
 
 Notación 
 
-$h$($a$ **concatenado_con** $b$) = $h(a || b)$ 
+$h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$ 
 
 - - - 
 
 ## Contraseñas: Condimento
 
-* Contra un hash puro, almacenando $h(pass)$
+* Ataques contra un hash "sin sal", que almacena $h(pass)$
     + hash de gran diccionario: ¿alguna coincide?
+        - puedo encontrar coincidencias entre diccionario y BD en tiempo logarítmico
     + extensión del diccionario: *rainbow tables*
+        - genero muchas cadenas de hashes
+        - luego itero sobre hashes de la BD para ver si aterrizo en una cadena
+        - si hay suerte, miro en esa cadena para encontrar el punto anterior
     + miro lista de hashes: ¿alguna coincide?
+        - contraseñas con el mismo hash seguramente son iguales
+        - y si tienen pistas, esto se convierte en crucigrama
 
 (referencias: [XKCD](http://xkcd.com/1286/), [crucigrama al respecto](http://zed0.co.uk/crossword/) ) 
 
 - - -
 
-* Contra un hash "salado", almacenando $h(sal || pass)$ y $sal$
-    + $h(s_1 || pass_1) = h(s_2 || pass_2) \not \Rightarrow pass_1 = pass_2 \quad$ (en general; y además, las colisiones son infrecuentes)
-    + $h(s_1 || pass_1) \neq h(s_2 || pass_2) \not \Rightarrow pass_1 \neq pass_2 \quad$ (en general)
-    + $\leadsto$ para encontrar contraseñas, necesitas atacarlas **cada una por separado**, con su sal - en lugar de todas a la vez y reaprovechando trabajo previo
+* Contra un hash "salado", almacenando $h(sal\:||\:pass)$ y $sal$
+    + $h(s_1\:||\:pass_1) = h(s_2\:||\:pass_2) \not \Rightarrow pass_1 = pass_2$\
+    (excepto por colisión)
+    + $h(s_1\:||\:pass_1) \neq h(s_2\:||\:pass_2) \not \Rightarrow pass_1 \neq pass_2$\
+    (excepto por colisión)
+    + $\leadsto$ sólo puedes atacar contraseñas **una por una**, con su respectiva sal\
+    -- en lugar poder atacarlas todas a la vez y/o reaprovechar trabajo previo
 
 ## Mejores prácticas 
 
-* No escribas código de gestión de contraseñas.
+* **No escribas código de gestión de contraseñas**
     + La criptografía es difícil
-    + Mejor dejársela a los tipos que la saben y que van a actualizarla cuando se rompa
+    + Mejor dejársela a los tipos que la saben \
+    y que van a actualizarla cuando se rompa
     + Coste de fuerza bruta siempre disminuye, nunca va a aumentar
 * [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt)
-    + Multironda: aumenta coste de ataques (y de uso normal, pero es asimétrico: le "duele" mucho más al atacante). 
+    + Multironda: aumenta coste de ataque\
+    (y de uso normal, pero es asimétrico: le "duele" mucho más al atacante).
     + Distintos algorimos: empezó con `md5`, ahora se usa sobre todo con `blowfish`
-    + Autodescriptivo: resultado de aplicarlo incluye información sobre algoritmo, rondas, y sal
-    + Por defecto, Spring Security lo usa, con $2^{10}$ rondas: `$2a$10$`
+    + Autodescriptivo: su salida incluye información sobre algoritmo, rondas, y sal
+    + Por defecto, Spring Security usa algo similar a `$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy`
+        * 2a: algoritmo **blowfish** sobre cadenas **utf8 terminadas con `\0`**
+        * 10: **$2^{10}$ rondas**
+        * siguientes 22 caracteres: la **sal** (128 bits, en algo similar a Base-64\footnote{bcrypt:  \texttt{./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789}\\
+        Base-64 usa: \texttt{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/}})
+        * siguientes 31 caracteres: el **hash** resultante (184 bits, misma codificación)
 * Alternativas (entre [muchas soportadas por Spring Security](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/factory/PasswordEncoderFactories.html))
     + Argon2
     + PBKDF2
@@ -141,7 +161,7 @@ $h$($a$ **concatenado_con** $b$) = $h(a || b)$
     * 1 redundante (se calcula a partir de los otros)
     * 4 últimos usados para resolver incidencias (semipúblicos, tendrías que guardarlos 'en claro')
     * adivinar 5 restantes por fuerza bruta es fácil
-* Evita gestionarlas
+* **Evita gestionarlas**
     * Usa las APIs de tu proveedor
     * Que carguen _otros_ con las responsabilidades asociadas ([PCI](https://www.pcisecuritystandards.org/))
 
@@ -160,40 +180,100 @@ Introducing: little [Bobby tables](http://bobby-tables.com/java.html)
 
 - - - 
 
+(99% de los usuarios)
+
 ~~~{.java}
-    login = "Robert"; // del formulario
-    sql = "SELECT * FROM Student WHERE login='" + login + "';";
+login = "Robert"; // del formulario
+sql = "SELECT * FROM Student WHERE login='" + login + "';";
 ~~~
 
 . . .
 
 ~~~{.sql}   
-    SELECT * FROM Student WHERE login='Robert'
+SELECT * FROM Student WHERE login='Robert'
 ~~~
 
 . . . 
 
----
+\hspace{1cm}
+\hrule
+\hspace{1cm}
+
+(1% de usuarios; profesor de IW)
 
 ~~~{.java}
-    login = "Robert'); DROP TABLE Students;--"; // del formulario
-    sql = "SELECT * FROM Student WHERE login='" + login + "';";
+login = "Robert'; DROP TABLE Students;--"; // del formulario
+sql = "SELECT * FROM Student WHERE login='" + login + "';";
 ~~~
 
 . . .
 
 ~~~{.sql}
-    SELECT * FROM Student WHERE login='Robert'); DROP TABLE Students;--';
+SELECT * FROM Student WHERE login='Robert'; DROP TABLE Students;--';
 ~~~
+
+---
+
+Ejemplo de inyección SQL para saltarse comprobaciones
+
+~~~{.java}
+sql = "SELECT * FROM Student " +
+    "WHERE login='" + login + "' AND pass='" + login + "';";
+~~~
+
+. . .
+
+~~~{.java}
+login = "Robert"; // del formulario
+pass = "1' OR '1'='1"
+~~~
+
+. . .
+
+~~~{.sql}
+SELECT * FROM Student 
+    WHERE login='Robert' AND pass='1' OR '1'='1';
+~~~
+
+. . .
+
+(en SQL, AND tiene prioridad sobre OR -- devolviendo *todos* los usuarios)
+
+## Más tipos de inyección SQL
+
+* Ciegas: sin poder ver la respuesta \
+(pero sí sus efectos secundarios)
+    - retardos en proporcionar respuesta
+    - tipo de error generados
+    - retardos externos (DNS, ...)
+* Exploratorias: para descubrir 
+    - la estructura de la BD
+    - y de sus consultas (para poder inyectar más y mejor)
+* ...
+
+(mucho más en, pongamos, [https://www.websec.ca/kb/sql_injection](https://www.websec.ca/kb/sql_injection))
 
 ## Evitando inyección SQL
 
-* Usa consultas preparadas
-* No construyas consultas por concatenación
+* Usa **consultas preparadas**
+* **No construyas** consultas por **concatenación**
     + porque para evitar inyecciones tendrías que limpiar los argumentos...
-* NO intentes 'limpiar' a mano
+* Y **no intentes 'limpiar' a mano**
     + _no sabes suficiente SQL_
     + _ni conoces las variantes que usa cada BD_
+
+
+. . . 
+
+Codificaciones en MySQL según [websec.ca](https://www.websec.ca/kb/sql_injection)
+
+* URL\
+`SELECT %74able_%6eame FROM information_schema.tables;`    
+* Double URL\
+`SELECT %2574able_%256eame FROM information_schema.tables;`
+* Unicode\
+`SELECT %u0074able_%u6eame FROM information_schema.tables;`
+
 
 ## Inyección de HTML/JS
 
@@ -215,7 +295,7 @@ model.addAttribute("login", login);
 ~~~
 ~~~{.html}
 <!-- en la vista;
-    (nunca useis 'utext' con datos controlados por el usuario) -->
+    (nunca useis 'utext' con datos controlados por usuarios) -->
 <h1>Bienvenido, <span th:utext="${login}">Alguien</span></h1>
 ~~~
 
@@ -236,7 +316,7 @@ model.addAttribute("login", login);
 ~~~
 ~~~{.html}
 <!-- en la vista;
-    (nunca useis 'utext' con datos controlados por el usuario) -->
+    (nunca useis 'utext' con datos controlados por usuarios) -->
 <h1>Bienvenido, <span th:utext="${login}">Alguien</span></h1>
 ~~~
 
@@ -249,8 +329,9 @@ model.addAttribute("login", login);
 ---
 
 ~~~{.html}
-<h1>Bienvenido, <span><script>alert(document.cookie)
-</script></span></h1>
+<h1>Bienvenido, <span>
+<script src="http://malo.com/maldades.js"></script>
+</span></h1>
 ~~~
 
 ## Evitando inyección HTML/JS
@@ -258,8 +339,8 @@ model.addAttribute("login", login);
 * Valida, valida y valida. Y luego, escapa.
 
 * Escapado: depende del contexto
-    + dentro de un elemento HTML: thymeleaf os ayuda; usa `text`
-    + dentro de un atributo de HTML: thymeleaf os ayuda: lo escapa automáticamente. 
+    + dentro de un elemento HTML: **thymeleaf os ayuda**; usa `text`
+    + dentro de un atributo de HTML: **thymeleaf os ayuda**: lo escapa automáticamente. 
     + dentro de JS: configura bien tu serialización (la veremos el próximo día).
 
 ## Incluyendo JS dinámico en tu HTML
@@ -272,14 +353,16 @@ model.addAttribute("message", "1 + Math.sqrt(2)");
 // dentro de un <script> en un fichero html
 var message =/*[[${message}]]*/ 'defaultanyvalue';
 //            |              |
-//            +--------------+-- sin ' ' entre comentario y corchetes
+//            \--------------+-- sin ' ' entre comentario y corchetes
 ~~~
 
 ## Vectores internos: ficheros
 
 * Desconfía de los ficheros que te suban
     + de su nombre y/o ruta: descártalo
-    + de su contenido: no te fíes de lo que te dicen
+    + de su contenido: no te fíes de que contiene
+        - lo que has pedido
+        - lo que dicen que te están dando
 * Usa un esquema de nombrado que garantice que no hay colisiones
     + recomendado: _base_/_tabla_/_id-en-tabla_
 
@@ -337,8 +420,9 @@ public String postPhoto(@RequestParam("photo") MultipartFile photo,
 ~~~{.java}
 boolean isImage(File f) {
     try {
-        BufferedImage img = ImageIO.read(new File("strawberry.jpg"));
+        BufferedImage img = ImageIO.read(f));
     } catch (IOException e) {
+        // fallo interpretando como imagen
         return false;
     }
     return true;
@@ -351,9 +435,12 @@ boolean isImage(File f) {
 ## Vectores internos: datos incorrectos
     
 * Nunca asumas que lo que llega es lo que esperas recibir
-    + Es posible escribir URLs sin hacer click en enlaces
+    + Es posible llegar a URLs sin hacer click en enlaces
+        - por ejemplo, escribiéndolas directamente
     + Es posible modificar parámetros GET editando la URL
-    + Es posible modificar parámetros POST editando JS ó usando utilidades del navegador
+    + Es posible modificar parámetros POST editando JS\
+    ó usando utilidades del navegador
+        - recomiendo PostMan; muy útil para probar APIs
 
 - - - 
 
@@ -390,4 +477,6 @@ el precio nunca debería formar parte de esta consulta: ¡pueden cambiarlo!
 
 ------
 
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="img/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+![](./img/cc-by-sa-4.png "Creative Commons Attribution-ShareAlike 4.0 International License"){ width=25% }
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/)
