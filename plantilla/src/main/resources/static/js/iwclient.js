@@ -1,27 +1,15 @@
 /**
  * WebSocket API, which only works once initialized
  */
-const ws = {
-		
-	/**
-	 * WebSocket, or null if none connected
-	 */
-	socket: null,
-	
-	/**
-	 * Sends a string to the server via the websocket.
-	 * @param {string} text to send 
-	 * @returns nothing
-	 */
-	send: (text) => {
-		if (ws.socket != null) {
-			ws.socket.send(text);
-		}
-	},
+const ws = {		
 
 	/**
-	 * Default action when text is received. 
-	 * @returns
+	 * Number of retries if connection fails
+	 */
+	retries: 5,
+		
+	/**
+	 * Default action when message is received. 
 	 */
 	receive: (text) => {
 		console.log(text);
@@ -30,25 +18,74 @@ const ws = {
 	/**
 	 * Attempts to establish communication with the specified
 	 * web-socket endpoint. If successfull, will call 
-	 * @returns
 	 */
-	initialize: (endpoint) => {
+	initialize: (endpoint, subs = []) => {
 		try {
-			ws.socket = new WebSocket(endpoint);
-			ws.socket.onmessage = (e) => ws.receive(e.data);
+			ws.stompClient = Stomp.client(endpoint);
+			if (ws.retries -- > 0) {
+				ws.stompClient.reconnect_delay = 2000;		// reconexión automática tras 2s		
+			}
+			const headers = {'X-CSRF-TOKEN' : config.csrf.value}
+			ws.stompClient.connect(headers, () => {
+		        ws.connected = true;
+		        console.log('Connected to ', endpoint, ' - subscribing...');		        
+		        while (subs.length != 0) {
+		        	ws.subscribe(subs.pop())
+		        }
+		    });			
 			console.log("Connected to WS '" + endpoint + "'")
 		} catch (e) {
 			console.log("Error, connection to WS '" + endpoint + "' FAILED: ", e);
 		}
+	},
+	
+	subscribe: (sub) => {
+        try {
+	        ws.stompClient.subscribe(sub, 
+	        		(m) => ws.receive(JSON.parse(m.body)));	// falla si no recibe JSON!	        	
+        	console.log("Hopefully subscribed to " + sub);
+        } catch (e) {
+        	console.log("Error, could not subscribe to " + sub);
+        }
 	}
 } 
+
+/**
+ * Sends an ajax request using fetch
+ */
+//envía json, espera json de vuelta; lanza error si status != 200
+function go(url, method, data = {}) {
+  let params = {
+    method: method, // POST, GET, POST, PUT, DELETE, etc.
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify(data)
+  };
+  if (method === "GET") {
+	  delete params.body;
+  } else {
+      params.headers["X-CSRF-TOKEN"] = config.csrf.value; 
+  }  
+  console.log("sending", url, params)
+  return fetch(url, params)
+  	.then(response => {
+	    if (response.ok) {
+	        return response.json(); // esto lo recibes con then(d => ...)
+	    } else {
+	    	throw response.text();  // esto lo recibes con catch(d => ...)
+	    }
+  	})
+}
 
 /**
  * Actions to perform once the page is fully loaded
  */
 document.addEventListener("DOMContentLoaded", () => {
-	if (config.socketUrl !== false) {
-		ws.initialize(config.socketUrl);
+	if (config.socketUrl) {
+		let subs = config.admin ? 
+				["/topic/admin", "/user/queue/updates"] : ["/user/queue/updates"]
+		ws.initialize(config.socketUrl, subs);
 	}
 	
 	// add your after-page-loaded JS code here; or even better, call 

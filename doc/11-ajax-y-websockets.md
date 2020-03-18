@@ -469,6 +469,26 @@ ws.stompClient.subscribe('/topic/welcome',
 
 ## Controlando la suscripción en el servidor
 
+~~~{.java}
+@Configuration
+public class WebSocketSecurityConfig
+      extends AbstractSecurityWebSocketMessageBrokerConfigurer { 
+
+	
+    protected void configureInbound(\
+            MessageSecurityMetadataSourceRegistry messages) {
+        messages
+            .simpSubscribeDestMatchers("/topic/admin")	// solo admines
+            	.hasRole(User.Role.ADMIN.toString())
+            .anyMessage().authenticated(); 				// login requerido
+    }
+}
+~~~
+
+## Rutas de usuario
+
+
+
 https://www.baeldung.com/spring-security-websockets
 
 https://dzone.com/articles/rest-api-error-handling-with-spring-boot

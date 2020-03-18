@@ -31,16 +31,11 @@
 					<input type="hidden" name="password" value="aa">
 					<button type="submit">a</button>
   				</form>				
-				<form th:action="@{/clase/enter}" method="post">
-					<input id="z" type="hidden" name="userName" value="z">
-					<input type="hidden" name="groupCode" value="test">
-					<button type="submit">z</button>
+				<form th:action="@{/login}" method="post">
+					<input type="hidden" name="username" value="b">
+					<input type="hidden" name="password" value="aa">
+					<button type="submit">b</button>
   				</form> 
-				<script>
-				window.addEventListener('load', () => {
-					document.getElementById('z').value = "z" + Math.floor(Math.random()*1000);		        	
-				});
-				</script>  				
   			</div>
 		</div>		
 	</nav>

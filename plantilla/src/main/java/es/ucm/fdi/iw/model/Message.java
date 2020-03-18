@@ -21,16 +21,18 @@ public class Message {
 	
 	private static Logger log = LogManager.getLogger(Message.class);	
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	@ManyToOne(targetEntity = User.class)
 	private User sender;
+	@ManyToOne(targetEntity = User.class)
 	private User recipient;
 	private String text;
 	
 	private LocalDateTime dateSent;
 	private LocalDateTime dateRead;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -39,7 +41,6 @@ public class Message {
 		this.id = id;
 	}
 
-	@ManyToOne(targetEntity = User.class)
 	public User getSender() {
 		return sender;
 	}
@@ -48,7 +49,6 @@ public class Message {
 		this.sender = sender;
 	}
 
-	@ManyToOne(targetEntity = User.class)
 	public User getRecipient() {
 		return recipient;
 	}

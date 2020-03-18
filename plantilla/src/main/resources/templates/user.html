@@ -47,13 +47,10 @@
 	</div>
 
 	<div class="sidebar">
-	<table>
-		<tr th:each="x, i: ${xs}">
-		    <td th:text="|${i.index} ${i.count} ${i.size} ${i.current}|"
-		    th:class="|c${i.odd}-${i.first}-${i.last}|">hola!</td>
-		</tr>
-	</table>
-	</div>
+	<form th:action="@{/user/{id}/msg(id=${user.id})}" method="POST">
+	<textarea id="message" placeholder="escribe a este usuario" rows="4" cols="20"></textarea>
+	<button id="sendmsg" type="submit">Enviar</button>
+	</form>
 	</div>
 	
 	<footer th:replace="fragments/footer.html :: footer">
@@ -72,6 +69,19 @@ document.addEventListener("DOMContentLoaded", () => {
 				"" : "Ambas contraseñas tienen que coincidir");
 	}
 });	
+
+document.addEventListener("DOMContentLoaded", () => {
+	let b = document.getElementById("sendmsg");
+	b.onclick = (e) => {
+		e.preventDefault();
+		console.log(b, b.parentNode)
+		go(b.parentNode.action, 'POST', {message: 
+				document.getElementById("message").value})
+			.then(d => console.log("happy", d))
+			.catch(e => console.log("sad", e))
+	}
+});
+
 	</script>	
 </body>
 </html>

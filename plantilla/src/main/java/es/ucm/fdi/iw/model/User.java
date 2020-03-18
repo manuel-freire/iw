@@ -18,6 +18,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A user; can be an Admin, a User, or a Moderator
  *
@@ -49,12 +51,32 @@ public class User {
 	}
 	
 	// do not change these fields
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	@Column(nullable = false)
 	private String username;
+	@Column(nullable = false)
 	private String password;
+	@Column(nullable = false)
 	private String roles; // split by ',' to separate roles
 	private byte enabled;
 
+	// application-specific fields
+	private String firstName;
+	private String lastName;
+
+	@OneToMany(targetEntity = Message.class)
+	@JoinColumn(name = "sender_id")
+	@JsonIgnore
+	private List<Message> sent = new ArrayList<>();
+	@OneToMany(targetEntity = Message.class)
+	@JoinColumn(name = "recipient_id")	
+	@JsonIgnore
+	private List<Message> received = new ArrayList<>();	
+	
+	// utility methods
+	
 	/**
 	 * Checks whether this user has a given role.
 	 * @param role to check
@@ -66,46 +88,6 @@ public class User {
 				.anyMatch(r -> r.equals(roleName));
 	}
 	
-	// application-specific fields
-	private String firstName;
-	private String lastName;
-
-	private List<Message> sent = new ArrayList<>();
-	private List<Message> received = new ArrayList<>();
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public long getId() {
-		return id;
-	}
-	
-	public void setId(long id) {
-		this.id = id;
-	}	
-
-	@Column(nullable = false)
-	public String getPassword() {
-		return password;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	/**
-	 * Sets the password to an encoded value. 
-	 * You can generate encoded passwords using {@link #encodePassword}.
-	 * call only with encoded passwords - NEVER STORE PLAINTEXT PASSWORDS
-	 * @param encodedPassword to set as user's password
-	 */
-	public void setPassword(String encodedPassword) {
-		this.password = encodedPassword;
-	}
-
 	/**
 	 * Tests a raw (non-encoded) password against the stored one.
 	 * @param rawPassword to test against
@@ -127,6 +109,38 @@ public class User {
 	 */
 	public static String encodePassword(String rawPassword) {
 		return encoder.encode(rawPassword);
+	}	
+	
+	// auto-generated getters and setters (which could be avoided with Lombok)
+	
+	public long getId() {
+		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	/**
+	 * Sets the password to an encoded value. 
+	 * You can generate encoded passwords using {@link #encodePassword}.
+	 * call only with encoded passwords - NEVER STORE PLAINTEXT PASSWORDS
+	 * @param encodedPassword to set as user's password
+	 */
+	public void setPassword(String encodedPassword) {
+		this.password = encodedPassword;
 	}
 
 	public String getRoles() {
@@ -161,8 +175,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	@OneToMany(targetEntity = Message.class)
-	@JoinColumn(name = "sender_id")
 	public List<Message> getSent() {
 		return sent;
 	}
@@ -171,8 +183,6 @@ public class User {
 		this.sent = sent;
 	}
 
-	@OneToMany(targetEntity = Message.class)
-	@JoinColumn(name = "recipient_id")
 	public List<Message> getReceived() {
 		return received;
 	}
