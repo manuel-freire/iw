@@ -6,20 +6,37 @@
 	<title>RPC - Profesor</title>	
 	<style>
 		.droptarget {
-		  float: left; 
-		  width: 175px; 
-		  height: 15px;
-		  margin: 5px;
-		  padding: 5px;
-		  text-align: center;
-		  vertical-align: middle;
-		  border: 1px solid #aaaaaa;
+			float: left; 
+			width: 175px; 
+			height: 15px;
+			padding: 5px;
+			border: 1px solid #aaaaaa;
+			text-align: center;
+			vertical-align: middle;
+			cursor: move;
+		}
+		.classBox {
+			float: left; 
+			width: 300px; 
+			height: 800px;
+			padding: 5px;
+			border: 1px solid #aaaaaa;
+			vertical-align: middle;
 		}
 	    div.scroll { 
 	        margin:4px, 4px; 
 	        padding:4px; 
-	        width: 300px; 
-	        height: 400px; 
+	        width: 250px; 
+	        height: 300px; 
+	        overflow-x: hidden; 
+	        overflow-x: auto; 
+	        text-align:justify; 
+	    }
+	    div.team { 
+			width: 200px; 
+			height: 300px;
+			margin: 5px;
+			padding: 5px;
 	        overflow-x: hidden; 
 	        overflow-x: auto; 
 	        text-align:justify; 
@@ -48,13 +65,12 @@
 					<button type="submit">Crear clase</button>
 				</form>
 
-				<div class="scroll">
-					<table class="adminTable">
-					<tr><th>Clase de prueba
-					<tr th:each="u: ${users}">
-						<td><div class="droptarget" ondragstart="dragStart(event)" draggable="true" id="dragtarget" th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
-					</tr>
-					</table>
+				<div class="classBox">
+					<th>Clase de prueba</th>
+					<div class="scroll" ondrop="drop(event, this)" ondragover="allowDrop(event)">
+						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
+						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
+					</div>
 				</div>
 			</div>
 			<div>
@@ -64,9 +80,9 @@
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>					
 
-				<div class="scroll">
+				<div class="scroll" id="scrollTeam">
 					<table class="adminTable" id="teamTable" name="teamTable">
-					<tr><th>Lista de equipos
+					<tr><th>Lista de equipos</th>
 					</table>
 				</div>	
 			</div>
@@ -79,47 +95,55 @@
 	</footer>		
 
 	<script type="text/javascript">
-		function dragStart(event) {
-		  event.dataTransfer.setData("Text", event.target.id);
-		}
-
-		function allowDrop(event) {
-		  event.preventDefault();
-		}
-
-		function drop(event) {
-		  event.preventDefault();
-		  var data = event.dataTransfer.getData("Text");
-		  event.target.appendChild(document.getElementById(data));
-		}
 
 		function createTeams(quantity) {
 			var i;
 			var container;
 			var title;
+			var scroll;
 			var wrapper;
 			var row;
 
-			wrapper = document.getElementById('teamTable');
+			//wrapper = document.getElementById('teamTable');
+			//wrapper = document.getElementById('scrollTeam');
 
 			for (i = 0; i < quantity; i++) {
 				wrapper = document.createElement('div');
+  				wrapper.setAttribute("class", "scroll");
 
 				title = document.createElement('h2');
   				title.innerHTML = "Equipo " + i.toString();
 
   				container = document.createElement('div');
-  				container.setAttribute("class", "droptarget");
-  				container.setAttribute("ondrop", "drop(event)");
-  				container.setAttribute("ondragover", "allowDrop(event)");
+  				container.setAttribute("class", "team");
+
+  				scroll = document.createElement('div');
+  				scroll.setAttribute("class", "scroll");
+  				scroll.setAttribute("ondrop", "drop(event, this)");
+  				scroll.setAttribute("ondragover", "allowDrop(event)");
 
   				row = document.createElement('tr');
 
+  				container.appendChild(scroll);
   				wrapper.appendChild(title);
   				wrapper.appendChild(container);
   				row.appendChild(wrapper);
   				document.getElementById('teamTable').appendChild(row);
   			}
+		}
+
+		function allowDrop(ev) {
+			ev.preventDefault();
+		}
+
+		function drag(ev) {
+			ev.dataTransfer.setData("text", ev.target.id);
+		}
+
+		function drop(ev, el) {
+			ev.preventDefault();
+			var data = ev.dataTransfer.getData("text");
+			el.appendChild(document.getElementById(data));
 		}
 
 	</script>
