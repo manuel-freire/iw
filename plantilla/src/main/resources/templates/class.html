@@ -70,7 +70,11 @@
 					<div class="scroll" ondrop="drop(event, this)" ondragover="allowDrop(event)">
 						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
 						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
-					</div>
+					</div>	
+					<form th:if="${users != null && stClass != null}" method="POST" 
+							th:action="@{/admin/{id}/class/saveFile(id=${session.u.id}, userList=${users}, newClass=${stClass})}">
+						<button type="submit">Descargar QR de acceso</button>
+	  				</form>  
 				</div>
 			</div>
 			<div>

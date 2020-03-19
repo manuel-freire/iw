@@ -18,7 +18,7 @@ import es.ucm.fdi.iw.model.User;
 
 public class ClassFileReader {
 	
-	private static final Logger log = LogManager.getLogger(UserController.class);
+	private static final Logger log = LogManager.getLogger(ClassFileReader.class);
 	
 	@Autowired
 	private static PasswordEncoder passwordEncoder;

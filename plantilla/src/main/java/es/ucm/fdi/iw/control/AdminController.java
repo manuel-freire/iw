@@ -2,6 +2,8 @@ package es.ucm.fdi.iw.control;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +25,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.itextpdf.text.DocumentException;
+
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ClassFileDTO;
+import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 import es.ucm.fdi.iw.utils.ClassFileReader;
+import es.ucm.fdi.iw.utils.PdfGenerator;
 
 /**
  * Admin-only controller
@@ -159,5 +165,96 @@ public class AdminController {
 			log.warn("La información de la clase está incompleta");
 		}
 		
+	}
+	
+	@PostMapping("/{id}/class/saveFile")
+	public String saveClassToFile(
+			HttpServletResponse response,
+			@PathVariable("id") String id,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return classes(model);
+		}
+		
+		List<User> userList = dummyUsers();
+		StClass stClass = dummyClass();
+		
+		if (stClass == null) {
+			log.info("Error al acceder a los datos de la clase");
+		} else if (userList == null || userList.isEmpty()){
+			log.info("Error al acceder a los datos de los alumnos");
+		} else {
+			log.info("Creando fichero QR de la clase");
+			PdfGenerator.generateQrClassFile(userList, stClass);
+		}
+		
+		return classes(model);
+	}	
+	
+	public List<User> dummyUsers() {
+		List<User> users = new ArrayList<>();
+		
+		User u1 = new User();
+		u1.setFirstName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		u1.setLastName("aaa aaa");
+		u1.setUsername("ST.001");
+		u1.setId(4);
+		
+		User u2 = new User();
+		u2.setFirstName("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+		u2.setLastName("bbb bbb");
+		u2.setUsername("ST.002");
+		u2.setId(5);
+		
+		User u3 = new User();
+		u3.setFirstName("ccccccccccccccccccccccccccccccc");
+		u3.setLastName("ccc ccc");
+		u3.setUsername("ST.003");
+		u3.setId(6);
+		
+		users.add(u1);
+		users.add(u2);
+		users.add(u3);
+		users.add(u3);
+		users.add(u2);
+		users.add(u2);
+		users.add(u1);
+		users.add(u3);
+		users.add(u3);
+		users.add(u2);
+		users.add(u1);
+		users.add(u2);
+		users.add(u3);
+		users.add(u2);
+		users.add(u1);
+		users.add(u2);
+		users.add(u2);
+		users.add(u2);
+		users.add(u1);
+		users.add(u3);
+		users.add(u3);
+		users.add(u2);
+		users.add(u1);
+		users.add(u2);
+		users.add(u3);
+		users.add(u2);
+		users.add(u1);
+		users.add(u2);
+		
+		return users;
+	}
+	
+	public StClass dummyClass() {
+		StClass st = new StClass();
+		st.setClassName("Clase de prueba");
+		st.setId(2);
+		
+		return st;
 	}
 }
