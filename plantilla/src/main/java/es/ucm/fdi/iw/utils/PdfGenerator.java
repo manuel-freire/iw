@@ -67,7 +67,7 @@ public class PdfGenerator {
 		}
 
 		for (int i=0; i < numPages; i++) {
-			for (int j=0; j < Math.min(Constants.NUM_ROWS, users.size()-cellCount); j++) {
+			for (int j=0; j < Math.min(Constants.NUM_ROWS, users.size()-i*Constants.NUM_ROWS); j++) {
 				cellCount = Constants.NUM_ROWS*i+j;
 				u = users.get(cellCount);
 				id = Long.toString(u.getId());
