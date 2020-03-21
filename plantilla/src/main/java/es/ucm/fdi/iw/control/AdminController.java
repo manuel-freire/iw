@@ -117,7 +117,7 @@ public class AdminController {
 
 	@PostMapping("/{id}/class")
 	@Transactional
-	public String createFile(
+	public String createClassFromFile(
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
 			@PathVariable("id") String id,
@@ -164,8 +164,41 @@ public class AdminController {
 		} else {
 			log.warn("La información de la clase está incompleta");
 		}
-		
 	}
+	
+	@PostMapping("/{id}/contest")
+	@Transactional
+	public String createContestFromFile(
+			HttpServletResponse response,
+			@RequestParam("contestfile") MultipartFile contestFile,
+			@PathVariable("id") String id,
+			Model model, HttpSession session) throws IOException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return classes(model);
+		}
+		
+		log.info("Profesor {} subiendo fichero de clase", id);
+		if (contestFile.isEmpty()) {
+			log.info("El fichero está vacío");
+		} else {
+			String content = new String(contestFile.getBytes(), "UTF-8");
+			log.info("El fichero con los datos se ha cargado correctamente");
+			saveToDb(content);
+
+			model.addAttribute("users", entityManager.createQuery(
+					"SELECT u FROM User u").getResultList());
+			model.addAttribute("stClass", entityManager.createQuery(
+					"SELECT c FROM StClass c WHERE id=2").getResultList());
+		}
+		
+		return classes(model);
+	}	
 	
 	@PostMapping("/{id}/class/saveFile")
 	public String saveClassToFile(

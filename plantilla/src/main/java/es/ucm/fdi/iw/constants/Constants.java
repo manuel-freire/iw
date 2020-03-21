@@ -1,4 +1,4 @@
-package es.ucm.fdi.iw.utils;
+package es.ucm.fdi.iw.constants;
 
 public class Constants {
 	//Constantes para la creación del fichero PDF con los códigos QR de acceso

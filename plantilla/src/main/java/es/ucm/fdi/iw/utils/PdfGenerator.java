@@ -21,6 +21,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import es.ucm.fdi.iw.constants.Constants;
 import es.ucm.fdi.iw.control.UserController;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;

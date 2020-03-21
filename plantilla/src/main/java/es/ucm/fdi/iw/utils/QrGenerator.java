@@ -20,6 +20,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import es.ucm.fdi.iw.constants.Constants;
+
 public class QrGenerator {
 	
 	private static final Logger log = LogManager.getLogger(QrGenerator.class);
