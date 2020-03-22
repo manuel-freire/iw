@@ -4,6 +4,28 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC - Profesor</title>
+	<style>
+		.contestBox {
+			float: left; 
+			width: 300px; 
+			height: 800px;
+			padding: 5px;
+			border: 1px solid #aaaaaa;
+			vertical-align: middle;
+		}
+	    div.scroll { 
+	        margin:4px, 4px; 
+	        padding:4px; 
+	        width: 250px; 
+	        height: 300px; 
+	        overflow-x: hidden; 
+	        overflow-x: auto; 
+	        text-align:justify; 
+	    }
+        .container {
+	        display: flex;
+	    }
+	</style>
 </head>
 <body>
 	<nav th:replace="fragments/nav.html :: nav">
@@ -13,13 +35,26 @@
 	<div class="container">
 	<div class="main">
 		
-	<p>
-	Vista de pruebas
-	</p>
-		
-	<footer th:replace="fragments/footer.html :: footer">
-		Footer goes here
-	</footer>
+		<h1>
+			Vista de concursos
+		</h1>
+
+		<div class="container">
+			<div>
+				<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+					Fichero de concurso <input type="file" name="contestfile"/>
+					<button type="submit">Crear concurso</button>
+				</form>
+
+				<div class="contestBox">
+					<th>Concurso de prueba</th>
+					<div class="scroll">
+						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
+						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
+					</div>	
+				</div>
+			</div>
+		</div>
 	
 	</div>
 	</div>

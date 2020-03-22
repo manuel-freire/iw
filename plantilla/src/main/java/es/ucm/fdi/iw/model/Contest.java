@@ -31,8 +31,8 @@ public class Contest {
 	
 	private long id;
 	private String name;
-//	private User teacher;
-//	private List<Question> questions = new ArrayList<>();
+	private User teacher;
+	private List<Question> questions = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,23 +52,35 @@ public class Contest {
 		this.name = name;
 	}
 
-//	@ManyToOne(targetEntity = User.class)
-//	@JoinColumn(name = "id")
-//	public User getTeacher() {
-//		return teacher;
-//	}
-//
-//	public void setTeacher(User teacher) {
-//		this.teacher = teacher;
-//	}
-//
-//	@ManyToMany(targetEntity = Question.class)
-//	@JoinColumn(name = "id")
-//	public List<Question> getQuestions() {
-//		return questions;
-//	}
-//
-//	public void setQuestions(List<Question> questions) {
-//		this.questions = questions;
-//	}
+	@ManyToOne(targetEntity = User.class)
+	@JoinColumn(name = "contests")
+	public User getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(User teacher) {
+		this.teacher = teacher;
+	}
+
+	@ManyToMany(targetEntity = Question.class)
+	@JoinColumn(name = "contest")
+	public List<Question> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(List<Question> questions) {
+		this.questions = questions;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder stb = new StringBuilder();
+		
+		stb.append("Concurso: " + this.getName() + "\n");
+		for (int i = 0; i < this.questions.size(); i++) {
+			stb.append("- " + this.questions.get(i).toString() + "\n");
+		}
+		
+	    return stb.toString();
+	}
 }

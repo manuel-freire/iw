@@ -84,19 +84,17 @@
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>					
 
-				<div class="scroll" id="scrollTeam">
+				<div class="scroll" id="scrollTeam" style="width:750px">
+					<div class="container">
 					<table class="adminTable" id="teamTable" name="teamTable">
-					<tr><th>Lista de equipos</th>
+					<tr id="teamList"><th>Lista de equipos</th>
 					</table>
 				</div>	
 			</div>
 		</div>
+			
 	</div>
-	</div>
-				
-	<footer th:replace="fragments/footer.html :: footer">
-		Footer goes here
-	</footer>		
+	</div>	
 
 	<script type="text/javascript">
 
@@ -113,7 +111,6 @@
 
 			for (i = 0; i < quantity; i++) {
 				wrapper = document.createElement('div');
-  				wrapper.setAttribute("class", "scroll");
 
 				title = document.createElement('h2');
   				title.innerHTML = "Equipo " + i.toString();
@@ -126,13 +123,13 @@
   				scroll.setAttribute("ondrop", "drop(event, this)");
   				scroll.setAttribute("ondragover", "allowDrop(event)");
 
-  				row = document.createElement('tr');
+  				team = document.createElement('td');
 
   				container.appendChild(scroll);
   				wrapper.appendChild(title);
   				wrapper.appendChild(container);
-  				row.appendChild(wrapper);
-  				document.getElementById('teamTable').appendChild(row);
+  				team.appendChild(wrapper);
+  				document.getElementById('teamList').appendChild(team);
   			}
 		}
 

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import es.ucm.fdi.iw.constants.ClassFileDTO;
-import es.ucm.fdi.iw.control.UserController;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
 

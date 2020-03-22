@@ -13,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -58,6 +59,8 @@ public class User {
 	// application-specific fields
 	private String firstName;
 	private String lastName;
+	
+	private List<Contest> contests;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -181,6 +184,16 @@ public class User {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	@OneToMany(targetEntity = Contest.class)
+	@JoinColumn(name = "teacher")
+	public List<Contest> getContests() {
+		return contests;
+	}
+
+	public void setContests(List<Contest> contests) {
+		this.contests = contests;
 	}
 	
 	@Override

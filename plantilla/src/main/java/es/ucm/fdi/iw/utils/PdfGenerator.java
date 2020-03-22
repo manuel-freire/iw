@@ -21,7 +21,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import es.ucm.fdi.iw.constants.Constants;
+import es.ucm.fdi.iw.constants.ConstantsClass;
 import es.ucm.fdi.iw.control.UserController;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
@@ -38,10 +38,10 @@ public class PdfGenerator {
 		int numPages;
 		int cellCount = 0;
 		
-		String qrFile = Constants.QR_FILE + "." + Constants.PDF;
+		String qrFile = ConstantsClass.QR_FILE + "." + ConstantsClass.PDF;
 		Document document = new Document();
 		PdfWriter.getInstance(document, new FileOutputStream(qrFile));
-		Font font = FontFactory.getFont(FontFactory.COURIER, Constants.QR_FONT_SIZE, BaseColor.BLACK);
+		Font font = FontFactory.getFont(FontFactory.COURIER, ConstantsClass.QR_FONT_SIZE, BaseColor.BLACK);
 		PdfPTable table;
 		
 		document.open();		
@@ -61,24 +61,24 @@ public class PdfGenerator {
 //			document.add(qrCode);
 //		}
 		
-		if (users.size() % Constants.NUM_ROWS == 0) {
-			numPages = users.size() / Constants.NUM_ROWS;
+		if (users.size() % ConstantsClass.NUM_ROWS == 0) {
+			numPages = users.size() / ConstantsClass.NUM_ROWS;
 		} else {
-			numPages = (users.size() / Constants.NUM_ROWS) + 1;
+			numPages = (users.size() / ConstantsClass.NUM_ROWS) + 1;
 		}
 
 		for (int i=0; i < numPages; i++) {
-			for (int j=0; j < Math.min(Constants.NUM_ROWS, users.size()-i*Constants.NUM_ROWS); j++) {
-				cellCount = Constants.NUM_ROWS*i+j;
+			for (int j=0; j < Math.min(ConstantsClass.NUM_ROWS, users.size()-i*ConstantsClass.NUM_ROWS); j++) {
+				cellCount = ConstantsClass.NUM_ROWS*i+j;
 				u = users.get(cellCount);
 				id = Long.toString(u.getId());
 				name = u.getFirstName() + ",\n" + u.getLastName();
-				img = Constants.QR_IMG + u.getUsername() + "." + Constants.PNG;
+				img = ConstantsClass.QR_IMG + u.getUsername() + "." + ConstantsClass.PNG;
 				
 				log.info("Creando QR para el usuario {}", cellCount);
-				table = new PdfPTable(Constants.NUM_COLS);
-				table.getDefaultCell().setFixedHeight(Constants.CELL_H);
-				table.setWidths(new float[] {Constants.NAME_W, Constants.USER_W, Constants.QR_W});
+				table = new PdfPTable(ConstantsClass.NUM_COLS);
+				table.getDefaultCell().setFixedHeight(ConstantsClass.CELL_H);
+				table.setWidths(new float[] {ConstantsClass.NAME_W, ConstantsClass.USER_W, ConstantsClass.QR_W});
 				table.addCell(new Phrase(name, font));
 				table.addCell(new Phrase(img, font));
 				QrGenerator.generateQrCode(id, u.getUsername());

@@ -29,10 +29,14 @@ import com.itextpdf.text.DocumentException;
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ClassFileDTO;
+import es.ucm.fdi.iw.model.Answer;
+import es.ucm.fdi.iw.model.Contest;
+import es.ucm.fdi.iw.model.Question;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 import es.ucm.fdi.iw.utils.ClassFileReader;
+import es.ucm.fdi.iw.utils.ContestFileReader;
 import es.ucm.fdi.iw.utils.PdfGenerator;
 
 /**
@@ -138,7 +142,7 @@ public class AdminController {
 		} else {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveToDb(content);
+			saveClassToDb(content);
 
 			model.addAttribute("users", entityManager.createQuery(
 					"SELECT u FROM User u").getResultList());
@@ -149,7 +153,7 @@ public class AdminController {
 		return classes(model);
 	}	
 	
-	private void saveToDb(String content) {	
+	private void saveClassToDb(String content) {	
 		User student;
 		log.info("Inicio del procesado del fichero de clase");		
 		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
@@ -180,7 +184,7 @@ public class AdminController {
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(model);
+			return contest(model);
 		}
 		
 		log.info("Profesor {} subiendo fichero de clase", id);
@@ -189,16 +193,39 @@ public class AdminController {
 		} else {
 			String content = new String(contestFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveToDb(content);
-
-			model.addAttribute("users", entityManager.createQuery(
-					"SELECT u FROM User u").getResultList());
-			model.addAttribute("stClass", entityManager.createQuery(
-					"SELECT c FROM StClass c WHERE id=2").getResultList());
+			saveContestToDb(target, content);
 		}
 		
-		return classes(model);
+		return contest(model);
 	}	
+	
+	private void saveContestToDb(User teacher, String content) {
+		log.info("Inicio del procesado del fichero de clase");		
+		Contest contest = ContestFileReader.readContestFile(content);
+		List<Question> questionList;
+		Question question;
+		List<Answer> answerList;
+		
+		if (contest.getQuestions() != null) {
+			questionList = contest.getQuestions();
+			for (int i = 0; i < questionList.size(); i++) {
+				question = questionList.get(i);
+				if (question.getAnswers() != null) {
+					answerList = question.getAnswers();
+					for (int j = 0; j < answerList.size(); j++) {
+						entityManager.persist(answerList.get(j));						
+					}
+				} else {
+					log.info("La información de la pregunta {} es incompleta o errónea", i);						
+				}
+				entityManager.persist(question);				
+			}
+			contest.setTeacher(teacher);
+			entityManager.persist(contest);				
+		} else {
+			log.warn("La información de las preguntas es incompleta o  errónea");
+		}
+	}
 	
 	@PostMapping("/{id}/class/saveFile")
 	public String saveClassToFile(

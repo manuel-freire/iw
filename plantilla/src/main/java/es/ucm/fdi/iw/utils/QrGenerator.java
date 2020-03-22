@@ -20,17 +20,17 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-import es.ucm.fdi.iw.constants.Constants;
+import es.ucm.fdi.iw.constants.ConstantsClass;
 
 public class QrGenerator {
 	
 	private static final Logger log = LogManager.getLogger(QrGenerator.class);
 	
 	public static void generateQrCode(String id, String username) {
-		String url = Constants.USER_URL + id;
-		String QrPath = Constants.QR_IMG + username + "." + Constants.PNG;
-		int size = Constants.QR_IMG_SIZE;
-		String fileType = Constants.PNG;
+		String url = ConstantsClass.USER_URL + id;
+		String QrPath = ConstantsClass.QR_IMG + username + "." + ConstantsClass.PNG;
+		int size = ConstantsClass.QR_IMG_SIZE;
+		String fileType = ConstantsClass.PNG;
 		File myFile = new File(QrPath);
 		
 		try {
