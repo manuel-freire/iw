@@ -7,7 +7,7 @@
 	<style>
 		.contestBox {
 			float: left; 
-			width: 300px; 
+			width: 500px; 
 			height: 800px;
 			padding: 5px;
 			border: 1px solid #aaaaaa;
@@ -16,7 +16,7 @@
 	    div.scroll { 
 	        margin:4px, 4px; 
 	        padding:4px; 
-	        width: 250px; 
+	        width: 400px; 
 	        height: 300px; 
 	        overflow-x: hidden; 
 	        overflow-x: auto; 
@@ -45,18 +45,28 @@
 					Fichero de concurso <input type="file" name="contestfile"/>
 					<button type="submit">Crear concurso</button>
 				</form>
-
-				<div class="contestBox">
-					<th>Concurso de prueba</th>
+				<div class="contestBox" th:if=${contest}>
+					<th th:text="${contest.name}"></th>
 					<div class="scroll">
-						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
-						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
-					</div>	
+						<div th:unles="${contest.questions == null}" th:each="q: ${contest.questions}">
+							<th th:text="${q.text}"></th>
+							<table th:unless="${q.answers == null}">
+								<tr  th:each="a: ${q.answers}">
+									<td th:text="${a.text}"></td>
+									<td th:text="${a.score}"></th>
+								</tr>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	
+		
 	</div>
 	</div>
+
+	<script type="text/javascript">
+
+	</script>
 </body>
 </html>

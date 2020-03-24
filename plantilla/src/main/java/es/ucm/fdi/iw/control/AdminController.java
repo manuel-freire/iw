@@ -142,8 +142,38 @@ public class AdminController {
 		} else {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveClassToDb(content);
-
+			saveClassToDb(model, content);
+		}
+		
+		return classes(model);
+	}	
+	
+	@PostMapping("/{id}/class/createQR")
+	public String createClassQR(
+			HttpServletResponse response,
+			@PathVariable("id") String id,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return classes(model);
+		}
+		
+		List<User> userList = dummyUsers();
+		StClass stClass = dummyClass();
+		
+		if (stClass == null) {
+			log.info("Error al acceder a los datos de la clase");
+		} else if (userList == null || userList.isEmpty()){
+			log.info("Error al acceder a los datos de los alumnos");
+		} else {
+			log.info("Creando fichero QR de la clase");
+			PdfGenerator.generateQrClassFile(userList, stClass);
+			
 			model.addAttribute("users", entityManager.createQuery(
 					"SELECT u FROM User u").getResultList());
 			model.addAttribute("stClass", entityManager.createQuery(
@@ -151,23 +181,6 @@ public class AdminController {
 		}
 		
 		return classes(model);
-	}	
-	
-	private void saveClassToDb(String content) {	
-		User student;
-		log.info("Inicio del procesado del fichero de clase");		
-		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
-		if (classInfo.getStClass() != null && classInfo.getStudents() != null) {
-			entityManager.persist(classInfo.getStClass());
-			for(int i = 0; i < classInfo.getStudents().size(); i++) {
-				student = classInfo.getStudents().get(i);
-				student.setPassword(passwordEncoder.encode(student.getPassword()));
-				entityManager.persist(student);
-			}
-			log.info("La información se ha cargado en la base de datos correctamente");				
-		} else {
-			log.warn("La información de la clase está incompleta");
-		}
 	}
 	
 	@PostMapping("/{id}/contest")
@@ -193,13 +206,37 @@ public class AdminController {
 		} else {
 			String content = new String(contestFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveContestToDb(target, content);
+			saveContestToDb(model, target, content);
 		}
-		
+		log.info("CONTEST AÑADIDO AL MODELO {}", model.containsAttribute("contest"));
 		return contest(model);
 	}	
 	
-	private void saveContestToDb(User teacher, String content) {
+	private Model saveClassToDb(Model model, String content) {	
+		User student;
+		log.info("Inicio del procesado del fichero de clase");		
+		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
+		if (classInfo.getStClass() != null && classInfo.getStudents() != null) {
+			entityManager.persist(classInfo.getStClass());
+			for(int i = 0; i < classInfo.getStudents().size(); i++) {
+				student = classInfo.getStudents().get(i);
+				student.setPassword(passwordEncoder.encode(student.getPassword()));
+				entityManager.persist(student);
+			}
+			log.info("La información se ha cargado en la base de datos correctamente");
+
+			model.addAttribute("users", entityManager.createQuery(
+					"SELECT u FROM User u").getResultList());
+			model.addAttribute("stClass", entityManager.createQuery(
+					"SELECT c FROM StClass c WHERE id=2").getResultList());				
+		} else {
+			log.warn("La información de la clase está incompleta");
+		}
+		
+		return model;
+	}
+	
+	private Model saveContestToDb(Model model, User teacher, String content) {
 		log.info("Inicio del procesado del fichero de clase");		
 		Contest contest = ContestFileReader.readContestFile(content);
 		List<Question> questionList;
@@ -221,40 +258,13 @@ public class AdminController {
 				entityManager.persist(question);				
 			}
 			contest.setTeacher(teacher);
-			entityManager.persist(contest);				
+			entityManager.persist(contest);		
+			model.addAttribute("contest", entityManager.find(Contest.class, contest.getId()));	
 		} else {
 			log.warn("La información de las preguntas es incompleta o  errónea");
 		}
-	}
-	
-	@PostMapping("/{id}/class/saveFile")
-	public String saveClassToFile(
-			HttpServletResponse response,
-			@PathVariable("id") String id,
-			Model model, HttpSession session) throws IOException, DocumentException {
-		User target = entityManager.find(User.class, Long.parseLong(id));
-		model.addAttribute("user", target);
 		
-		// check permissions
-		User requester = (User)session.getAttribute("u");
-		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(model);
-		}
-		
-		List<User> userList = dummyUsers();
-		StClass stClass = dummyClass();
-		
-		if (stClass == null) {
-			log.info("Error al acceder a los datos de la clase");
-		} else if (userList == null || userList.isEmpty()){
-			log.info("Error al acceder a los datos de los alumnos");
-		} else {
-			log.info("Creando fichero QR de la clase");
-			PdfGenerator.generateQrClassFile(userList, stClass);
-		}
-		
-		return classes(model);
+		return model;
 	}	
 	
 	public List<User> dummyUsers() {

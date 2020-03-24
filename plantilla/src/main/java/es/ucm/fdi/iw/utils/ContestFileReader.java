@@ -30,8 +30,6 @@ public class ContestFileReader {
 			JSONObject jContest = new JSONObject(jsonContest);
 			contest.setName(jContest.getString("nombreConcurso"));
 			
-			log.info("- Concurso cargado con éxito -\n {}", contest);
-			
 			JSONArray jQuestionsList = jContest.getJSONArray("preguntas");
 			JSONObject jQuestion;
 			
