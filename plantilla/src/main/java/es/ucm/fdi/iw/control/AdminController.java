@@ -1,7 +1,12 @@
 package es.ucm.fdi.iw.control;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +23,20 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.itextpdf.text.DocumentException;
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ClassFileDTO;
+import es.ucm.fdi.iw.constants.ConstantsClass;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Question;
@@ -153,34 +161,31 @@ public class AdminController {
 				log.info("Error al acceder a los datos de los alumnos");
 			} else {
 				log.info("Creando fichero QR de la clase");
-				PdfGenerator.generateQrClassFile(userList, stClass);
+				String qrFile = PdfGenerator.generateQrClassFile(userList, stClass);
 				
 				model.addAttribute("users", entityManager.createQuery(
 						"SELECT u FROM User u").getResultList());
 				model.addAttribute("stClass", entityManager.createQuery(
 						"SELECT c FROM StClass c WHERE id=2").getResultList());
-			}
+				
+				uploadToTemp(qrFile);
+
+		    }
 		}
 		
 		return classes(model);
 	}	
 	
 	@GetMapping("/{id}/class/createQR")
-	public String createClassQR(
-			HttpServletResponse response,
-			@PathVariable("id") String id,
-			Model model, HttpSession session) throws IOException, DocumentException {
-		User target = entityManager.find(User.class, Long.parseLong(id));
-		model.addAttribute("user", target);
-		
-		// check permissions
-		User requester = (User)session.getAttribute("u");
-		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(model);
-		}		
-		
-		return classes(model);
+	public StreamingResponseBody getQrFile(@PathVariable long id, Model model) throws IOException {		
+		File f = localData.getFile("qrcodes", ConstantsClass.QR_FILE + "." + ConstantsClass.PDF);
+		InputStream in = new BufferedInputStream(new FileInputStream(f));
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream os) throws IOException {
+				FileCopyUtils.copy(in, os);
+			}
+		};
 	}
 	
 	@PostMapping("/{id}/contest")
@@ -266,6 +271,26 @@ public class AdminController {
 		
 		return model;
 	}	
+	
+	private void uploadToTemp(String tempFile) throws IOException {
+		FileInputStream instream = null;
+		FileOutputStream outstream = null;
+	 
+	    File infile = new File(tempFile);
+	    File outfile = localData.getFile("qrcodes", ConstantsClass.QR_FILE + "." + ConstantsClass.PDF);
+
+	    instream = new FileInputStream(infile);
+	    outstream = new FileOutputStream(outfile);
+	    
+	    byte[] buffer = new byte[1024];
+	    int length;
+	    while ((length = instream.read(buffer)) > 0){
+	    	outstream.write(buffer, 0, length);
+	    }
+
+	    instream.close();
+	    outstream.close();
+	}
 	
 	public List<User> dummyUsers() {
 		List<User> users = new ArrayList<>();

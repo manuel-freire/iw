@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Table.Cell;
 import com.itextpdf.text.BaseColor;
@@ -22,6 +24,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ConstantsClass;
 import es.ucm.fdi.iw.control.UserController;
 import es.ucm.fdi.iw.model.StClass;
@@ -30,6 +33,9 @@ import es.ucm.fdi.iw.model.User;
 public class PdfGenerator {
 	
 	private static final Logger log = LogManager.getLogger(PdfGenerator.class);
+	
+	@Autowired
+	private static LocalData localData;
 
 	public static String generateQrClassFile(List<User> users, StClass stClass) throws DocumentException, MalformedURLException, IOException {
 
@@ -83,6 +89,9 @@ public class PdfGenerator {
 		}
 		
 		document.close();
+		
 		return qrFile;
 	}
+	
+	
 }
