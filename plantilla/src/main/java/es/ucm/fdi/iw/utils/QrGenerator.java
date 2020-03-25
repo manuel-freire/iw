@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -20,17 +21,27 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ConstantsClass;
 
 public class QrGenerator {
 	
 	private static final Logger log = LogManager.getLogger(QrGenerator.class);
 	
+	@Autowired
+	private LocalData localData;
+	
 	public static void generateQrCode(String id, String username) {
 		String url = ConstantsClass.USER_URL + id;
-		String QrPath = ConstantsClass.QR_IMG + username + "." + ConstantsClass.PNG;
 		int size = ConstantsClass.QR_IMG_SIZE;
 		String fileType = ConstantsClass.PNG;
+		
+		File directory = new File(ConstantsClass.QR_DIR);
+	    if (! directory.exists()){
+	        directory.mkdir();
+	    }
+	    
+	    String QrPath = ConstantsClass.QR_DIR + ConstantsClass.QR_IMG + username + "." + ConstantsClass.PNG;
 		File myFile = new File(QrPath);
 		
 		try {
@@ -64,7 +75,7 @@ public class QrGenerator {
 			}			
 			
 			ImageIO.write(image, fileType, myFile);
-			
+						
 		} catch (WriterException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

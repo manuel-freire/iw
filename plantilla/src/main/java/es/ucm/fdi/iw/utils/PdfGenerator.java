@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,36 +31,26 @@ public class PdfGenerator {
 	
 	private static final Logger log = LogManager.getLogger(PdfGenerator.class);
 
-	public static void generateQrClassFile(List<User> users, StClass stClass) throws DocumentException, MalformedURLException, IOException {
-//		Chunk chunkUser, chunkName;
+	public static String generateQrClassFile(List<User> users, StClass stClass) throws DocumentException, MalformedURLException, IOException {
+
 		String id, name, img;
 		User u;
 		Image qrCode;
 		int numPages;
 		int cellCount = 0;
 		
-		String qrFile = ConstantsClass.QR_FILE + "." + ConstantsClass.PDF;
+		File directory = new File(ConstantsClass.QR_DIR);
+	    if (! directory.exists()){
+	        directory.mkdir();
+	    }
+		
+		String qrFile = ConstantsClass.QR_DIR + ConstantsClass.QR_FILE + "." + ConstantsClass.PDF;
 		Document document = new Document();
 		PdfWriter.getInstance(document, new FileOutputStream(qrFile));
 		Font font = FontFactory.getFont(FontFactory.COURIER, ConstantsClass.QR_FONT_SIZE, BaseColor.BLACK);
 		PdfPTable table;
 		
-		document.open();		
-//		for (User u : users) {
-//			id = Long.toString(u.getId());
-//			name = u.getFirstName() + " " + u.getLastName();
-//			img = Constants.QR_IMG + u.getUsername() + "." + Constants.PNG;
-//			
-//			chunkName = new Chunk(name, font);
-//			chunkUser = new Chunk(img, font); 
-//			document.add(chunkName);
-//	        document.add(Chunk.NEWLINE);
-//			document.add(chunkUser);
-//			
-//			QrGenerator.generateQrCode(id, u.getUsername());
-//			qrCode = Image.getInstance(img);
-//			document.add(qrCode);
-//		}
+		document.open();	
 		
 		if (users.size() % ConstantsClass.NUM_ROWS == 0) {
 			numPages = users.size() / ConstantsClass.NUM_ROWS;
@@ -73,7 +64,7 @@ public class PdfGenerator {
 				u = users.get(cellCount);
 				id = Long.toString(u.getId());
 				name = u.getFirstName() + ",\n" + u.getLastName();
-				img = ConstantsClass.QR_IMG + u.getUsername() + "." + ConstantsClass.PNG;
+				img = ConstantsClass.QR_DIR + ConstantsClass.QR_IMG + u.getUsername() + "." + ConstantsClass.PNG;
 				
 				log.info("Creando QR para el usuario {}", cellCount);
 				table = new PdfPTable(ConstantsClass.NUM_COLS);
@@ -92,5 +83,6 @@ public class PdfGenerator {
 		}
 		
 		document.close();
+		return qrFile;
 	}
 }

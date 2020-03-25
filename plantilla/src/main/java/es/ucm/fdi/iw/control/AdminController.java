@@ -125,7 +125,7 @@ public class AdminController {
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
 			@PathVariable("id") String id,
-			Model model, HttpSession session) throws IOException {
+			Model model, HttpSession session) throws IOException, DocumentException {
 		User target = entityManager.find(User.class, Long.parseLong(id));
 		model.addAttribute("user", target);
 		
@@ -143,12 +143,29 @@ public class AdminController {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
 			saveClassToDb(model, content);
+			
+			List<User> userList = dummyUsers();
+			StClass stClass = dummyClass();
+			
+			if (stClass == null) {
+				log.info("Error al acceder a los datos de la clase");
+			} else if (userList == null || userList.isEmpty()){
+				log.info("Error al acceder a los datos de los alumnos");
+			} else {
+				log.info("Creando fichero QR de la clase");
+				PdfGenerator.generateQrClassFile(userList, stClass);
+				
+				model.addAttribute("users", entityManager.createQuery(
+						"SELECT u FROM User u").getResultList());
+				model.addAttribute("stClass", entityManager.createQuery(
+						"SELECT c FROM StClass c WHERE id=2").getResultList());
+			}
 		}
 		
 		return classes(model);
 	}	
 	
-	@PostMapping("/{id}/class/createQR")
+	@GetMapping("/{id}/class/createQR")
 	public String createClassQR(
 			HttpServletResponse response,
 			@PathVariable("id") String id,
@@ -161,24 +178,7 @@ public class AdminController {
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
 			return classes(model);
-		}
-		
-		List<User> userList = dummyUsers();
-		StClass stClass = dummyClass();
-		
-		if (stClass == null) {
-			log.info("Error al acceder a los datos de la clase");
-		} else if (userList == null || userList.isEmpty()){
-			log.info("Error al acceder a los datos de los alumnos");
-		} else {
-			log.info("Creando fichero QR de la clase");
-			PdfGenerator.generateQrClassFile(userList, stClass);
-			
-			model.addAttribute("users", entityManager.createQuery(
-					"SELECT u FROM User u").getResultList());
-			model.addAttribute("stClass", entityManager.createQuery(
-					"SELECT c FROM StClass c WHERE id=2").getResultList());
-		}
+		}		
 		
 		return classes(model);
 	}

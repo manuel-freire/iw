@@ -71,7 +71,7 @@
 						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
 						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
 					</div>	
-					<form th:unless="${users == null && stClass == null}" method="POST" 
+					<form th:unless="${users == null && stClass == null}"
 							th:action="@{/admin/{id}/class/createQR(id=${session.u.id}, userList=${users}, newClass=${stClass})}">
 						<button type="submit">Descargar QR de acceso</button>
 	  				</form>  
@@ -80,7 +80,7 @@
 			<div>
 				<div class="container">
 					<label for="quantity">Número de equipos:</label>
-					<input type="number" id="quantity" name="quantity" min="1" max="99">
+					<input type="number" id="quantity" name="quantity" min="1" max="99" defaultValue="1">
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>					
 
