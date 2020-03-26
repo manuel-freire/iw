@@ -54,7 +54,8 @@ public class User {
 	private byte enabled;
 	
 	private int elo;
-//	private StClass stClass;
+	private List<StClass> stClassList;
+	private StTeam team;
 	
 	// application-specific fields
 	private String firstName;
@@ -161,14 +162,25 @@ public class User {
 		this.elo = elo;
 	}
 
-//	@ManyToOne(targetEntity = StClass.class)
-//	public StClass getStClass() {
-//		return stClass;
-//	}
-//
-//	public void setStClass(StClass stClass) {
-//		this.stClass = stClass;
-//	}
+	@OneToMany(targetEntity = StClass.class)
+	@JoinColumn(name = "teacher")
+	public List<StClass> getStClassList() {
+		return stClassList;
+	}
+
+	public void setStClassList(List<StClass> stClassList) {
+		this.stClassList = stClassList;
+	}
+	
+	@ManyToOne(targetEntity = StTeam.class)
+	@JoinColumn(name = "members")
+	public StTeam getTeam() {
+		return team;
+	}
+
+	public void setTeam(StTeam team) {
+		this.team = team;
+	}
 
 	public String getFirstName() {
 		return firstName;

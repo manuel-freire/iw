@@ -33,6 +33,7 @@ public class Contest {
 	private String name;
 	private User teacher;
 	private List<Question> questions = new ArrayList<>();
+	private byte enabled;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,5 +83,13 @@ public class Contest {
 		}
 		
 	    return stb.toString();
+	}
+
+	public byte getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(byte enabled) {
+		this.enabled = enabled;
 	}
 }

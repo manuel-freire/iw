@@ -150,7 +150,7 @@ public class AdminController {
 		} else {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveClassToDb(model, content);
+			saveClassToDb(model, target, content);
 			
 			List<User> userList = dummyUsers();
 			StClass stClass = dummyClass();
@@ -217,17 +217,22 @@ public class AdminController {
 		return contest(model);
 	}	
 	
-	private Model saveClassToDb(Model model, String content) {	
+	private Model saveClassToDb(Model model, User teacher, String content) {	
 		User student;
+		StClass stClass;
 		log.info("Inicio del procesado del fichero de clase");		
 		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
 		if (classInfo.getStClass() != null && classInfo.getStudents() != null) {
-			entityManager.persist(classInfo.getStClass());
 			for(int i = 0; i < classInfo.getStudents().size(); i++) {
 				student = classInfo.getStudents().get(i);
 				student.setPassword(passwordEncoder.encode(student.getPassword()));
 				entityManager.persist(student);
-			}
+			}		
+
+			stClass = classInfo.getStClass();
+			stClass.setTeacher(teacher);
+			entityManager.persist(stClass);
+			
 			log.info("La información se ha cargado en la base de datos correctamente");
 
 			model.addAttribute("users", entityManager.createQuery(
@@ -347,7 +352,7 @@ public class AdminController {
 	
 	public StClass dummyClass() {
 		StClass st = new StClass();
-		st.setClassName("Clase de prueba");
+		st.setName("Clase de prueba");
 		st.setId(2);
 		
 		return st;

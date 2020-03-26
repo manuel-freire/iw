@@ -18,9 +18,6 @@ import es.ucm.fdi.iw.model.User;
 public class ClassFileReader {
 	
 	private static final Logger log = LogManager.getLogger(ClassFileReader.class);
-	
-	@Autowired
-	private static PasswordEncoder passwordEncoder;
 
 	public static ClassFileDTO readClassFile(String jsonClass) {
 		ClassFileDTO classFile = new ClassFileDTO();
@@ -28,8 +25,10 @@ public class ClassFileReader {
 		try {
 			JSONObject jClass = new JSONObject(jsonClass);
 			StClass stClass = new StClass();
-			stClass.setClassName(jClass.getString("nombreClase"));
+			stClass.setName(jClass.getString("nombreClase"));
 			classFile.setStClass(stClass);
+			List<StClass> stClassList = new ArrayList<>();
+			stClassList.add(stClass);
 			
 			log.info("- Clase cargada con éxito -\n {}", stClass);
 			
@@ -49,6 +48,7 @@ public class ClassFileReader {
 				student.setUsername("ST." + String.format("%03d" , i+1));
 				student.setPassword(String.format("%03d" , i+1));
 				student.setElo(1000);
+				student.setStClassList(stClassList);
 				
 				log.info("- Estudiante cargado con éxito -\n{}", student);
 				studentList.add(student);

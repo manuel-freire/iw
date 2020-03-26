@@ -21,19 +21,25 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-//@NamedQueries({
+@NamedQueries({
 //	@NamedQuery(name="StClass.byTeacher",
 //	query="SELECT stc FROM StClass stc "
-//			+ "WHERE stc.teacher = :teacherId")
-//})
+//			+ "WHERE stc.teacher = :teacherId"),
+	@NamedQuery(name="StClass.userFromClass",
+	query="SELECT u "
+			+ "FROM StClass st JOIN st.teacher u "
+			+ "WHERE u.roles = :roles "
+			+ "AND u.enabled = 1 "
+			+ "AND st.id = :id")
+})
 
 public class StClass {
 
 	private long id;
-	private String className;
-//	private User teacher;
+	private String name;
+	private User teacher;
 
-//	private List<User> students = new ArrayList<>();
+	private List<StTeam> teamList = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,39 +51,39 @@ public class StClass {
 		this.id = id;
 	}
 
-	public String getClassName() {
-		return className;
+	public String getName() {
+		return name;
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
+	public void setName(String name) {
+		this.name = name;
 	}	
-//	
-//	@ManyToOne(targetEntity = User.class)
-//	@JoinColumn(name = "stClass")
-//	public User getTeacher() {
-//		return teacher;
-//	}
-//
-//	public User setTeacher() {
-//		return teacher;
-//	}
-//	
-//	@OneToMany(targetEntity = User.class)
-//	@JoinColumn(name = "st_class")
-//	public List<User> getStudents() {
-//		return students;
-//	}
-//
-//	public void setStudents(List<User> students) {
-//		this.students = students;
-//	}
+	
+	@ManyToOne(targetEntity = User.class)
+	@JoinColumn(name = "stClassList")
+	public User getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(User teacher) {
+		this.teacher = teacher;
+	}
+
+	@OneToMany(targetEntity = StTeam.class)
+	@JoinColumn(name = "stClass")
+	public List<StTeam> getTeams() {
+		return teamList;
+	}
+
+	public void setTeams(List<StTeam> teamList) {
+		this.teamList = teamList;
+	}
 	
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
 		
-		stb.append("Clase: " + this.getClassName() + "\n");
+		stb.append("Clase: " + this.getName() + "\n");
 		
 	    return stb.toString();
 	}
