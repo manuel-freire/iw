@@ -3,6 +3,7 @@ package es.ucm.fdi.iw.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,15 +23,11 @@ import javax.persistence.OneToMany;
 
 @Entity
 @NamedQueries({
-//	@NamedQuery(name="StClass.byTeacher",
-//	query="SELECT stc FROM StClass stc "
-//			+ "WHERE stc.teacher = :teacherId"),
-	@NamedQuery(name="StClass.userFromClass",
-	query="SELECT u "
-			+ "FROM StClass st JOIN st.teacher u "
-			+ "WHERE u.roles = :roles "
-			+ "AND u.enabled = 1 "
-			+ "AND st.id = :id")
+	@NamedQuery(name="StClass.studentsFromClass",
+	query="SELECT t FROM StClass stc JOIN stc.teacher t "
+			+ "WHERE t.roles = 'USER' "
+			+ "AND t.enabled = 1 "
+			+ "AND stc.id = :classId")
 })
 
 public class StClass {
@@ -39,7 +36,7 @@ public class StClass {
 	private String name;
 	private User teacher;
 
-	private List<StTeam> teamList = new ArrayList<>();
+	private List<User> students = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,15 +65,15 @@ public class StClass {
 	public void setTeacher(User teacher) {
 		this.teacher = teacher;
 	}
-
-	@OneToMany(targetEntity = StTeam.class)
+	
+	@OneToMany(targetEntity = User.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "stClass")
-	public List<StTeam> getTeams() {
-		return teamList;
+	public List<User> getStudents() {
+		return students;
 	}
 
-	public void setTeams(List<StTeam> teamList) {
-		this.teamList = teamList;
+	public void setStudents(List<User> students) {
+		this.students = students;
 	}
 	
 	@Override

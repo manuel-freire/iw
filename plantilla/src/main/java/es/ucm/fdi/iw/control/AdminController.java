@@ -161,15 +161,8 @@ public class AdminController {
 				log.info("Error al acceder a los datos de los alumnos");
 			} else {
 				log.info("Creando fichero QR de la clase");
-				String qrFile = PdfGenerator.generateQrClassFile(userList, stClass);
-				
-				model.addAttribute("users", entityManager.createQuery(
-						"SELECT u FROM User u").getResultList());
-				model.addAttribute("stClass", entityManager.createQuery(
-						"SELECT c FROM StClass c WHERE id=2").getResultList());
-				
+				String qrFile = PdfGenerator.generateQrClassFile(userList, stClass);				
 				uploadToTemp(qrFile);
-
 		    }
 		}
 		
@@ -217,28 +210,33 @@ public class AdminController {
 		return contest(model);
 	}	
 	
-	private Model saveClassToDb(Model model, User teacher, String content) {	
-		User student;
-		StClass stClass;
+	private Model saveClassToDb(Model model, User teacher, String content) {
 		log.info("Inicio del procesado del fichero de clase");		
-		ClassFileDTO classInfo = ClassFileReader.readClassFile(content);
-		if (classInfo.getStClass() != null && classInfo.getStudents() != null) {
-			for(int i = 0; i < classInfo.getStudents().size(); i++) {
-				student = classInfo.getStudents().get(i);
+		StClass stClass = ClassFileReader.readClassFile(content);
+		if (stClass != null) {
+			for(User student: stClass.getStudents()) {
+				log.info("{} - {} \n \n ", student.getId(), student.hashCode());
 				student.setPassword(passwordEncoder.encode(student.getPassword()));
 				entityManager.persist(student);
 			}		
 
-			stClass = classInfo.getStClass();
 			stClass.setTeacher(teacher);
+			teacher.getStClassList().add(stClass);
 			entityManager.persist(stClass);
+			entityManager.persist(teacher);
 			
 			log.info("La información se ha cargado en la base de datos correctamente");
 
-			model.addAttribute("users", entityManager.createQuery(
-					"SELECT u FROM User u").getResultList());
-			model.addAttribute("stClass", entityManager.createQuery(
-					"SELECT c FROM StClass c WHERE id=2").getResultList());				
+//			model.addAttribute("users", entityManager.createQuery(
+//					"SELECT u FROM User u").getResultList());
+//			model.addAttribute("stClass", entityManager.createQuery(
+//					"SELECT c FROM StClass c WHERE id=" + stClass.getId()).getResultList());		
+			
+			model.addAttribute("users", entityManager.createNamedQuery("User.userFromClass", User.class)
+                    .setParameter("classId", stClass.getId()).getResultList());
+			log.info("{} \n\n\n", entityManager.createNamedQuery("User.userFromClass", User.class)
+					.setParameter("classId", stClass.getId()).getResultList());	
+	
 		} else {
 			log.warn("La información de la clase está incompleta");
 		}

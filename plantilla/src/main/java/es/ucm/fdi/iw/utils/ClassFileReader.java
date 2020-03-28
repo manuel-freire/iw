@@ -19,23 +19,19 @@ public class ClassFileReader {
 	
 	private static final Logger log = LogManager.getLogger(ClassFileReader.class);
 
-	public static ClassFileDTO readClassFile(String jsonClass) {
-		ClassFileDTO classFile = new ClassFileDTO();
-		
+	public static StClass readClassFile(String jsonClass) {
+		StClass stClass = new StClass();
+		User student;
+				
 		try {
 			JSONObject jClass = new JSONObject(jsonClass);
-			StClass stClass = new StClass();
 			stClass.setName(jClass.getString("nombreClase"));
-			classFile.setStClass(stClass);
-			List<StClass> stClassList = new ArrayList<>();
-			stClassList.add(stClass);
 			
 			log.info("- Clase cargada con éxito -\n {}", stClass);
 			
 			JSONArray jStudentsList = jClass.getJSONArray("alumnos");
 			JSONObject jStudent;
 			List<User> studentList = new ArrayList<>();
-			User student;
 			
 			for (int i = 0; i < jStudentsList.length(); i++) {
 				jStudent = jStudentsList.getJSONObject(i);
@@ -48,19 +44,19 @@ public class ClassFileReader {
 				student.setUsername("ST." + String.format("%03d" , i+1));
 				student.setPassword(String.format("%03d" , i+1));
 				student.setElo(1000);
-				student.setStClassList(stClassList);
+				student.setStClass(stClass);
 				
 				log.info("- Estudiante cargado con éxito -\n{}", student);
 				studentList.add(student);
 			}
 			
-			classFile.setStudents(studentList);
+			stClass.setStudents(studentList);
 			
 		} catch (JSONException e) {
 			log.warn("Error durante el procesado. Por favor revisa el fichero", e);
 		}
 		
-		return classFile;
+		return stClass;
 	}
 
 }

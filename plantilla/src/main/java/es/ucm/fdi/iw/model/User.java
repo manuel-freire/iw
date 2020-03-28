@@ -3,6 +3,7 @@ package es.ucm.fdi.iw.model;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 	@NamedQuery(name="User.hasUsername",
 	query="SELECT COUNT(u) "
 			+ "FROM User u "
-			+ "WHERE u.username = :username")
+			+ "WHERE u.username = :username"),
+	@NamedQuery(name="User.userFromClass",
+	query="SELECT u FROM User u JOIN u.stClass st  "
+			+ "WHERE u.roles = 'USER' "
+			+ "AND u.enabled = 1 "
+			+ "AND st.id = :classId")
 })
 
 public class User {
@@ -53,15 +59,15 @@ public class User {
 	private String roles; // split by ',' to separate roles
 	private byte enabled;
 	
-	private int elo;
-	private List<StClass> stClassList;
-	private StTeam team;
-	
 	// application-specific fields
 	private String firstName;
 	private String lastName;
 	
-	private List<Contest> contests;
+	private int elo;
+	private List<StClass> stClassList;
+	private StTeam team;
+	private StClass stClass;	
+	private List<Contest> contestList;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -153,6 +159,22 @@ public class User {
 	public static void setEncoder(BCryptPasswordEncoder encoder) {
 		User.encoder = encoder;
 	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 	
 	public int getElo() {
 		return elo;
@@ -162,7 +184,7 @@ public class User {
 		this.elo = elo;
 	}
 
-	@OneToMany(targetEntity = StClass.class)
+	@OneToMany(targetEntity = StClass.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "teacher")
 	public List<StClass> getStClassList() {
 		return stClassList;
@@ -182,30 +204,24 @@ public class User {
 		this.team = team;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	@ManyToOne(targetEntity = StClass.class)
+	@JoinColumn(name = "students")
+	public StClass getStClass() {
+		return stClass;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setStClass(StClass stClass) {
+		this.stClass = stClass;
 	}
 
 	@OneToMany(targetEntity = Contest.class)
 	@JoinColumn(name = "teacher")
 	public List<Contest> getContests() {
-		return contests;
+		return contestList;
 	}
 
 	public void setContests(List<Contest> contests) {
-		this.contests = contests;
+		this.contestList = contests;
 	}
 	
 	@Override
