@@ -50,7 +50,7 @@ public class ContestFileReader {
 				
 				answerList = new ArrayList<>();
 				for(int j = 0; j < ConstantsClass.NUM_ANSWERS; j++) {
-					answerParams = jQuestion.getString(Integer.toString(j+1)).split(ConstantsClass.SCORE_SEPARATOR);
+					answerParams = jQuestion.getString(Integer.toString(j+1)).split(ConstantsClass.SEPARATOR);
 					log.info(answerParams);
 					answer = new Answer();
 					answer.setQuestion(question);

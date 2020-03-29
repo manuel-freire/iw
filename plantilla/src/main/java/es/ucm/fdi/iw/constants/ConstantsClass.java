@@ -19,5 +19,5 @@ public class ConstantsClass {
 	public static int NUM_ROWS = 10;
 	
 	public static int NUM_ANSWERS = 4;
-	public static String SCORE_SEPARATOR = "-->";
+	public static String SEPARATOR = "-->";
 }

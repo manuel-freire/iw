@@ -35,12 +35,12 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.itextpdf.text.DocumentException;
 
 import es.ucm.fdi.iw.LocalData;
-import es.ucm.fdi.iw.constants.ClassFileDTO;
 import es.ucm.fdi.iw.constants.ConstantsClass;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Question;
 import es.ucm.fdi.iw.model.StClass;
+import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 import es.ucm.fdi.iw.utils.ClassFileReader;
@@ -164,6 +164,57 @@ public class AdminController {
 				String qrFile = PdfGenerator.generateQrClassFile(userList, stClass);				
 				uploadToTemp(qrFile);
 		    }
+		}
+		
+		return classes(model);
+	}	
+	
+	@PostMapping("/{id}/class/createTeams")
+	@Transactional
+	public String createTeams(
+			HttpServletResponse response,
+			@RequestParam("teamComp") List<String> teamComp,
+			@RequestParam("numTeams") String numTeams,
+			@PathVariable("id") String id,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return classes(model);
+		}
+		
+		log.info("Profesor {} creando equipos", id);
+		List<String> teamComps = teamComp;
+		String numTeamss = numTeams;
+
+		log.info(numTeams);
+		log.info("{}", teamComp);
+		
+		
+		if (teamComp == null || teamComp.isEmpty()) {
+			log.info("No se han creado equipos o ningún alumno ha sido asignado");
+		} else {
+			List<StTeam> teams = new ArrayList<>();
+			String studentInfo[];
+			String username;
+			
+			log.info(numTeams);
+			log.info("{}", teamComp);
+			
+//			for(int i = 0; i < Integer.valueOf(numTeams); i++) {
+//				log.info("Creando " + numTeams + " equipos");
+//				teams.add(new StTeam());
+//			}
+//			
+//			for(int j = 0; j < teamComp.size(); j++) {
+//				studentInfo = teamComp.get(j).split(",");
+//				username= studentInfo[0].split(" - ")[0];
+//				log.info(username);
+//			}
 		}
 		
 		return classes(model);

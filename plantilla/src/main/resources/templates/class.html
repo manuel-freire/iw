@@ -72,7 +72,7 @@
 						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
 					</div>	
 					<form th:unless="${users == null && stClass == null}"
-							th:action="@{/admin/{id}/class/createQR(id=${session.u.id}, userList=${users}, newClass=${stClass})}">
+							th:action="@{/admin/{id}/class/createQR(id=${session.u.id})}">
 						<button type="submit">Descargar QR de acceso</button>
 	  				</form>  
 				</div>
@@ -85,11 +85,21 @@
 				</div>					
 
 				<div class="scroll" id="scrollTeam" style="width:750px">
-					<div class="container">
 					<table class="adminTable" id="teamTable" name="teamTable">
-					<tr id="teamList"><th>Lista de equipos</th>
+					<tr><th>Lista de equipos</th></tr>
+					<tr id="teamList"></tr>
 					</table>
-				</div>	
+				</div>
+
+				<form th:unless="${users == null && stClass == null}" method="POST" 
+						th:action="@{/admin/{id}/class/createTeams(id=${session.u.id})}">
+					<input type="hidden" name="teamComp" id="teamComp"/>
+					<input type="hidden" name="numTeams" id="numTeams"/>
+					<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
+  				</form>  
+
+  				<button onclick="getTeams()">Prueba get equipos</button>
+
 			</div>
 		</div>
 			
@@ -99,26 +109,27 @@
 	<script type="text/javascript">
 
 		function createTeams(quantity) {
-			var i;
 			var container;
 			var title;
 			var scroll;
 			var wrapper;
 			var row;
+			var i;
 
 			//wrapper = document.getElementById('teamTable');
 			//wrapper = document.getElementById('scrollTeam');
 
-			for (i = 1; i <= quantity; i++) {
+			for (i = 0; i < quantity; i++) {
 				wrapper = document.createElement('div');
 
 				title = document.createElement('h2');
-  				title.innerHTML = "Equipo " + i.toString();
+  				title.innerHTML = "Equipo " + "" + (i+1);
 
   				container = document.createElement('div');
   				container.setAttribute("class", "team");
 
   				scroll = document.createElement('div');
+  				scroll.setAttribute("id", "team_" + "" + i);
   				scroll.setAttribute("class", "scroll");
   				scroll.setAttribute("ondrop", "drop(event, this)");
   				scroll.setAttribute("ondragover", "allowDrop(event)");
@@ -131,6 +142,33 @@
   				team.appendChild(wrapper);
   				document.getElementById('teamList').appendChild(team);
   			}
+		}
+
+		function getTeamComp() {
+			var teams= document.getElementById('teamList').querySelectorAll(".scroll");
+			var members;
+			var teamComp = [];
+			var i;
+			var j;
+
+			for (i = 0; i < teams.length; i++) {
+				members = teams[i].querySelectorAll(".droptarget");
+				for (j=0; j < members.length; j++) {
+					teamComp.push(members[j].innerHTML + "-->" + i);
+				}
+			} 
+
+			return teamComp;
+		}
+
+		function getNumTeams() {
+			var numTeams = document.getElementById('quantity').value;
+			return numTeams;
+		}
+
+		function setTeamsInfo() {
+			document.getElementById("teamComp").value = getTeamComp();
+			document.getElementById("numTeams").value = getNumTeams();
 		}
 
 		function allowDrop(ev) {
