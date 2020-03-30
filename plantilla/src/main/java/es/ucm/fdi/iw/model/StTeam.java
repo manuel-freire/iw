@@ -30,7 +30,7 @@ import javax.persistence.OneToMany;
 public class StTeam {
 	
 	private long id;
-	private String name;
+	private String teamName;
 	private StClass stClass;
 	
 	private int elo;
@@ -50,12 +50,12 @@ public class StTeam {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getTeamName() {
+		return teamName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
 	}
 
 	@ManyToOne(targetEntity = StClass.class)
@@ -109,4 +109,16 @@ public class StTeam {
 	public void setMembers(List<User> members) {
 		this.members = members;
 	}	
+	
+	@Override
+	public String toString() {
+		StringBuilder stb = new StringBuilder();
+		
+		stb.append(this.teamName + "\n");
+		for (int i = 0; i < this.members.size(); i++) {
+			stb.append(this.members.get(i).toString() + "\n");
+		}
+		
+	    return stb.toString();
+	}
 }

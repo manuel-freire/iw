@@ -23,11 +23,9 @@ import javax.persistence.OneToMany;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name="StClass.studentsFromClass",
-	query="SELECT t FROM StClass stc JOIN stc.teacher t "
-			+ "WHERE t.roles = 'USER' "
-			+ "AND t.enabled = 1 "
-			+ "AND stc.id = :classId")
+	@NamedQuery(name="StClass.byId",
+	query="SELECT st FROM StClass st "
+			+ "WHERE st.id = :classId")
 })
 
 public class StClass {

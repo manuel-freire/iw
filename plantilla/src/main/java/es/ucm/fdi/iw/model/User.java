@@ -39,7 +39,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 	query="SELECT u FROM User u JOIN u.stClass st  "
 			+ "WHERE u.roles = 'USER' "
 			+ "AND u.enabled = 1 "
-			+ "AND st.id = :classId")
+			+ "AND st.id = :classId"),
+	@NamedQuery(name="User.classFromUser",
+	query="SELECT u.stClass FROM User u "
+			+ "WHERE u.username = :username AND u.enabled = 1"),
 })
 
 public class User {

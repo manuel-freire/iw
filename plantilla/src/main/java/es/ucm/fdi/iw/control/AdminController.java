@@ -169,6 +169,18 @@ public class AdminController {
 		return classes(model);
 	}	
 	
+	@GetMapping("/{id}/class/createQR")
+	public StreamingResponseBody getQrFile(@PathVariable long id, Model model) throws IOException {		
+		File f = localData.getFile("qrcodes", ConstantsClass.QR_FILE + "." + ConstantsClass.PDF);
+		InputStream in = new BufferedInputStream(new FileInputStream(f));
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream os) throws IOException {
+				FileCopyUtils.copy(in, os);
+			}
+		};
+	}
+	
 	@PostMapping("/{id}/class/createTeams")
 	@Transactional
 	public String createTeams(
@@ -187,50 +199,54 @@ public class AdminController {
 			return classes(model);
 		}
 		
-		log.info("Profesor {} creando equipos", id);
-		List<String> teamComps = teamComp;
-		String numTeamss = numTeams;
-
-		log.info(numTeams);
-		log.info("{}", teamComp);
-		
-		
 		if (teamComp == null || teamComp.isEmpty()) {
 			log.info("No se han creado equipos o ningún alumno ha sido asignado");
 		} else {
+			log.info("Profesor {} creando equipos", id);	
+			
 			List<StTeam> teams = new ArrayList<>();
-			String studentInfo[];
+			StTeam team;
+			User student;
+			
+			String[] studentInfo;
 			String username;
+			int teamIndex;
 			
-			log.info(numTeams);
-			log.info("{}", teamComp);
+			for (int i = 0; i < Integer.valueOf(numTeams); i++) {
+				team = new StTeam();
+				team.setBronze(0);
+				team.setSilver(0);
+				team.setGold(0);
+				team.setTeamName("Equipo " + (i+1));
+				team.setMembers(new ArrayList<>());
+				teams.add(team);
+				entityManager.persist(team);
+			}// ELO, MIEMBROS, CLASE
+
+			for (int j = 0; j < teamComp.size(); j++) {
+				studentInfo = teamComp.get(j).split(ConstantsClass.SEPARATOR);
+				username = studentInfo[0].split(" - ")[0];
+				teamIndex = Integer.valueOf(studentInfo[1]);
+				student = entityManager.createNamedQuery("User.byUsername", User.class)
+	                    .setParameter("username", username).getSingleResult();
+				if (student != null) {
+					team = teams.get(teamIndex);
+					team.getMembers().add(student);
+					student.setTeam(team);
+					entityManager.persist(student);
+				} else {
+					log.info("No existe ningún alumno con ese nombre de usuario");
+				}
+			}
 			
-//			for(int i = 0; i < Integer.valueOf(numTeams); i++) {
-//				log.info("Creando " + numTeams + " equipos");
-//				teams.add(new StTeam());
-//			}
-//			
-//			for(int j = 0; j < teamComp.size(); j++) {
-//				studentInfo = teamComp.get(j).split(",");
-//				username= studentInfo[0].split(" - ")[0];
-//				log.info(username);
-//			}
-		}
+			for(int k = 0; k < Integer.valueOf(numTeams); k++) {
+				log.info("{} \n\n\n", teams.get(k));
+			}
+
+		}	
 		
 		return classes(model);
 	}	
-	
-	@GetMapping("/{id}/class/createQR")
-	public StreamingResponseBody getQrFile(@PathVariable long id, Model model) throws IOException {		
-		File f = localData.getFile("qrcodes", ConstantsClass.QR_FILE + "." + ConstantsClass.PDF);
-		InputStream in = new BufferedInputStream(new FileInputStream(f));
-		return new StreamingResponseBody() {
-			@Override
-			public void writeTo(OutputStream os) throws IOException {
-				FileCopyUtils.copy(in, os);
-			}
-		};
-	}
 	
 	@PostMapping("/{id}/contest")
 	@Transactional
@@ -285,8 +301,6 @@ public class AdminController {
 			
 			model.addAttribute("users", entityManager.createNamedQuery("User.userFromClass", User.class)
                     .setParameter("classId", stClass.getId()).getResultList());
-			log.info("{} \n\n\n", entityManager.createNamedQuery("User.userFromClass", User.class)
-					.setParameter("classId", stClass.getId()).getResultList());	
 	
 		} else {
 			log.warn("La información de la clase está incompleta");
