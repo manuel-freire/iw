@@ -6,7 +6,7 @@ const ws = {
 	/**
 	 * Number of retries if connection fails
 	 */
-	retries: 5,
+	retries: 3,
 		
 	/**
 	 * Default action when message is received. 
@@ -15,6 +15,8 @@ const ws = {
 		console.log(text);
 	},
 	
+	headers: {'X-CSRF-TOKEN' : config.csrf.value},
+	
 	/**
 	 * Attempts to establish communication with the specified
 	 * web-socket endpoint. If successfull, will call 
@@ -22,11 +24,8 @@ const ws = {
 	initialize: (endpoint, subs = []) => {
 		try {
 			ws.stompClient = Stomp.client(endpoint);
-			if (ws.retries -- > 0) {
-				ws.stompClient.reconnect_delay = 2000;		// reconexión automática tras 2s		
-			}
-			const headers = {'X-CSRF-TOKEN' : config.csrf.value}
-			ws.stompClient.connect(headers, () => {
+			ws.stompClient.reconnect_delay = (ws.retries -- > 0) ? 2000 : 0;
+			ws.stompClient.connect(ws.headers, () => {
 		        ws.connected = true;
 		        console.log('Connected to ', endpoint, ' - subscribing...');		        
 		        while (subs.length != 0) {
@@ -42,7 +41,7 @@ const ws = {
 	subscribe: (sub) => {
         try {
 	        ws.stompClient.subscribe(sub, 
-	        		(m) => ws.receive(JSON.parse(m.body)));	// falla si no recibe JSON!	        	
+	        		(m) => ws.receive(JSON.parse(m.body))); 	// falla si no recibe JSON!
         	console.log("Hopefully subscribed to " + sub);
         } catch (e) {
         	console.log("Error, could not subscribe to " + sub);

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><th:block th:replace="fragments/head :: header"/>
+	<title>Mensajes</title>
+
+	<script th:src="@{/js/simple-datatables-2.1.10.min.js}"></script>
+	<link th:href="@{/css/simple-datatables-2.1.10.css}" rel="stylesheet">
+</head>
+<body>
+	<nav th:replace="fragments/nav.html :: nav">
+		Nav goes here
+	</nav>
+	
+	<div class="container">
+	<div class="main">
+	<h1>Mensajes recibidos</h1>
+	
+	<table class="datatable" id="datatable"></table>
+	
+	</div>
+	</div>	
+	<script>
+	new simpleDatatables.DataTable(
+		'#datatable', { 
+		    ajax: {
+		        url: "received", // relativo a url actual
+		        load: function(xhr) {
+		        	let data = JSON.parse(xhr.responseText);
+		        	for (let i=0; i<data.length; i++) {
+		        		let row = data[i];
+		        		row.sent = new Date(row.sent).toLocaleString("es-ES").split(" ").join("@");
+		        		if (row.received) {
+		        			row.received = new Date(row.received).toLocaleString("es-ES").split(" ").join("@");
+		        		}
+		        	}
+		        	
+		        	return JSON.stringify(data);
+		        }
+		    }
+		}
+	);
+	</script>
+</body>
+</html>

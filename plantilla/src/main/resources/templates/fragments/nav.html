@@ -10,9 +10,9 @@
 		<a class="logo" href="" th:href="@{/}"></a>
 		<span class="sitename">Plantilla de IW</span>
 
-		<div class="logx" th:if="${session.u}">			
-			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">admin</a>
-			<a th:if="${session.g} neq null" th:href="@{/clase/}">clase</a>
+		<div class="logx" th:if="${session.u}">
+			<a id="received" th:href="@{/message/}" th:text="${session.unread} ? '📬': '📪'">📫</a>			
+			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">administrar</a>
 			<a th:href="@{/logout}" href="/logout">logout</a>
 			<a th:href="@{/user/{id}(id=${session.u.id})}">
 				<img class="userthumb" th:src="@{/user/{id}/photo(id=${session.u.id})}">
@@ -35,7 +35,7 @@
 					<input type="hidden" name="username" value="b">
 					<input type="hidden" name="password" value="aa">
 					<button type="submit">b</button>
-  				</form> 
+  				</form>
   			</div>
 		</div>		
 	</nav>

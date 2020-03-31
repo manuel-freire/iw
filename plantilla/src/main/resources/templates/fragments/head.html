@@ -9,7 +9,7 @@
 	<script type="text/javascript">
 		const config = {
 			socketUrl: "[[${session.ws}?:'']]",	// vacío indica falso
-			apiUrl: "[[${session.ws}?@{/api/v/}:'']]",
+			rootUrl: "[[${session.ws}?@{/}:'']]",
 			csrf: {
 				name: "[[${_csrf.parameterName}]]",
 				value: "[[${_csrf.token}]]"

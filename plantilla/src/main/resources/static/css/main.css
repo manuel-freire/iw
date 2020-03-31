@@ -73,6 +73,10 @@ footer img {
 	display: block;
 }
 
+div.datatable {
+	margin: 0 2em 2em 2em;
+}
+
 /* to highlight debug elements */
 .debug {
 	padding: 5px;
