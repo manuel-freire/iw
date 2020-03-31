@@ -74,7 +74,7 @@
 					<form th:unless="${users == null}"
 							th:action="@{/admin/{id}/class/createQR(id=${session.u.id})}">
 						<button type="submit">Descargar QR de acceso</button>
-	  				</form>  
+	  				</form>   
 				</div>
 			</div>
 			<div>
@@ -92,13 +92,11 @@
 				</div>
 
 				<form th:unless="${users == null}" method="POST" 
-						th:action="@{/admin/{id}/class/createTeams(id=${session.u.id})}">
+						th:action="@{/admin/{id}/class/createTeams/{classId}(id=${session.u.id},classId=${stClass.id})}">
 					<input type="hidden" name="teamComp" id="teamComp"/>
 					<input type="hidden" name="numTeams" id="numTeams"/>
 					<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
   				</form>  
-
-  				<button onclick="getTeams()">Prueba get equipos</button>
 
 			</div>
 		</div>

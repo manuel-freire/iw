@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,20 +151,7 @@ public class AdminController {
 		} else {
 			String content = new String(classFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveClassToDb(model, target, content);
-			
-			List<User> userList = dummyUsers();
-			StClass stClass = dummyClass();
-			
-			if (stClass == null) {
-				log.info("Error al acceder a los datos de la clase");
-			} else if (userList == null || userList.isEmpty()){
-				log.info("Error al acceder a los datos de los alumnos");
-			} else {
-				log.info("Creando fichero QR de la clase");
-				String qrFile = PdfGenerator.generateQrClassFile(userList, stClass);				
-				uploadToTemp(qrFile);
-		    }
+			saveClassToDb(model, target, content);			
 		}
 		
 		return classes(model);
@@ -181,13 +169,14 @@ public class AdminController {
 		};
 	}
 	
-	@PostMapping("/{id}/class/createTeams")
+	@PostMapping("/{id}/class/createTeams/{classId}")
 	@Transactional
 	public String createTeams(
 			HttpServletResponse response,
 			@RequestParam("teamComp") List<String> teamComp,
 			@RequestParam("numTeams") String numTeams,
 			@PathVariable("id") String id,
+			@PathVariable("classId") String classId,
 			Model model, HttpSession session) throws IOException, DocumentException {
 		User target = entityManager.find(User.class, Long.parseLong(id));
 		model.addAttribute("user", target);
@@ -205,6 +194,7 @@ public class AdminController {
 			log.info("Profesor {} creando equipos", id);	
 			
 			List<StTeam> teams = new ArrayList<>();
+			StClass stClass= entityManager.find(StClass.class, Long.parseLong(classId));
 			StTeam team;
 			User student;
 			
@@ -217,18 +207,22 @@ public class AdminController {
 				team.setBronze(0);
 				team.setSilver(0);
 				team.setGold(0);
+				team.setElo(1000);
 				team.setTeamName("Equipo " + (i+1));
+				team.setStClass(stClass);
 				team.setMembers(new ArrayList<>());
 				teams.add(team);
 				entityManager.persist(team);
-			}// ELO, MIEMBROS, CLASE
+			}
 
 			for (int j = 0; j < teamComp.size(); j++) {
 				studentInfo = teamComp.get(j).split(ConstantsClass.SEPARATOR);
 				username = studentInfo[0].split(" - ")[0];
 				teamIndex = Integer.valueOf(studentInfo[1]);
-				student = entityManager.createNamedQuery("User.byUsername", User.class)
-	                    .setParameter("username", username).getSingleResult();
+				student = entityManager.createNamedQuery("User.userInClass", User.class)
+	                    .setParameter("username", username)
+	                    .setParameter("classId", stClass.getId())
+	                    .getSingleResult();
 				if (student != null) {
 					team = teams.get(teamIndex);
 					team.getMembers().add(student);
@@ -239,9 +233,8 @@ public class AdminController {
 				}
 			}
 			
-			for(int k = 0; k < Integer.valueOf(numTeams); k++) {
-				log.info("{} \n\n\n", teams.get(k));
-			}
+			stClass.setTeamList(teams);
+			entityManager.persist(stClass);			
 
 		}	
 		
@@ -277,7 +270,7 @@ public class AdminController {
 		return contest(model);
 	}	
 	
-	private Model saveClassToDb(Model model, User teacher, String content) {
+	private Model saveClassToDb(Model model, User teacher, String content) throws MalformedURLException, DocumentException, IOException {
 		log.info("Inicio del procesado del fichero de clase");		
 		StClass stClass = ClassFileReader.readClassFile(content);
 		if (stClass != null) {
@@ -293,14 +286,18 @@ public class AdminController {
 			entityManager.persist(teacher);
 			
 			log.info("La información se ha cargado en la base de datos correctamente");
-
-//			model.addAttribute("users", entityManager.createQuery(
-//					"SELECT u FROM User u").getResultList());
-//			model.addAttribute("stClass", entityManager.createQuery(
-//					"SELECT c FROM StClass c WHERE id=" + stClass.getId()).getResultList());		
 			
-			model.addAttribute("users", entityManager.createNamedQuery("User.userFromClass", User.class)
+			if (stClass.getStudents() == null || stClass.getStudents().isEmpty()){
+				log.info("Error al acceder a los datos de los alumnos");
+			} else {
+				log.info("Creando fichero QR de la clase");
+				String qrFile = PdfGenerator.generateQrClassFile(stClass.getStudents(), stClass);				
+				uploadToTemp(qrFile);
+		    }
+			
+			model.addAttribute("users", entityManager.createNamedQuery("User.wholeClass", User.class)
                     .setParameter("classId", stClass.getId()).getResultList());
+			model.addAttribute("stClass", entityManager.find(StClass.class, stClass.getId()));
 	
 		} else {
 			log.warn("La información de la clase está incompleta");

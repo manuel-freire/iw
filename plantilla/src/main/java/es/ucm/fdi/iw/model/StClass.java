@@ -35,6 +35,7 @@ public class StClass {
 	private User teacher;
 
 	private List<User> students = new ArrayList<>();
+	private List<StTeam> teamList = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,12 +74,26 @@ public class StClass {
 	public void setStudents(List<User> students) {
 		this.students = students;
 	}
+
+	@OneToMany(targetEntity = StTeam.class)
+	@JoinColumn(name = "stClass")
+	public List<StTeam> getTeamList() {
+		return teamList;
+	}
+
+	public void setTeamList(List<StTeam> teamList) {
+		this.teamList = teamList;
+	}
 	
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
 		
 		stb.append("Clase: " + this.getName() + "\n");
+		stb.append("Profesor/a: {}" + this.teacher + "\n");
+		for (int i = 0; i < this.students.size(); i++) {
+			stb.append(this.students.get(i).toString() + "\n");
+		}
 		
 	    return stb.toString();
 	}

@@ -25,6 +25,7 @@ public class ClassFileReader {
 		try {
 			JSONObject jClass = new JSONObject(jsonClass);
 			stClass.setName(jClass.getString("nombreClase"));
+			stClass.setTeamList(new ArrayList<>());
 			
 			log.info("- Clase cargada con éxito -\n {}", stClass);
 			
