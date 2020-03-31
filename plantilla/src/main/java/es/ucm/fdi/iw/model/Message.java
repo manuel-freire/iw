@@ -51,13 +51,10 @@ public class Message {
 	 * @return
 	 * @throws JsonProcessingException
 	 */
-	@SafeVarargs
-	public static List<Transfer> asTransferObjects(Collection<Message> ...messages) {
+	public static List<Transfer> asTransferObjects(Collection<Message> messages) {
 		ArrayList<Transfer> all = new ArrayList<>();
-		for (Collection<Message> ms: messages) {
-			for (Message m : ms) {
-				all.add(new Transfer(m));
-			}
+		for (Message m : messages) {
+			all.add(new Transfer(m));
 		}
 		return all;
 	}

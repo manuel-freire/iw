@@ -228,7 +228,7 @@ function validaUsername(username) {
     // Spring Security lo añade en formularios html, pero no en Ajax
     params[config.csrf.name] = config.csrf.value;
     // petición en sí
-    return go(config.apiUrl + "/username", 'GET', params)
+    return go(config.rootUrl + "/username", 'GET', params)
         .then(d => "")
         .catch(() => "nombre de usuario inválido o duplicado");
 }
@@ -551,9 +551,6 @@ messagingTemplate.convertAndSend("/topic/admin", json);
 ~~~{.java}
 		User requester = (User)session.getAttribute("u");
 		
-    ObjectMapper mapper = new ObjectMapper();
-		ObjectNode rootNode = mapper.createObjectNode();
-		rootNode.put("text", requester.getUsername() + " is looking up " + u.getUsername());
 		String json = "{ \"text\": " 
       + requester.getUsername() + " is looking up " + u 
       + "}";
