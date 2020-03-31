@@ -142,7 +142,7 @@ fetch('https://no-such-server.blabla') // seguramente falle
   .then(json => console.log(json.nombre_y_apellidos))
   .catch(e => console.log(e))          // y por tanto se haga ésto
 
-// es casi seguro que el fetch todavía habrá acabado al llegar aquí
+// es casi seguro que el fetch todavía NO habrá acabado al llegar aquí
 console.log("Me imprimo antes de que el fetch acabe")
 ~~~
 
@@ -194,6 +194,14 @@ En la asignatura, usaremos Ajax para:
 
 En general, siempre que quieras no recargar página (pero hacer una petición), un fetch estaría justificado. Y más si la página es cara de construir (ejemplo: listado)
 
+## JQuery y JS moderno
+
+* [JQuery]() facilita mucho interaccionar con el modelo (DOM) de las páginas. **Su uso en la asignatura es opcional**.
+* En los ejemplos, y en la plantilla, **no lo usaré** - porque de un tiempo a esta parte, [hay equivalentes no-JQuery](https://plainjs.com/javascript/):
+  - `$(selector)` $\larrow$ `document.querySelectorAll(selector)`
+  - `$(html)` $\larrow$ `const el = document.createElement('div'); el.innerHTML(html)`
+  - ... (más en [web de plainjs](https://plainjs.com/javascript/)
+
 ## Ajax para validación
 
 Recordamos el código de validación estándar:
@@ -208,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
         () => u.setCustomValidity(  // si "", válido; si no, inválido
             validaUsername(u.value))
 }
-~~~~
+~~~
 
 ---
 
@@ -217,14 +225,14 @@ Y ahora, el ajax (asumimos uso de función `go` anterior)
 ~~~{.java}
 function validaUsername(username) {
     let params = {username: username};
-    // Spring Security inyecta esto en formularios html, pero no en Ajax
+    // Spring Security lo añade en formularios html, pero no en Ajax
     params[config.csrf.name] = config.csrf.value;
     // petición en sí
     return go(config.apiUrl + "/username", 'GET', params)
         .then(d => "")
         .catch(() => "nombre de usuario inválido o duplicado");
 }
-~~~~
+~~~
 
 ---
 
@@ -233,67 +241,87 @@ Y en el servidor, un manejador normal y corriente (el servidor no distingue entr
 ~~~{.java}
 @GetMapping("/username")
 public String getUser(@RequestParam (required=false) String uname) {
-    User u = entityManager.find(User.class, id);
-    model.addAttribute("user", u);
-    return "user";
+    User u = buscaUsuarioOLanzaExcepcion(uname);
+    return "user"; // devuelve una vista completa
 }
-~~~~
+~~~
+
+~~~{.java}
+@GetMapping("/username")
+@ResponseBody // <-- "lo que devuelvo es la respuesta, tal cual"
+public String getUser(@RequestParam (required=false) String uname) {
+    User u = buscaUsuarioOLanzaExcepcion(uname);
+    return "user"; // devuelve la cadena 'OK': gasta menos recursos
+}
+~~~
 
 ## Ajax para carga dinámica de resultados
 
-(falta por rellenar)
+* Usaremos [Simple Datatables](https://github.com/fiduswriter/Simple-DataTables) como _datatable_ (hay muchas alternativas; podeis elegir la que más os guste)
+  - Código libre
+  - No requiere ninguna librería externa, ni siquiera JQuery
+  - Ajax muy sencillo
+  - Incluida en última versión de la plantilla, siguiendo instrucciones de su ["manual"](https://github.com/fiduswriter/Simple-DataTables/wiki/ajax)
 
-## Ajax para botones
+---
 
-En general, el lado cliente es sencillo...
+En el cliente...
 
 ~~~{.html}
-<!-- Sin Ajax -->
-<td><form method="post" 
-  th:action="@{/admin/toggleuser(id=${u.id})}">
-  <button type="submit"
-     th:text="${u.enabled eq 1 ? 'inactivar' : 'activar'}" ></button>
-</form>
-
-<!-- Ajaxificado -->
-<td><form method="post" 
-  th:action="@{/admin/toggleuser(id=${u.id})}">
-  <button type="submit"
-     class="toggle" th:attr="data-el_id=${element.getId()}" 
-     th:text="${u.enabled eq 1 ? 'inactivar' : 'activar'}" ></button>
-</form>
+<script th:src="@{/js/simple-datatables-2.1.10.min.js}"></script>
+<link th:href="@{/css/simple-datatables-2.1.10.css}" rel="stylesheet">
+<!-- ... -->
+<table class="datatable" id="datatable"></table>
 ~~~
 
 ~~~{.js}
-document.addEventListener("DOMContentLoaded", () => {
-	let bs = document.querySelectorAll('.toggle')
-    // falta: enviar la petición y gestionar el resultado
-}
+new simpleDatatables.DataTable(
+  '#datatable', { 
+      ajax: {
+          url: config.rootUrl + "message/received"
+      }});
 ~~~
 
 ---
 
-... y el lado servidor, todavía más:
+Y en el servidor...
 
 ~~~{.java}
-// sin Ajax: devuelve una vista
-@PostMapping("/toggleuser")
-@Transactional
-public String delUser(Model model, @RequestParam long id) {
-    User target = entityManager.find(User.class, id);
-    // ...
-    // y devuelve una vista
-    return index(model);
-}	    
+@GetMapping(path = "/received", produces = "application/json")
+@Transactional // para no recibir resultados inconsistentes
+@ResponseBody // para indicar que no devuelve vista, sino un objeto (jsonizado)
+public List<Message.Transfer> retrieveMessages(HttpSession session) {
+  long userId = ((User)session.getAttribute("u")).getId();		
+  User u = entityManager.find(User.class, userId);
+  log.info("Generating message list for user {} ({} messages)", 
+      u.getUsername(), u.getReceived().size());
+  return Message.asTransferObjects(u.getReceived());
+}	
+~~~
 
-// con Ajax: sólo devuelve status ok, y un texto mínimo
-@PostMapping("/toggleuser")
-@Transactional
-@ResponseBody // <-- devuelve un texto literal
-public String delUser(Model model,	@RequestParam long id) {
-    // ...
-    // y devuelve un texto literal, y no un nombre de vista
-    return "ok";
+--- 
+
+Sobre Transfer Objects
+
+~~~{.java}
+public class Message {
+  // ... resto de una entidad mensaje estandar
+  public static class Transfer {
+    private String from;
+    private String to;
+    private String sent;
+    private String received;
+    private String text;
+    long id;
+    public Transfer(Message m) {
+      this.from = m.getSender().getUsername();
+      this.to = m.getRecipient().getUsername();      
+      this.sent = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
+      m.getDateSent());
+      // ... convierte todos los campos al formato de intercambio
+    }
+    // ... getters para el TransferObject
+  }
 }
 ~~~
 
@@ -440,31 +468,17 @@ receipt:77
 * Permisos (no todo el mundo se puede suscribir a todo)\
   vía Spring (no es parte de STOMP)
 
-## Tipos de rutas
-
-* `/topic/algo` - suscripciones a canales
-
-~~~{.javascript}
-// en cliente
-ws.stompClient.subscribe('/topic/welcome', 
-        (m) => ws.receive(JSON.parse(m.body).content));
-~~~
-
-~~~{.javascript}
-// en un controlador
-@Autowired
-private SimpMessagingTemplate messagingTemplate;
-
-// en un controlador, dentro del @XyzMapping
-messagingTemplate.convertAndSend("/topic/welcome",
-        "{texto: \"hola mundo\"}");
-~~~
-
 ## Suscripción desde un cliente
 
+* Ya incorporado a `iwclient.js`, que es parte de la plantilla
+
 ~~~{.javascript}
-ws.stompClient.subscribe('/topic/welcome', 
-        (m) => ws.receive(JSON.parse(m.body).content));
+document.addEventListener("DOMContentLoaded", () => {
+	if (config.socketUrl) {
+		let subs = config.admin ? 
+				["/topic/admin", "/user/queue/updates"] : ["/user/queue/updates"]
+		ws.initialize(config.socketUrl, subs);
+	}
 ~~~
 
 ## Controlando la suscripción en el servidor
@@ -475,23 +489,77 @@ public class WebSocketSecurityConfig
       extends AbstractSecurityWebSocketMessageBrokerConfigurer { 
 
 	
-    protected void configureInbound(\
+    protected void configureInbound(
             MessageSecurityMetadataSourceRegistry messages) {
         messages
-            .simpSubscribeDestMatchers("/topic/admin")	// solo admines
+            .simpSubscribeDestMatchers("/topic/admin")// solo admin
             	.hasRole(User.Role.ADMIN.toString())
-            .anyMessage().authenticated(); 				// login requerido
+            .anyMessage().authenticated(); 			// solo logueado
     }
 }
 ~~~
 
-## Rutas de usuario
+## Enviando mensajes a un usuario
+
+* Destino: `queue/updates/nombreusuario`
+* Requiere suscripción a `user/queue/updates` (te llames como te llames)
+
+~~~{.java}
+// en el controlador...
+@Autowired
+private SimpMessagingTemplate messagingTemplate;
 
 
+// dentro de un @AlgoMapping ...
+messagingTemplate.convertAndSend("/user/"+u.getUsername()
+  +"/queue/updates", json);
+~~~
 
-https://www.baeldung.com/spring-security-websockets
+## Enviando mensajes a un canal
 
-https://dzone.com/articles/rest-api-error-handling-with-spring-boot
+* Destino: `topic/nombrecanal`
+* Requiere suscripción previa (y puede ser prohibida por `WebSocketSecurityConfig`)
+
+~~~{.java}
+// en el controlador...
+@Autowired
+private SimpMessagingTemplate messagingTemplate;
+
+
+// dentro de un @AlgoMapping ...
+messagingTemplate.convertAndSend("/topic/admin", json);
+~~~
+
+## Creando JSON para enviar cosas
+
+* Con Jackson (incluido en Spring). Ventajas
+  - API que facilita escribir JSON correcto
+  - Escapa cadenas de forma correcta
+
+~~~{.java}
+		User requester = (User)session.getAttribute("u");
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode rootNode = mapper.createObjectNode();
+		rootNode.put("text", requester.getUsername() + " is looking up " + u.getUsername());
+		String json = mapper.writeValueAsString(rootNode);
+~~~
+
+- - - 
+
+* Sin Jackson. Ventaja: puede ser más sencillo. Ojo con los escapes
+
+~~~{.java}
+		User requester = (User)session.getAttribute("u");
+		
+    ObjectMapper mapper = new ObjectMapper();
+		ObjectNode rootNode = mapper.createObjectNode();
+		rootNode.put("text", requester.getUsername() + " is looking up " + u.getUsername());
+		String json = "{ \"text\": " 
+      + requester.getUsername() + " is looking up " + u 
+      + "}";
+~~~
+
+* Desventaja: escapar bien es muy difícil. En ese fragmento hay 2 nombres de usuario sin escapar, y ambos pueden contener `"` que rompan cosas.
 
 ## Referencias para websockets
 
@@ -501,7 +569,6 @@ https://dzone.com/articles/rest-api-error-handling-with-spring-boot
 * Más docs de [Spring MVC](https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket)
 
 * Según el estándar de la [IETF](https://tools.ietf.org/html/rfc6455)
-
 
 * Api de Websockets, [según Mozilla](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
