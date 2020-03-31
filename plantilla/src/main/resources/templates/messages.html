@@ -22,17 +22,21 @@
 	</div>
 	</div>	
 	<script>
+	function formatDate(d) {
+		// 2020-03-23T10:48:11.074 => 23/3/2020@10:48:18
+		return new Date(d).toLocaleString("es-ES").split(" ").join("@")
+	}
 	new simpleDatatables.DataTable(
 		'#datatable', { 
 		    ajax: {
-		        url: "received", // relativo a url actual
+		        url: config.rootUrl + "message/received", // empieza siempre por config.rootUrl
 		        load: function(xhr) {
 		        	let data = JSON.parse(xhr.responseText);
 		        	for (let i=0; i<data.length; i++) {
 		        		let row = data[i];
-		        		row.sent = new Date(row.sent).toLocaleString("es-ES").split(" ").join("@");
+		        		row.sent = formatDate(row.sent);
 		        		if (row.received) {
-		        			row.received = new Date(row.received).toLocaleString("es-ES").split(" ").join("@");
+		        			row.received = formatDate(row.received);
 		        		}
 		        	}
 		        	
