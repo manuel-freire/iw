@@ -41,7 +41,7 @@ public class ClassFileReader {
 				student.setRoles("USER");
 				student.setFirstName(jStudent.getString("nombre"));
 				student.setLastName(jStudent.getString("apellidos"));
-				student.setUsername("ST." + String.format("%03d" , i+1));
+				student.setUsername("ST-" + String.format("%03d" , i+1));
 				student.setPassword(String.format("%03d" , i+1));
 				student.setElo(1000);
 				student.setStClass(stClass);

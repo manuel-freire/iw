@@ -33,9 +33,6 @@ import es.ucm.fdi.iw.model.User;
 public class PdfGenerator {
 	
 	private static final Logger log = LogManager.getLogger(PdfGenerator.class);
-	
-	@Autowired
-	private static LocalData localData;
 
 	public static String generateQrClassFile(List<User> users, StClass stClass) throws DocumentException, MalformedURLException, IOException {
 

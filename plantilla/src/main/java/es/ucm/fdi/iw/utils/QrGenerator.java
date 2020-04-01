@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.EnumMap;
 import java.util.Map;
  
@@ -28,11 +30,9 @@ public class QrGenerator {
 	
 	private static final Logger log = LogManager.getLogger(QrGenerator.class);
 	
-	@Autowired
-	private LocalData localData;
-	
-	public static void generateQrCode(String id, String username) {
-		String url = ConstantsClass.USER_URL + id;
+	public static void generateQrCode(String id, String username) throws UnknownHostException {
+		InetAddress inetAddress = InetAddress.getLocalHost();
+		String url = "http://" + inetAddress.getHostAddress() + ":" +ConstantsClass.PORT + "/user/" + id;
 		int size = ConstantsClass.QR_IMG_SIZE;
 		String fileType = ConstantsClass.PNG;
 		

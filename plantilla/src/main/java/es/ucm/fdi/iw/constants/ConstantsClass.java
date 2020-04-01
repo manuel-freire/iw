@@ -2,7 +2,7 @@ package es.ucm.fdi.iw.constants;
 
 public class ConstantsClass {
 	//Constantes para la creación del fichero PDF con los códigos QR de acceso
-	public static String USER_URL = "http://localhost:8080/user/";
+	public static String PORT = "8080";
 	public static String QR_DIR = "qrcodes/";
 	public static String QR_IMG = "User_";
 	public static String QR_FILE = "ClassQR";
