@@ -24,7 +24,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import es.ucm.fdi.iw.LocalData;
-import es.ucm.fdi.iw.constants.ConstantsClass;
+import es.ucm.fdi.iw.constants.ConstantsFromFile;
 
 public class QrGenerator {
 	
@@ -32,16 +32,16 @@ public class QrGenerator {
 	
 	public static void generateQrCode(String id, String username) throws UnknownHostException {
 		InetAddress inetAddress = InetAddress.getLocalHost();
-		String url = "http://" + inetAddress.getHostAddress() + ":" +ConstantsClass.PORT + "/user/" + id;
-		int size = ConstantsClass.QR_IMG_SIZE;
-		String fileType = ConstantsClass.PNG;
+		String url = "http://" + inetAddress.getHostAddress() + ":" +ConstantsFromFile.PORT + "/user/" + id;
+		int size = ConstantsFromFile.QR_IMG_SIZE;
+		String fileType = ConstantsFromFile.PNG;
 		
-		File directory = new File(ConstantsClass.QR_DIR);
+		File directory = new File(ConstantsFromFile.QR_DIR);
 	    if (! directory.exists()){
 	        directory.mkdir();
 	    }
 	    
-	    String QrPath = ConstantsClass.QR_DIR + ConstantsClass.QR_IMG + username + "." + ConstantsClass.PNG;
+	    String QrPath = ConstantsFromFile.QR_DIR + ConstantsFromFile.QR_IMG + username + "." + ConstantsFromFile.PNG;
 		File myFile = new File(QrPath);
 		
 		try {

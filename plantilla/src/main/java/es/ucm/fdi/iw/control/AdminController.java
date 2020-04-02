@@ -36,7 +36,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.itextpdf.text.DocumentException;
 
 import es.ucm.fdi.iw.LocalData;
-import es.ucm.fdi.iw.constants.ConstantsClass;
+import es.ucm.fdi.iw.constants.ConstantsFromFile;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Question;
@@ -159,7 +159,7 @@ public class AdminController {
 	
 	@GetMapping("/{id}/class/createQR")
 	public StreamingResponseBody getQrFile(@PathVariable long id, Model model) throws IOException {		
-		File f = localData.getFile("qrcodes", ConstantsClass.QR_FILE + "." + ConstantsClass.PDF);
+		File f = localData.getFile("qrcodes", ConstantsFromFile.QR_FILE + "." + ConstantsFromFile.PDF);
 		InputStream in = new BufferedInputStream(new FileInputStream(f));
 		return new StreamingResponseBody() {
 			@Override
@@ -216,7 +216,7 @@ public class AdminController {
 			}
 
 			for (int j = 0; j < teamComp.size(); j++) {
-				studentInfo = teamComp.get(j).split(ConstantsClass.SEPARATOR);
+				studentInfo = teamComp.get(j).split(ConstantsFromFile.SEPARATOR);
 				username = studentInfo[0].split(" - ")[0];
 				teamIndex = Integer.valueOf(studentInfo[1]);
 				student = entityManager.createNamedQuery("User.userInClass", User.class)
@@ -342,7 +342,7 @@ public class AdminController {
 		FileOutputStream outstream = null;
 	 
 	    File infile = new File(tempFile);
-	    File outfile = localData.getFile("qrcodes", ConstantsClass.QR_FILE + "." + ConstantsClass.PDF);
+	    File outfile = localData.getFile("qrcodes", ConstantsFromFile.QR_FILE + "." + ConstantsFromFile.PDF);
 
 	    instream = new FileInputStream(infile);
 	    outstream = new FileOutputStream(outfile);

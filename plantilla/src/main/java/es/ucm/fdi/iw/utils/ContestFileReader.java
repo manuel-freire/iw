@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import es.ucm.fdi.iw.constants.ConstantsClass;
+import es.ucm.fdi.iw.constants.ConstantsFromFile;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Question;
@@ -33,13 +33,15 @@ public class ContestFileReader {
 			
 			JSONArray jQuestionsList = jContest.getJSONArray("preguntas");
 			JSONObject jQuestion;
-			
+
+			List<Contest> contestList = new ArrayList<>();
 			List<Question> questionList = new ArrayList<>();
 			List<Answer> answerList;
-			List<Contest> contestList = new ArrayList<>();
+			
+			JSONArray answerInput;
+			String[] answerData;
 			Question question;
-			Answer answer;
-			String[] answerParams;
+			Answer answer;			
 			
 			contestList.add(contest);
 			for (int i = 0; i < jQuestionsList.length(); i++) {
@@ -49,13 +51,14 @@ public class ContestFileReader {
 				question.setContest(contestList);
 				
 				answerList = new ArrayList<>();
-				for(int j = 0; j < ConstantsClass.NUM_ANSWERS; j++) {
-					answerParams = jQuestion.getString(Integer.toString(j+1)).split(ConstantsClass.SEPARATOR);
-					log.info(answerParams);
+				answerInput = jQuestion.getJSONArray("respuestas");
+				for(int j = 0; j < answerInput.length(); j++) {
+					answerData = answerInput.getString(j).split(ConstantsFromFile.SEPARATOR);
+					log.info(answerInput);
 					answer = new Answer();
 					answer.setQuestion(question);
-					answer.setText(answerParams[0]);
-					answer.setScore(Double.parseDouble(answerParams[1]));
+					answer.setText(answerData[0]);
+					answer.setScore(Double.parseDouble(answerData[1]));
 					answerList.add(answer);
 				}
 				

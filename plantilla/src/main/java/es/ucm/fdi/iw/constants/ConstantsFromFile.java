@@ -1,6 +1,6 @@
 package es.ucm.fdi.iw.constants;
 
-public class ConstantsClass {
+public class ConstantsFromFile {
 	//Constantes para la creación del fichero PDF con los códigos QR de acceso
 	public static String PORT = "8080";
 	public static String QR_DIR = "qrcodes/";
@@ -9,6 +9,7 @@ public class ConstantsClass {
 	public static String PNG = "png";
 	public static String PDF = "pdf";
 	
+	//Constantes para el formato de la tabla del fichero
 	public static int QR_IMG_SIZE = 85;
 	public static int QR_FONT_SIZE = 12;
 	public static int CELL_H = 75;

@@ -66,7 +66,7 @@
 				</form>
 
 				<div class="classBox">
-					<th>Clase de prueba</th>
+					<th th:unless="${stClass == null}" th:text="${stClass.name}">Clase de prueba</th>
 					<div th:if="${users}" class="scroll" ondrop="drop(event, this)" ondragover="allowDrop(event)">
 						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
 						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
