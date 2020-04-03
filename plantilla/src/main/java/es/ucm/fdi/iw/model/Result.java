@@ -1,0 +1,114 @@
+package es.ucm.fdi.iw.model;
+
+import java.util.List;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+
+
+/**
+ * A question can be included in several contest. It can be answered with different options. Each option has
+ * an associated score.
+ *
+ * @author aitorcay
+ */
+
+@Entity
+//@NamedQueries({
+//	@NamedQuery(name="Question.byContest",
+//	query="SELECT q FROM Question q "
+//			+ "WHERE q.contest = :contestId")
+//})
+
+public class Result {
+	
+	private long id;
+	private User user;
+	private Contest contest;
+	private List<Answer> answers;
+	
+	private int correct;
+	private double score;
+	private boolean passed;
+	private boolean perfect;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	public long getId() {
+		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	@ManyToOne(targetEntity = User.class)
+	@JoinColumn(name = "resultList")
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@ManyToOne(targetEntity = Contest.class)
+	@JoinColumn(name = "results")
+	public Contest getContest() {
+		return contest;
+	}
+
+	public void setContest(Contest contest) {
+		this.contest = contest;
+	}
+
+	@ManyToMany(targetEntity = Answer.class)
+	public List<Answer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
+	}
+
+	public int getCorrect() {
+		return correct;
+	}
+
+	public void setCorrect(int correct) {
+		this.correct = correct;
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public void setScore(double score) {
+		this.score = score;
+	}
+
+	public boolean isPassed() {
+		return passed;
+	}
+
+	public void setPassed(boolean passed) {
+		this.passed = passed;
+	}
+
+	public boolean isPerfect() {
+		return perfect;
+	}
+
+	public void setPerfect(boolean perfect) {
+		this.perfect = perfect;
+	}
+}

@@ -73,6 +73,7 @@ public class User {
 	private StTeam team;
 	private StClass stClass;	
 	private List<Contest> contestList;
+	private List<Result> resultList;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -227,6 +228,16 @@ public class User {
 
 	public void setContests(List<Contest> contests) {
 		this.contestList = contests;
+	}
+
+	@OneToMany(targetEntity = Result.class)
+	@JoinColumn(name = "user")
+	public List<Result> getResultList() {
+		return resultList;
+	}
+
+	public void setResultList(List<Result> resultList) {
+		this.resultList = resultList;
 	}
 	
 	@Override

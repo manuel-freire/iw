@@ -12,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 
 /**
@@ -33,6 +34,7 @@ public class Contest {
 	private String name;
 	private User teacher;
 	private List<Question> questions = new ArrayList<>();
+	private List<Result> results = new ArrayList<>();
 	private byte enabled;
 	
 	@Id
@@ -73,6 +75,24 @@ public class Contest {
 		this.questions = questions;
 	}
 	
+	@OneToMany(targetEntity = Result.class)
+	@JoinColumn(name = "contest")
+	public List<Result> getResults() {
+		return results;
+	}
+
+	public void setResults(List<Result> results) {
+		this.results = results;
+	}
+
+	public byte getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(byte enabled) {
+		this.enabled = enabled;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
@@ -83,13 +103,5 @@ public class Contest {
 		}
 		
 	    return stb.toString();
-	}
-
-	public byte getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(byte enabled) {
-		this.enabled = enabled;
 	}
 }
