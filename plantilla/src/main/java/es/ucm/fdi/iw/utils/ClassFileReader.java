@@ -44,7 +44,12 @@ public class ClassFileReader {
 				student.setUsername("ST-" + String.format("%03d" , i+1));
 				student.setPassword(String.format("%03d" , i+1));
 				student.setElo(1000);
+				student.setCorrect(0);
+				student.setPerfect(0);
+				student.setPassed(0);
 				student.setStClass(stClass);
+				student.setResultList(new ArrayList<>());
+				student.setAchivementUser(new ArrayList<>());
 				
 				log.info("- Estudiante cargado con éxito -\n{}", student);
 				studentList.add(student);

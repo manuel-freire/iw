@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -34,11 +35,13 @@ public class StTeam {
 	private StClass stClass;
 	
 	private int elo;
+	private int correct;
 	private int gold;
 	private int silver;
 	private int bronze;
 
 	private List<User> members = new ArrayList<>();
+	private List<Achievement> achivementTeam;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,6 +79,14 @@ public class StTeam {
 		this.elo = elo;
 	}
 
+	public int getCorrect() {
+		return correct;
+	}
+
+	public void setCorrect(int correct) {
+		this.correct = correct;
+	}
+
 	public int getGold() {
 		return gold;
 	}
@@ -109,6 +120,16 @@ public class StTeam {
 	public void setMembers(List<User> members) {
 		this.members = members;
 	}	
+	
+	@ManyToMany(targetEntity = Achievement.class)
+	@JoinColumn(name = "team")
+	public List<Achievement> getAchivementTeam() {
+		return achivementTeam;
+	}
+
+	public void setAchivementTeam(List<Achievement> achivementTeam) {
+		this.achivementTeam = achivementTeam;
+	}
 	
 	@Override
 	public String toString() {

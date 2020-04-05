@@ -110,5 +110,26 @@ public class Result {
 
 	public void setPerfect(boolean perfect) {
 		this.perfect = perfect;
+	}	
+	
+	@Override
+	public String toString() {
+		StringBuilder stb = new StringBuilder();
+
+		stb.append("Usuario: " + this.user.getUsername() + "\n");
+		stb.append("Prueba: " + this.contest.getName() + "\n");	
+		if (this.passed) {
+			stb.append("Prueba superada \n");
+		} else {
+			stb.append("Prueba fallida \n");			
+		}	
+		stb.append("Correctas: " + this.correct + "\n");
+		stb.append("Puntuación: " + this.score + "\n");
+		
+		for (int i = 0; i < this.answers.size(); i++) {
+			stb.append(Integer.toString(i+1) + ": " +this.answers.get(i).toString());
+		}
+		
+	    return stb.toString();
 	}
 }

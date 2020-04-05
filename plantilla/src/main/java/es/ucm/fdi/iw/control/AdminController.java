@@ -208,9 +208,11 @@ public class AdminController {
 				team.setSilver(0);
 				team.setGold(0);
 				team.setElo(1000);
+				team.setCorrect(0);
 				team.setTeamName("Equipo " + (i+1));
 				team.setStClass(stClass);
 				team.setMembers(new ArrayList<>());
+				team.setAchivementTeam(new ArrayList<>());
 				teams.add(team);
 				entityManager.persist(team);
 			}
@@ -327,8 +329,11 @@ public class AdminController {
 				}
 				entityManager.persist(question);				
 			}
+			
 			contest.setTeacher(teacher);
-			entityManager.persist(contest);		
+			entityManager.persist(contest);	
+			teacher.getContests().add(contest);
+			
 			model.addAttribute("contest", entityManager.find(Contest.class, contest.getId()));	
 		} else {
 			log.warn("La información de las preguntas es incompleta o  errónea");

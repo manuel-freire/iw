@@ -68,12 +68,21 @@ public class User {
 	private String firstName;
 	private String lastName;
 	
+	// achievement/ranking fields
 	private int elo;
-	private List<StClass> stClassList;
+	private int correct;
+	private int passed;
+	private int perfect;
+	
+	
 	private StTeam team;
-	private StClass stClass;	
+	private StClass stClass;
+	// admin fields
+	private List<StClass> stClassList;
 	private List<Contest> contestList;
+	// user fields
 	private List<Result> resultList;
+	private List<Achievement> achivementUser;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -190,14 +199,28 @@ public class User {
 		this.elo = elo;
 	}
 
-	@OneToMany(targetEntity = StClass.class, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "teacher")
-	public List<StClass> getStClassList() {
-		return stClassList;
+	public int getCorrect() {
+		return correct;
 	}
 
-	public void setStClassList(List<StClass> stClassList) {
-		this.stClassList = stClassList;
+	public void setCorrect(int correct) {
+		this.correct = correct;
+	}
+
+	public int getPassed() {
+		return passed;
+	}
+
+	public void setPassed(int passed) {
+		this.passed = passed;
+	}
+
+	public int getPerfect() {
+		return perfect;
+	}
+
+	public void setPerfect(int perfect) {
+		this.perfect = perfect;
 	}
 	
 	@ManyToOne(targetEntity = StTeam.class)
@@ -220,6 +243,16 @@ public class User {
 		this.stClass = stClass;
 	}
 
+	@OneToMany(targetEntity = StClass.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "teacher")
+	public List<StClass> getStClassList() {
+		return stClassList;
+	}
+
+	public void setStClassList(List<StClass> stClassList) {
+		this.stClassList = stClassList;
+	}
+
 	@OneToMany(targetEntity = Contest.class)
 	@JoinColumn(name = "teacher")
 	public List<Contest> getContests() {
@@ -238,6 +271,16 @@ public class User {
 
 	public void setResultList(List<Result> resultList) {
 		this.resultList = resultList;
+	}
+
+	@ManyToMany(targetEntity = Achievement.class)
+	@JoinColumn(name = "student")
+	public List<Achievement> getAchivementUser() {
+		return achivementUser;
+	}
+
+	public void setAchivementUser(List<Achievement> achivementUser) {
+		this.achivementUser = achivementUser;
 	}
 	
 	@Override
