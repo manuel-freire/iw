@@ -41,7 +41,7 @@ public class StTeam {
 	private int bronze;
 
 	private List<User> members = new ArrayList<>();
-	private List<Achievement> achivementTeam;
+	private List<Achievement> achievementTeam;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -123,21 +123,25 @@ public class StTeam {
 	
 	@ManyToMany(targetEntity = Achievement.class)
 	@JoinColumn(name = "team")
-	public List<Achievement> getAchivementTeam() {
-		return achivementTeam;
+	public List<Achievement> getAchievementTeam() {
+		return achievementTeam;
 	}
 
-	public void setAchivementTeam(List<Achievement> achivementTeam) {
-		this.achivementTeam = achivementTeam;
+	public void setAchievementTeam(List<Achievement> achivementTeam) {
+		this.achievementTeam = achivementTeam;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
-		
+
+		stb.append("--- EQUIPO ---\n");
 		stb.append(this.teamName + "\n");
 		for (int i = 0; i < this.members.size(); i++) {
 			stb.append(this.members.get(i).toString() + "\n");
+		}
+		for (int i = 0; i < this.achievementTeam.size(); i++) {
+			stb.append(this.achievementTeam.get(i).toString() + "\n");
 		}
 		
 	    return stb.toString();

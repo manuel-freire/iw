@@ -72,8 +72,7 @@ public class User {
 	private int elo;
 	private int correct;
 	private int passed;
-	private int perfect;
-	
+	private int perfect;	
 	
 	private StTeam team;
 	private StClass stClass;
@@ -82,7 +81,7 @@ public class User {
 	private List<Contest> contestList;
 	// user fields
 	private List<Result> resultList;
-	private List<Achievement> achivementUser;
+	private List<Achievement> achievementUser;
 
 	/**
 	 * Checks whether this user has a given role.
@@ -275,18 +274,19 @@ public class User {
 
 	@ManyToMany(targetEntity = Achievement.class)
 	@JoinColumn(name = "student")
-	public List<Achievement> getAchivementUser() {
-		return achivementUser;
+	public List<Achievement> getAchievementUser() {
+		return achievementUser;
 	}
 
-	public void setAchivementUser(List<Achievement> achivementUser) {
-		this.achivementUser = achivementUser;
+	public void setAchievementUser(List<Achievement> achivementUser) {
+		this.achievementUser = achivementUser;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
 		
+		stb.append("--- USUARIO ---\n");
 		stb.append("Nombre: " + this.getFirstName() + "\n");
 		stb.append("Apellidos: " + this.getLastName() + "\n");
 		stb.append("Usuario: " + this.getUsername() + "\n");

@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 
 /**
@@ -16,19 +18,22 @@ import javax.persistence.ManyToOne;
  */
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name="Question.byContest",
-//	query="SELECT q FROM Question q "
-//			+ "WHERE q.contest = :contestId")
-//})
+@NamedQueries({
+	@NamedQuery(name="Goal.forUser",
+	query="SELECT g FROM Goal g "
+			+ "WHERE g.target = 'USER'"),
+	@NamedQuery(name="Goal.forTeam",
+	query="SELECT g FROM Goal g "
+			+ "WHERE g.target = 'TEAM'"),
+	
+})
 
 public class Goal {
 	
 	private long id;
 	private String description;
-	private int[] levels;
+	private String levels;
 	private String target;
-	private String stage;
 	private String key;
 	
 	@Id
@@ -49,11 +54,11 @@ public class Goal {
 		this.description = description;
 	}
 
-	public int[] getLevels() {
+	public String getLevels() {
 		return levels;
 	}
 
-	public void setLevels(int[] levels) {
+	public void setLevels(String levels) {
 		this.levels = levels;
 	}
 
@@ -63,14 +68,6 @@ public class Goal {
 
 	public void setTarget(String target) {
 		this.target = target;
-	}
-
-	public String getStage() {
-		return stage;
-	}
-
-	public void setStage(String stage) {
-		this.stage = stage;
 	}
 
 	public String getKey() {
@@ -85,11 +82,11 @@ public class Goal {
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
 
+		stb.append("--- META ---\n");
 		stb.append("Objetivo: " + this.description + "\n");
 		stb.append("Clave: " + this.key + "\n");
-		stb.append("Niveles: {}" + this.levels + "\n");
+		stb.append("Niveles: " + this.levels + "\n");
 		stb.append("Target: " + this.target + "\n");
-		stb.append("Corrección: " + this.stage + "\n");
 		
 	    return stb.toString();
 	}

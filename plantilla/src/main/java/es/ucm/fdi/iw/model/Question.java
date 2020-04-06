@@ -76,7 +76,8 @@ public class Question {
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
-		
+
+		stb.append("--- PREGUNTA ---\n");
 		stb.append( this.text + "\n");
 		for (int i = 0; i < this.answers.size(); i++) {
 			stb.append(Integer.toString(i+1) + ": " +this.answers.get(i).toString());

@@ -37,8 +37,10 @@ import com.itextpdf.text.DocumentException;
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ConstantsFromFile;
+import es.ucm.fdi.iw.model.Achievement;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
+import es.ucm.fdi.iw.model.Goal;
 import es.ucm.fdi.iw.model.Question;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.StTeam;
@@ -212,7 +214,7 @@ public class AdminController {
 				team.setTeamName("Equipo " + (i+1));
 				team.setStClass(stClass);
 				team.setMembers(new ArrayList<>());
-				team.setAchivementTeam(new ArrayList<>());
+				team.setAchievementTeam(createAchievementsTeam(team));
 				teams.add(team);
 				entityManager.persist(team);
 			}
@@ -235,6 +237,7 @@ public class AdminController {
 				}
 			}
 			
+			log.info("{}", teams);
 			stClass.setTeamList(teams);
 			entityManager.persist(stClass);			
 
@@ -275,17 +278,18 @@ public class AdminController {
 	private Model saveClassToDb(Model model, User teacher, String content) throws MalformedURLException, DocumentException, IOException {
 		log.info("Inicio del procesado del fichero de clase");		
 		StClass stClass = ClassFileReader.readClassFile(content);
-		if (stClass != null) {
-			for(User student: stClass.getStudents()) {
-				log.info("{} - {} \n \n ", student.getId(), student.hashCode());
-				student.setPassword(passwordEncoder.encode(student.getPassword()));
-				entityManager.persist(student);
-			}		
-
+		if (stClass != null) {		
 			stClass.setTeacher(teacher);
 			teacher.getStClassList().add(stClass);
 			entityManager.persist(stClass);
 			entityManager.persist(teacher);
+			
+			for(User student: stClass.getStudents()) {
+				log.info("{} - {} \n \n ", student.getId(), student.hashCode());
+				student.setPassword(passwordEncoder.encode(student.getPassword()));
+				student.setAchievementUser(createAchievementsUser(student));
+				entityManager.persist(student);
+			}
 			
 			log.info("La información se ha cargado en la base de datos correctamente");
 			
@@ -361,65 +365,111 @@ public class AdminController {
 	    instream.close();
 	    outstream.close();
 	}
-	
-	public List<User> dummyUsers() {
-		List<User> users = new ArrayList<>();
+
+	private List<Achievement> createAchievementsUser(User user) {
+		List<Achievement> achievementList = new ArrayList<Achievement>();
+		List<Goal> goals = entityManager.createNamedQuery("Goal.forUser", Goal.class).getResultList();
+		Achievement achievement;
 		
-		User u1 = new User();
-		u1.setFirstName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-		u1.setLastName("aaa aaa");
-		u1.setUsername("ST.001");
-		u1.setId(4);
+		for (int i = 0; i < goals.size(); i++) {
+			achievement = new Achievement();
+			achievement.setGoal(goals.get(i));
+			achievement.setStudent(user);
+			achievement.setLevel(0);
+			if (goals.get(i).getKey() == "ELO") {
+				achievement.setProgress(user.getElo());
+			} else {
+				achievement.setProgress(0);
+			}
+				
+			achievementList.add(achievement);
+			entityManager.persist(achievement);
+		}		
 		
-		User u2 = new User();
-		u2.setFirstName("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-		u2.setLastName("bbb bbb");
-		u2.setUsername("ST.002");
-		u2.setId(5);
-		
-		User u3 = new User();
-		u3.setFirstName("ccccccccccccccccccccccccccccccc");
-		u3.setLastName("ccc ccc");
-		u3.setUsername("ST.003");
-		u3.setId(6);
-		
-		users.add(u1);
-		users.add(u2);
-		users.add(u3);
-		users.add(u3);
-		users.add(u2);
-		users.add(u2);
-		users.add(u1);
-		users.add(u3);
-		users.add(u3);
-		users.add(u2);
-		users.add(u1);
-		users.add(u2);
-		users.add(u3);
-		users.add(u2);
-		users.add(u1);
-		users.add(u2);
-		users.add(u2);
-		users.add(u2);
-		users.add(u1);
-		users.add(u3);
-		users.add(u3);
-		users.add(u2);
-		users.add(u1);
-		users.add(u2);
-		users.add(u3);
-		users.add(u2);
-		users.add(u1);
-		users.add(u2);
-		
-		return users;
+		return achievementList;
 	}
 	
-	public StClass dummyClass() {
-		StClass st = new StClass();
-		st.setName("Clase de prueba");
-		st.setId(2);
+	private List<Achievement> createAchievementsTeam(StTeam team) {
+		List<Achievement> achievementList = new ArrayList<Achievement>();
+		List<Goal> goals = entityManager.createNamedQuery("Goal.forTeam", Goal.class).getResultList();
+		Achievement achievement;
 		
-		return st;
+		for (int i = 0; i < goals.size(); i++) {
+			achievement = new Achievement();
+			achievement.setGoal(goals.get(i));
+			achievement.setTeam(team);
+			achievement.setLevel(0);
+			if (goals.get(i).getKey() == "ELO") {
+				achievement.setProgress(team.getElo());
+			} else {
+				achievement.setProgress(0);
+			}
+				
+			achievementList.add(achievement);
+			entityManager.persist(achievement);
+		}		
+		
+		return achievementList;
 	}
+	
+//	public List<User> dummyUsers() {
+//		List<User> users = new ArrayList<>();
+//		
+//		User u1 = new User();
+//		u1.setFirstName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+//		u1.setLastName("aaa aaa");
+//		u1.setUsername("ST.001");
+//		u1.setId(4);
+//		
+//		User u2 = new User();
+//		u2.setFirstName("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+//		u2.setLastName("bbb bbb");
+//		u2.setUsername("ST.002");
+//		u2.setId(5);
+//		
+//		User u3 = new User();
+//		u3.setFirstName("ccccccccccccccccccccccccccccccc");
+//		u3.setLastName("ccc ccc");
+//		u3.setUsername("ST.003");
+//		u3.setId(6);
+//		
+//		users.add(u1);
+//		users.add(u2);
+//		users.add(u3);
+//		users.add(u3);
+//		users.add(u2);
+//		users.add(u2);
+//		users.add(u1);
+//		users.add(u3);
+//		users.add(u3);
+//		users.add(u2);
+//		users.add(u1);
+//		users.add(u2);
+//		users.add(u3);
+//		users.add(u2);
+//		users.add(u1);
+//		users.add(u2);
+//		users.add(u2);
+//		users.add(u2);
+//		users.add(u1);
+//		users.add(u3);
+//		users.add(u3);
+//		users.add(u2);
+//		users.add(u1);
+//		users.add(u2);
+//		users.add(u3);
+//		users.add(u2);
+//		users.add(u1);
+//		users.add(u2);
+//		
+//		return users;
+//	}
+//	
+//	public StClass dummyClass() {
+//		StClass st = new StClass();
+//		st.setName("Clase de prueba");
+//		st.setId(2);
+//		
+//		return st;
+//	}
 }

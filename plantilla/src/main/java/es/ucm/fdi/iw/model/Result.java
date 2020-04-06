@@ -116,6 +116,7 @@ public class Result {
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
 
+		stb.append("--- RESULTADO ---\n");
 		stb.append("Usuario: " + this.user.getUsername() + "\n");
 		stb.append("Prueba: " + this.contest.getName() + "\n");	
 		if (this.passed) {

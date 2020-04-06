@@ -96,7 +96,8 @@ public class Contest {
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
-		
+
+		stb.append("--- CONCURSO ---\n");
 		stb.append("Concurso: " + this.getName() + "\n");
 		for (int i = 0; i < this.questions.size(); i++) {
 			stb.append("- " + this.questions.get(i).toString() + "\n");

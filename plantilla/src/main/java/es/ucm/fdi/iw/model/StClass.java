@@ -88,9 +88,10 @@ public class StClass {
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
-		
+
+		stb.append("--- CLASE ---\n");
 		stb.append("Clase: " + this.getName() + "\n");
-		stb.append("Profesor/a: {}" + this.teacher + "\n");
+		stb.append("Profesor/a: {}" + this.teacher.getUsername() + "\n");
 		for (int i = 0; i < this.students.size(); i++) {
 			stb.append(this.students.get(i).toString() + "\n");
 		}

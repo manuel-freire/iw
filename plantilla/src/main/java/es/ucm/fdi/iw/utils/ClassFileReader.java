@@ -49,7 +49,6 @@ public class ClassFileReader {
 				student.setPassed(0);
 				student.setStClass(stClass);
 				student.setResultList(new ArrayList<>());
-				student.setAchivementUser(new ArrayList<>());
 				
 				log.info("- Estudiante cargado con éxito -\n{}", student);
 				studentList.add(student);

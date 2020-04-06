@@ -69,7 +69,8 @@ public class Answer {
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
-		
+
+		stb.append("--- OPCIÓN ---\n");
 		stb.append( this.text + " | " + Double.toString(this.score) + " ptos\n");
 		
 	    return stb.toString();

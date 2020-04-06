@@ -95,6 +95,7 @@ public class Achievement {
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
 
+		stb.append("--- LOGRO ---\n");
 		if (this.student != null)
 			stb.append("Usuario: " + this.student.getUsername() + "\n");
 		if (this.team != null)
