@@ -376,7 +376,8 @@ public class AdminController {
 			achievement.setGoal(goals.get(i));
 			achievement.setStudent(user);
 			achievement.setLevel(0);
-			if (goals.get(i).getKey() == "ELO") {
+			log.info(goals.get(i).getKey() + "\n\n\n\n\n");
+			if (goals.get(i).getKey().equals("ELO")) {
 				achievement.setProgress(user.getElo());
 			} else {
 				achievement.setProgress(0);
@@ -399,7 +400,7 @@ public class AdminController {
 			achievement.setGoal(goals.get(i));
 			achievement.setTeam(team);
 			achievement.setLevel(0);
-			if (goals.get(i).getKey() == "ELO") {
+			if (goals.get(i).getKey().equals("ELO")) {
 				achievement.setProgress(team.getElo());
 			} else {
 				achievement.setProgress(0);

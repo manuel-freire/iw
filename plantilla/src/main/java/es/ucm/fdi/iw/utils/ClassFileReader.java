@@ -27,8 +27,6 @@ public class ClassFileReader {
 			stClass.setName(jClass.getString("nombreClase"));
 			stClass.setTeamList(new ArrayList<>());
 			
-			log.info("- Clase cargada con éxito -\n {}", stClass);
-			
 			JSONArray jStudentsList = jClass.getJSONArray("alumnos");
 			JSONObject jStudent;
 			List<User> studentList = new ArrayList<>();

@@ -121,7 +121,7 @@ public class StTeam {
 		this.members = members;
 	}	
 	
-	@ManyToMany(targetEntity = Achievement.class)
+	@OneToMany(targetEntity = Achievement.class)
 	@JoinColumn(name = "team")
 	public List<Achievement> getAchievementTeam() {
 		return achievementTeam;

@@ -272,7 +272,7 @@ public class User {
 		this.resultList = resultList;
 	}
 
-	@ManyToMany(targetEntity = Achievement.class)
+	@OneToMany(targetEntity = Achievement.class)
 	@JoinColumn(name = "student")
 	public List<Achievement> getAchievementUser() {
 		return achievementUser;
