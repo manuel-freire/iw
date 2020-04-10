@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,9 +24,9 @@ import javax.persistence.OneToMany;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name="StClass.byId",
-	query="SELECT st FROM StClass st "
-			+ "WHERE st.id = :classId")
+	@NamedQuery(name="StClass.byTeacher",
+	query="SELECT st FROM StClass st JOIN st.teacher t "
+			+ "WHERE t.id = :userId")
 })
 
 public class StClass {
@@ -65,7 +66,7 @@ public class StClass {
 		this.teacher = teacher;
 	}
 	
-	@OneToMany(targetEntity = User.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = User.class, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "stClass")
 	public List<User> getStudents() {
 		return students;
@@ -75,7 +76,7 @@ public class StClass {
 		this.students = students;
 	}
 
-	@OneToMany(targetEntity = StTeam.class)
+	@OneToMany(targetEntity = StTeam.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "stClass")
 	public List<StTeam> getTeamList() {
 		return teamList;
@@ -91,9 +92,9 @@ public class StClass {
 
 		stb.append("--- CLASE ---\n");
 		stb.append("Clase: " + this.getName() + "\n");
-		stb.append("Profesor/a: {}" + this.teacher.getUsername() + "\n");
+		stb.append("Profesor/a: " + this.teacher.getUsername() + "\n");
 		for (int i = 0; i < this.students.size(); i++) {
-			stb.append(this.students.get(i).toString() + "\n");
+			stb.append(this.students.get(i).getUsername() + "\n");
 		}
 		
 	    return stb.toString();

@@ -115,7 +115,15 @@ public class AdminController {
 	}
 	
 	@GetMapping("/{id}/class")
-	public String classes(Model model) {
+	public String classes(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		List<StClass> classList = entityManager.createNamedQuery("StClass.byTeacher", StClass.class)
+				.setParameter("userId", u.getId()).getResultList();
+		model.addAttribute("classList", classList);
+		
+		log.info("{} \n", classList);
 		
 		return "class";
 	}
@@ -144,7 +152,7 @@ public class AdminController {
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(model);
+			return classes(Long.parseLong(id), model, session);
 		}
 		
 		log.info("Profesor {} subiendo fichero de clase", id);
@@ -156,7 +164,7 @@ public class AdminController {
 			saveClassToDb(model, target, content);			
 		}
 		
-		return classes(model);
+		return classes(Long.parseLong(id), model, session);
 	}	
 	
 	@GetMapping("/{id}/class/createQR")
@@ -187,7 +195,7 @@ public class AdminController {
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(model);
+			return classes(Long.parseLong(id), model, session);
 		}
 		
 		if (teamComp == null || teamComp.isEmpty()) {
@@ -214,7 +222,7 @@ public class AdminController {
 				team.setTeamName("Equipo " + (i+1));
 				team.setStClass(stClass);
 				team.setMembers(new ArrayList<>());
-				team.setAchievementTeam(createAchievementsTeam(team));
+				//team.setAchievementTeam(createAchievementsTeam(team));
 				teams.add(team);
 				entityManager.persist(team);
 			}
@@ -243,7 +251,7 @@ public class AdminController {
 
 		}	
 		
-		return classes(model);
+		return classes(Long.parseLong(id), model, session);
 	}	
 	
 	@PostMapping("/{id}/contest")
@@ -407,7 +415,7 @@ public class AdminController {
 			}
 				
 			achievementList.add(achievement);
-			entityManager.persist(achievement);
+			//entityManager.persist(achievement);
 		}		
 		
 		return achievementList;
