@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,8 +24,8 @@ import javax.persistence.OneToMany;
 @Entity
 @NamedQueries({
 	@NamedQuery(name="StTeam.byClass",
-	query="SELECT stt FROM StTeam stt "
-			+ "WHERE stt.stClass = :classId")
+	query="SELECT stt FROM StTeam stt JOIN stt.stClass stc "
+			+ "WHERE stc.id = :classId")
 })
 
 public class StTeam {
@@ -110,7 +111,7 @@ public class StTeam {
 		this.bronze = bronze;
 	}
 
-	@OneToMany(targetEntity = User.class)
+	@OneToMany(targetEntity = User.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "team")
 	public List<User> getMembers() {
 		return members;
@@ -120,7 +121,7 @@ public class StTeam {
 		this.members = members;
 	}	
 	
-	@OneToMany(targetEntity = Achievement.class)
+	@OneToMany(targetEntity = Achievement.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "team")
 	public List<Achievement> getAchievementTeam() {
 		return achievementTeam;

@@ -137,6 +137,54 @@ public class AdminController {
 	public String play(Model model) {
 		return "play";
 	}	
+	
+	@GetMapping("/{id}/class/{classId}")
+	public String selectedClass(@PathVariable("id") long id, @PathVariable("classId") long classId,
+			Model model, HttpSession session) {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+		StClass stClass = entityManager.find(StClass.class, classId);
+		model.addAttribute("stClass", stClass);
+		
+		List<StTeam> teams = entityManager.createNamedQuery("StTeam.byClass", StTeam.class)
+                .setParameter("classId", classId).getResultList();
+		
+		List<User> students = entityManager.createNamedQuery("User.wholeClass", User.class)
+                .setParameter("classId", classId).getResultList();
+		
+		List<StClass> classList = entityManager.createNamedQuery("StClass.byTeacher", StClass.class)
+				.setParameter("userId", id).getResultList();
+
+		model.addAttribute("teams", teams);
+		model.addAttribute("students", students);
+		model.addAttribute("classList", classList);
+		
+		return classes(id, model, session);
+	}
+	
+	@GetMapping("/{id}/class/{classId}/createQR")
+	public StreamingResponseBody getQrFile(@PathVariable("id") long id, @PathVariable("classId") long classId,
+			Model model, HttpSession session) throws IOException, DocumentException {	
+		
+		StClass stClass = entityManager.find(StClass.class, classId);
+		
+		if (stClass.getStudents() == null || stClass.getStudents().isEmpty()){
+			log.info("Error al acceder a los datos de los alumnos");
+		} else {
+			log.info("Creando fichero QR de la clase");
+			String qrFile = PdfGenerator.generateQrClassFile(stClass.getStudents(), stClass);				
+			uploadToTemp(qrFile);
+	    }
+		
+		File f = localData.getFile("qrcodes", ConstantsFromFile.QR_FILE + "." + ConstantsFromFile.PDF);
+		InputStream in = new BufferedInputStream(new FileInputStream(f));
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream os) throws IOException {
+				FileCopyUtils.copy(in, os);
+			}
+		};
+	}
 
 	@PostMapping("/{id}/class")
 	@Transactional
@@ -165,21 +213,9 @@ public class AdminController {
 		}
 		
 		return classes(Long.parseLong(id), model, session);
-	}	
-	
-	@GetMapping("/{id}/class/createQR")
-	public StreamingResponseBody getQrFile(@PathVariable long id, Model model) throws IOException {		
-		File f = localData.getFile("qrcodes", ConstantsFromFile.QR_FILE + "." + ConstantsFromFile.PDF);
-		InputStream in = new BufferedInputStream(new FileInputStream(f));
-		return new StreamingResponseBody() {
-			@Override
-			public void writeTo(OutputStream os) throws IOException {
-				FileCopyUtils.copy(in, os);
-			}
-		};
 	}
 	
-	@PostMapping("/{id}/class/createTeams/{classId}")
+	@PostMapping("/{id}/class/{classId}/createTeams")
 	@Transactional
 	public String createTeams(
 			HttpServletResponse response,
@@ -222,7 +258,7 @@ public class AdminController {
 				team.setTeamName("Equipo " + (i+1));
 				team.setStClass(stClass);
 				team.setMembers(new ArrayList<>());
-				//team.setAchievementTeam(createAchievementsTeam(team));
+				team.setAchievementTeam(createAchievementsTeam(team));
 				teams.add(team);
 				entityManager.persist(team);
 			}
@@ -300,14 +336,6 @@ public class AdminController {
 			}
 			
 			log.info("La información se ha cargado en la base de datos correctamente");
-			
-			if (stClass.getStudents() == null || stClass.getStudents().isEmpty()){
-				log.info("Error al acceder a los datos de los alumnos");
-			} else {
-				log.info("Creando fichero QR de la clase");
-				String qrFile = PdfGenerator.generateQrClassFile(stClass.getStudents(), stClass);				
-				uploadToTemp(qrFile);
-		    }
 			
 			model.addAttribute("users", entityManager.createNamedQuery("User.wholeClass", User.class)
                     .setParameter("classId", stClass.getId()).getResultList());
@@ -415,7 +443,7 @@ public class AdminController {
 			}
 				
 			achievementList.add(achievement);
-			//entityManager.persist(achievement);
+			entityManager.persist(achievement);
 		}		
 		
 		return achievementList;
