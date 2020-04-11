@@ -56,7 +56,7 @@ public class StClass {
 		this.name = name;
 	}	
 	
-	@ManyToOne(targetEntity = User.class)
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "stClassList")
 	public User getTeacher() {
 		return teacher;

@@ -40,15 +40,20 @@
 		</h1>
 
 		<div class="container">
-			<div>
-				<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-					Fichero de concurso <input type="file" name="contestfile"/>
-					<button type="submit">Crear concurso</button>
-				</form>
+			<div style="width:25%;">
+				<div class="classBox">		
+					<form th:if="${contestList}" th:each="c: ${contestList}" 
+							th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+						<button type="submit" th:text="${c.name}">Mis clases</button>
+	  				</form>					
+				</div>
+			</div>
+
+			<div style="width:75%;">
 				<div class="contestBox" th:if=${contest}>
 					<th th:text="${contest.name}"></th>
 					<div class="scroll">
-						<div th:unles="${contest.questions == null}" th:each="q: ${contest.questions}">
+						<div th:each="q: ${contest.questions}">
 							<th th:text="${q.text}"></th>
 							<table th:unless="${q.answers == null}">
 								<tr  th:each="a: ${q.answers}">
@@ -59,8 +64,13 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div>			
 		</div>
+
+		<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+			Fichero de concurso <input type="file" name="contestfile"/>
+			<button type="submit">Crear concurso</button>
+		</form>
 		
 	</div>
 	</div>

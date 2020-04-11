@@ -13,6 +13,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 
 /**
  * A question can be included in several contest. It can be answered with different options. Each option has
@@ -33,7 +36,7 @@ public class Question {
 	private long id;
 	private String text;
 	private List<Answer> answers;
-	private List<Contest> contest;
+	private Contest contest;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +58,7 @@ public class Question {
 
 	@OneToMany(targetEntity = Answer.class)
 	@JoinColumn(name = "question")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Answer> getAnswers() {
 		return answers;
 	}
@@ -65,11 +69,11 @@ public class Question {
 	
 	@ManyToOne(targetEntity = Contest.class)
 	@JoinColumn(name = "questions")
-	public List<Contest> getContest() {
+	public Contest getContest() {
 		return contest;
 	}
 	
-	public void setContest(List<Contest> contest) {
+	public void setContest(Contest contest) {
 		this.contest = contest;
 	}	
 	

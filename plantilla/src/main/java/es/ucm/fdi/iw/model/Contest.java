@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +14,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 
 /**
  * A contest includes several questions. A teacher can create several contests
@@ -21,20 +25,20 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name="Contest.byTeacher",
-//	query="SELECT c FROM Contest c "
-//			+ "WHERE c.teacher = :teacherId")
-//})
+@NamedQueries({
+	@NamedQuery(name="Contest.byTeacher",
+	query="SELECT c FROM Contest c JOIN c.teacher t "
+			+ "WHERE t.id = :userId")
+})
 
 public class Contest {
 	
 	private long id;
 	private String name;
+	private byte enabled;
 	private User teacher;
 	private List<Question> questions = new ArrayList<>();
 	private List<Result> results = new ArrayList<>();
-	private byte enabled;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +58,15 @@ public class Contest {
 		this.name = name;
 	}
 
-	@ManyToOne(targetEntity = User.class)
+	public byte getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(byte enabled) {
+		this.enabled = enabled;
+	}
+
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "contests")
 	public User getTeacher() {
 		return teacher;
@@ -66,6 +78,7 @@ public class Contest {
 
 	@OneToMany(targetEntity = Question.class)
 	@JoinColumn(name = "contest")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Question> getQuestions() {
 		return questions;
 	}
@@ -82,14 +95,6 @@ public class Contest {
 
 	public void setResults(List<Result> results) {
 		this.results = results;
-	}
-
-	public byte getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(byte enabled) {
-		this.enabled = enabled;
 	}
 	
 	@Override

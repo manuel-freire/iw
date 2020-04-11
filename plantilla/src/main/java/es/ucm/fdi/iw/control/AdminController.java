@@ -123,13 +123,18 @@ public class AdminController {
 				.setParameter("userId", u.getId()).getResultList();
 		model.addAttribute("classList", classList);
 		
-		log.info("{} \n", classList);
-		
 		return "class";
 	}
 
 	@GetMapping("/{id}/contest")
-	public String contest(Model model) {
+	public String contest(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+				.setParameter("userId", u.getId()).getResultList();
+		model.addAttribute("contestList", contestList);
+		
 		return "contest";
 	}
 	
@@ -184,6 +189,22 @@ public class AdminController {
 				FileCopyUtils.copy(in, os);
 			}
 		};
+	}	
+	
+	@GetMapping("/{id}/contest/{contestId}")
+	public String selectedContest(@PathVariable("id") long id, @PathVariable("contestId") long contestId,
+			Model model, HttpSession session) {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+				.setParameter("userId", id).getResultList();
+		model.addAttribute("contestList", contestList);
+		
+		Contest contest = entityManager.find(Contest.class, contestId);
+		model.addAttribute("contest", contest);
+		
+		return contest(id, model, session);
 	}
 
 	@PostMapping("/{id}/class")
@@ -191,16 +212,16 @@ public class AdminController {
 	public String createClassFromFile(
 			HttpServletResponse response,
 			@RequestParam("classfile") MultipartFile classFile,
-			@PathVariable("id") String id,
+			@PathVariable("id") long id,
 			Model model, HttpSession session) throws IOException, DocumentException {
-		User target = entityManager.find(User.class, Long.parseLong(id));
+		User target = entityManager.find(User.class, id);
 		model.addAttribute("user", target);
 		
 		// check permissions
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(Long.parseLong(id), model, session);
+			return classes(id, model, session);
 		}
 		
 		log.info("Profesor {} subiendo fichero de clase", id);
@@ -212,7 +233,7 @@ public class AdminController {
 			saveClassToDb(model, target, content);			
 		}
 		
-		return classes(Long.parseLong(id), model, session);
+		return classes(id, model, session);
 	}
 	
 	@PostMapping("/{id}/class/{classId}/createTeams")
@@ -221,17 +242,17 @@ public class AdminController {
 			HttpServletResponse response,
 			@RequestParam("teamComp") List<String> teamComp,
 			@RequestParam("numTeams") String numTeams,
-			@PathVariable("id") String id,
-			@PathVariable("classId") String classId,
+			@PathVariable("id") long id,
+			@PathVariable("classId") long classId,
 			Model model, HttpSession session) throws IOException, DocumentException {
-		User target = entityManager.find(User.class, Long.parseLong(id));
+		User target = entityManager.find(User.class, id);
 		model.addAttribute("user", target);
 		
 		// check permissions
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return classes(Long.parseLong(id), model, session);
+			return selectedClass(id, classId, model, session);
 		}
 		
 		if (teamComp == null || teamComp.isEmpty()) {
@@ -240,7 +261,7 @@ public class AdminController {
 			log.info("Profesor {} creando equipos", id);	
 			
 			List<StTeam> teams = new ArrayList<>();
-			StClass stClass= entityManager.find(StClass.class, Long.parseLong(classId));
+			StClass stClass= entityManager.find(StClass.class, classId);
 			StTeam team;
 			User student;
 			
@@ -287,7 +308,7 @@ public class AdminController {
 
 		}	
 		
-		return classes(Long.parseLong(id), model, session);
+		return selectedClass(id, classId, model, session);
 	}	
 	
 	@PostMapping("/{id}/contest")
@@ -295,16 +316,16 @@ public class AdminController {
 	public String createContestFromFile(
 			HttpServletResponse response,
 			@RequestParam("contestfile") MultipartFile contestFile,
-			@PathVariable("id") String id,
+			@PathVariable("id") long id,
 			Model model, HttpSession session) throws IOException {
-		User target = entityManager.find(User.class, Long.parseLong(id));
+		User target = entityManager.find(User.class, id);
 		model.addAttribute("user", target);
 		
 		// check permissions
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return contest(model);
+			return contest(id, model, session);
 		}
 		
 		log.info("Profesor {} subiendo fichero de clase", id);
@@ -315,8 +336,8 @@ public class AdminController {
 			log.info("El fichero con los datos se ha cargado correctamente");
 			saveContestToDb(model, target, content);
 		}
-		log.info("CONTEST AÑADIDO AL MODELO {}", model.containsAttribute("contest"));
-		return contest(model);
+
+		return contest(id, model, session);
 	}	
 	
 	private Model saveClassToDb(Model model, User teacher, String content) throws MalformedURLException, DocumentException, IOException {
@@ -375,6 +396,7 @@ public class AdminController {
 			teacher.getContests().add(contest);
 			
 			model.addAttribute("contest", entityManager.find(Contest.class, contest.getId()));	
+			
 		} else {
 			log.warn("La información de las preguntas es incompleta o  errónea");
 		}

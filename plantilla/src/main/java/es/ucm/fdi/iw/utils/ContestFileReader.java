@@ -20,21 +20,17 @@ public class ContestFileReader {
 	
 	private static final Logger log = LogManager.getLogger(ContestFileReader.class);
 	
-	@Autowired
-	private static PasswordEncoder passwordEncoder;
-
 	public static Contest readContestFile(String jsonContest) {
 		Contest contest = new Contest();
 		
 		try {
 			JSONObject jContest = new JSONObject(jsonContest);
 			contest.setName(jContest.getString("nombreConcurso"));
-			contest.setEnabled((byte) 0);
+			contest.setEnabled((byte) 1);
 			
 			JSONArray jQuestionsList = jContest.getJSONArray("preguntas");
 			JSONObject jQuestion;
 
-			List<Contest> contestList = new ArrayList<>();
 			List<Question> questionList = new ArrayList<>();
 			List<Answer> answerList;
 			
@@ -43,12 +39,11 @@ public class ContestFileReader {
 			Question question;
 			Answer answer;			
 			
-			contestList.add(contest);
 			for (int i = 0; i < jQuestionsList.length(); i++) {
 				jQuestion = jQuestionsList.getJSONObject(i);
 				question = new Question();
 				question.setText(jQuestion.getString("enunciado"));
-				question.setContest(contestList);
+				question.setContest(contest);
 				
 				answerList = new ArrayList<>();
 				answerInput = jQuestion.getJSONArray("respuestas");
