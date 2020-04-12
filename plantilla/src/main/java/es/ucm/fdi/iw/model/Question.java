@@ -57,7 +57,7 @@ public class Question {
 	}
 
 	@OneToMany(targetEntity = Answer.class)
-	@JoinColumn(name = "question")
+	@JoinColumn(name = "answerList")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Answer> getAnswers() {
 		return answers;

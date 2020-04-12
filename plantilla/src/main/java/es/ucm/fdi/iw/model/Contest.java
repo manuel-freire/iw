@@ -67,7 +67,7 @@ public class Contest {
 	}
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "contests")
+	@JoinColumn(name = "contestList")
 	public User getTeacher() {
 		return teacher;
 	}
@@ -77,7 +77,7 @@ public class Contest {
 	}
 
 	@OneToMany(targetEntity = Question.class)
-	@JoinColumn(name = "contest")
+	@JoinColumn(name = "questionList")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Question> getQuestions() {
 		return questions;

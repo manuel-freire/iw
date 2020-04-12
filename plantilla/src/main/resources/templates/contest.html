@@ -35,8 +35,8 @@
 	<div class="container">
 	<div class="main">
 		
-		<h1>
-			Vista de concursos
+		<h1 style="margin-left:25px;">
+			Mis pruebas
 		</h1>
 
 		<div class="container">
@@ -58,6 +58,7 @@
 							<table th:unless="${q.answers == null}">
 								<tr  th:each="a: ${q.answers}">
 									<td th:text="${a.text}"></td>
+									<td th:text="-->"></td>
 									<td th:text="${a.score}"></th>
 								</tr>
 							</table>
