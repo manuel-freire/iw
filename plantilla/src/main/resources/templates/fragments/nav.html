@@ -36,7 +36,7 @@
 
 		<div th:if="${session.u}">			
 			<div th:if="${session.u.hasRole('USER')}">	
-				<form th:action="@{/user/{id}/profile(id=${session.u.id})}">
+				<form th:action="@{/user/{id}(id=${session.u.id})}">
 					<button type="submit">Mi perfil</button>
   				</form>	
   			</div>			
@@ -78,12 +78,12 @@
 					<input type="hidden" name="username" value="a">
 					<input type="hidden" name="password" value="aa">
 					<button type="submit">a</button>
-  				</form>				
-				<form th:action="@{/clase/enter}" method="post">
-					<input id="z" type="hidden" name="userName" value="z">
-					<input type="hidden" name="groupCode" value="test">
+  				</form>	
+				<form th:action="@{/login}" method="post">
+					<input type="hidden" name="username" value="ST.00A">
+					<input type="hidden" name="password" value="aa">
 					<button type="submit">z</button>
-  				</form> 
+  				</form>		
 				<script>
 				window.addEventListener('load', () => {
 					document.getElementById('z').value = "z" + Math.floor(Math.random()*1000);		        	

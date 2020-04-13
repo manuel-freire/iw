@@ -18,7 +18,7 @@
 		.classBox {
 			float: left; 
 			width: 300px; 
-			height: 800px;
+			height: 600px;
 			padding: 5px;
 			border: 1px solid #aaaaaa;
 			vertical-align: middle;
@@ -41,9 +41,11 @@
 	        overflow-x: auto; 
 	        text-align:justify; 
 	    }
-        .container {
-	        display: flex;
-	    }
+		.inner {
+			position: absolute;
+			top: 50%; left: 50%;
+			transform: translate(-50%, -50%);
+		}
 	</style>
 </head>
 <body>
@@ -53,13 +55,22 @@
 	
 	<div class="container">
 	<div class="main">
-		
-		<h1 style="margin-left:25px;">
-			Mis clases
-		</h1>
+
+		<div class="container" style="position: relative;">
+
+			<h1 style="margin-left:25px;margin-right:25px;">Mis clases</h1>
+
+			<div class="inner">
+				<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+					Fichero de clase <input type="file" name="classfile"/>
+					<button type="submit">Crear clase</button>
+				</form>
+			</div>
+	
+		</div>
 
 
-		<div class="container">
+		<div class="container" style="display: flex; height: 100%;">
 
 			<div style="width:33%;">
 

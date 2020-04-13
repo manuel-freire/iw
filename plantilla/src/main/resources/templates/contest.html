@@ -5,10 +5,18 @@
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC - Profesor</title>
 	<style>
+		.classBox {
+			float: left; 
+			width: 300px; 
+			height: 800px;
+			padding: 5px;
+			border: 1px solid #aaaaaa;
+			vertical-align: middle;
+		}
 		.contestBox {
 			float: left; 
 			width: 500px; 
-			height: 800px;
+			height: 600px;
 			padding: 5px;
 			border: 1px solid #aaaaaa;
 			vertical-align: middle;
@@ -22,9 +30,11 @@
 	        overflow-x: auto; 
 	        text-align:justify; 
 	    }
-        .container {
-	        display: flex;
-	    }
+		.inner {
+			position: absolute;
+			top: 50%; left: 50%;
+			transform: translate(-50%, -50%);
+		}
 	</style>
 </head>
 <body>
@@ -34,12 +44,21 @@
 	
 	<div class="container">
 	<div class="main">
-		
-		<h1 style="margin-left:25px;">
-			Mis pruebas
-		</h1>
 
-		<div class="container">
+		<div class="container" style="position: relative;">
+
+			<h1 style="margin-left:25px;margin-right:25px;">Mis pruebas</h1>
+
+			<div class="inner">
+				<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+					Fichero de concurso <input type="file" name="contestfile"/>
+					<button type="submit">Crear concurso</button>
+				</form>
+			</div>
+	
+		</div>
+
+		<div class="container" style="display: flex; height: 100%;">
 			<div style="width:25%;">
 				<div class="classBox">		
 					<form th:if="${contestList}" th:each="c: ${contestList}" 
@@ -58,7 +77,7 @@
 							<table th:unless="${q.answers == null}">
 								<tr  th:each="a: ${q.answers}">
 									<td th:text="${a.text}"></td>
-									<td th:text="-->"></td>
+									<td> | </td>
 									<td th:text="${a.score}"></th>
 								</tr>
 							</table>
@@ -67,11 +86,6 @@
 				</div>
 			</div>			
 		</div>
-
-		<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-			Fichero de concurso <input type="file" name="contestfile"/>
-			<button type="submit">Crear concurso</button>
-		</form>
 		
 	</div>
 	</div>

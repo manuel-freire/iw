@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServlet;
@@ -32,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import es.ucm.fdi.iw.LocalData;
+import es.ucm.fdi.iw.model.Achievement;
+import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 
@@ -59,8 +62,29 @@ public class UserController {
 	public String getUser(@PathVariable long id, Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
-		return "user";
+		
+		List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byStudent", Achievement.class)
+				.setParameter("userId", u.getId()).getResultList();
+		model.addAttribute("achievements", achievements);
+		
+		return "profile";
 	}
+
+	@GetMapping("/{id}/team")
+	public String team(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		return "team";
+	}
+	
+	@GetMapping("/{id}/rankings")
+	public String rankings(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		return "rankings";
+	}	
 
 	@PostMapping("/{id}")
 	@Transactional
@@ -85,7 +109,7 @@ public class UserController {
 			target.setPassword(passwordEncoder.encode(edited.getPassword()));
 		}		
 		target.setUsername(edited.getUsername());
-		return "user";
+		return "profile";
 	}	
 	
 	@GetMapping(value="/{id}/photo")
@@ -105,21 +129,6 @@ public class UserController {
 			}
 		};
 	}
-	
-	@GetMapping("/{id}/profile")
-	public String profile(Model model) {
-		return "profile";
-	}
-
-	@GetMapping("/{id}/team")
-	public String team(Model model) {
-		return "team";
-	}
-	
-	@GetMapping("/{id}/rankings")
-	public String rankings(Model model) {
-		return "rankings";
-	}	
 	
 	@PostMapping("/{id}/photo")
 	public String postPhoto(

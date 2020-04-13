@@ -19,11 +19,14 @@ import javax.persistence.OneToOne;
  */
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name="Achievement.byStudent",
-//	query="SELECT a FROM Achievement a "
-//			+ "WHERE a.student = :studentId")
-//})
+@NamedQueries({
+	@NamedQuery(name="Achievement.byStudent",
+	query="SELECT a FROM Achievement a JOIN a.student s "
+			+ "WHERE s.id = :userId"),
+	@NamedQuery(name="Achievement.byTeacher",
+	query="SELECT a FROM Achievement a JOIN a.team t "
+			+ "WHERE t.id = :teamId")
+})
 
 public class Achievement {
 	
@@ -90,6 +93,16 @@ public class Achievement {
 		this.team = team;
 	}
 	
+	public String currentLevel() {
+		return this.goal.getLevels().split(",")[this.level];
+	}
+	
+	public String currentObjective() {
+		String current = currentLevel();
+		
+		return this.goal.getDescription().replace("XXX", current);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder stb = new StringBuilder();
@@ -99,7 +112,7 @@ public class Achievement {
 			stb.append("Usuario: " + this.student.getUsername() + "\n");
 		if (this.team != null)
 			stb.append("Equipo: " + this.team.getTeamName() + "\n");
-		stb.append("{}" + this.goal + "\n");
+		stb.append("{}" + this.goal);
 		stb.append("Nivel: " + this.level + "\n");
 		stb.append("Puntuación: " + this.progress + "\n");
 		
