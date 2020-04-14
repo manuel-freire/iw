@@ -35,6 +35,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Achievement;
 import es.ucm.fdi.iw.model.StClass;
+import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 
@@ -74,6 +75,9 @@ public class UserController {
 	public String team(@PathVariable long id, Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
+		
+		StTeam team = entityManager.find(StTeam.class, u.getTeam().getId());
+		model.addAttribute("team", team);
 		
 		return "team";
 	}
@@ -144,7 +148,7 @@ public class UserController {
 				! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
 					"No eres administrador, y éste no es tu perfil");
-			return "user";
+			return "profile";
 		}
 		
 		log.info("Updating photo for user {}", id);
@@ -161,6 +165,63 @@ public class UserController {
 			}
 			log.info("Successfully uploaded photo for {} into {}!", id, f.getAbsolutePath());
 		}
-		return "user";
+		return "profile";
+	}	
+	
+	@GetMapping(value="/{id}/team/{teamId}/photo")
+	public StreamingResponseBody getTeamPhoto(@PathVariable long id, @PathVariable("teamId") String teamId,
+			Model model) throws IOException {		
+		File f = localData.getFile("team", ""+teamId);
+		InputStream in;
+		if (f.exists()) {
+			in = new BufferedInputStream(new FileInputStream(f));
+		} else {
+			in = new BufferedInputStream(getClass().getClassLoader()
+					.getResourceAsStream("static/img/unknown-user.jpg"));
+		}
+		return new StreamingResponseBody() {
+			@Override
+			public void writeTo(OutputStream os) throws IOException {
+				FileCopyUtils.copy(in, os);
+			}
+		};
+	}
+	
+	@PostMapping("/{id}/team/{teamId}/photo")
+	public String postTeamPhoto(
+			HttpServletResponse response,
+			@RequestParam("photo") MultipartFile photo,
+			@PathVariable("id") String id, @PathVariable("teamId") String teamId, 
+			Model model, HttpSession session) throws IOException {
+		User target = entityManager.find(User.class, Long.parseLong(id));
+		model.addAttribute("user", target);
+		
+		StTeam team = entityManager.find(StTeam.class, Long.parseLong(teamId));
+		model.addAttribute("team", team);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&
+				! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
+					"No eres administrador, y éste no es tu perfil");
+			return "team";
+		}
+		
+		log.info("Updating photo for team {}", teamId);
+		File f = localData.getFile("team", teamId);
+		if (photo.isEmpty()) {
+			log.info("failed to upload photo: emtpy file?");
+		} else {
+			try (BufferedOutputStream stream =
+					new BufferedOutputStream(new FileOutputStream(f))) {
+				byte[] bytes = photo.getBytes();
+				stream.write(bytes);
+			} catch (Exception e) {
+				log.warn("Error uploading " + teamId + " ", e);
+			}
+			log.info("Successfully uploaded photo for {} into {}!", id, f.getAbsolutePath());
+		}
+		return "team";
 	}
 }

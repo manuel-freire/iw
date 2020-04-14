@@ -3,7 +3,14 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
-	<title>RPC - Profesor</title>
+	<title>RPC - Estudiante</title>
+	<style>
+		.inner {
+			position: absolute;
+			top: 50%; left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
 </head>
 <body>
 	<nav th:replace="fragments/nav.html :: nav">
@@ -11,17 +18,67 @@
 	</nav>
 	
 	<div class="container">
-	<div class="main">
+	<div class="main">		
 		
-	<p>
-	Vista de equipo
-	</p>
-		
-	<footer th:replace="fragments/footer.html :: footer">
-		Footer goes here
-	</footer>
+		<div class="container" style="position: relative;padding:10px">
+
+			<h1 style="margin-left:25px;margin-right:25px;" th:text="${team.teamName}"></h1>
+
+			<img th:src="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}">
+
+			<div class="inner">
+				<form th:action="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}" method="POST" enctype="multipart/form-data">
+					Nueva foto <input type="file" name="photo"/>
+					<button type="submit">Actualizar</button>
+				</form>
+			</div>
 	
+		</div>
+
+		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
+
+			<div style="width:30%;"> 
+
+				<h2>Cambiar información de usuario</h2>
+
+				</form>
+			</div>
+
+			<div style="width:70%;"> 
+
+				<h2 style="margin-bottom: :10px">Logros</h2>
+
+			</div>
+
+		</div>
+	
+		<footer th:replace="fragments/footer.html :: footer">
+			Footer goes here
+		</footer>
+
 	</div>
 	</div>
+	
+<script>
+	// esto es algo feo, y se podría sacar a un JS externo
+	document.addEventListener("DOMContentLoaded", () => {
+		// selecciona los campos de contraseña
+		let ps = document.querySelectorAll('#usermod > input[type="password"]')
+		// cada vez que cambie uno de ellos...
+		ps[0].oninput = ps[0].onchange = ps[1].oninput = ps[1].onchange = () => {
+			// dice que si no son iguales, el segundo no es válido
+			ps[1].setCustomValidity(ps[0].value === ps[1].value ? 
+					"" : "Ambas contraseñas tienen que coincidir");
+		}
+	});
+
+	function getObjective(achievement) {
+		var levels = achievement.goal.levels.split(",");
+
+		return levels[achievement.level];
+	}
+
+</script>	
+
 </body>
 </html>

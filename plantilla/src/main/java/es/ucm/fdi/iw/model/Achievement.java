@@ -97,10 +97,8 @@ public class Achievement {
 		return this.goal.getLevels().split(",")[this.level];
 	}
 	
-	public String currentObjective() {
-		String current = currentLevel();
-		
-		return this.goal.getDescription().replace("XXX", current);
+	public String currentObjective() {		
+		return this.goal.getDescription().replace("XXX", currentLevel());
 	}
 	
 	@Override
