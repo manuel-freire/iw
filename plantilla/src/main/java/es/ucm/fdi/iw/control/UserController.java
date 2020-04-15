@@ -79,6 +79,14 @@ public class UserController {
 		StTeam team = entityManager.find(StTeam.class, u.getTeam().getId());
 		model.addAttribute("team", team);
 		
+		List<User> members = entityManager.createNamedQuery("User.byTeam", User.class)
+				.setParameter("teamId", u.getTeam().getId()).getResultList();
+		model.addAttribute("members", members);
+		
+		List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byTeam", Achievement.class)
+				.setParameter("teamId", u.getTeam().getId()).getResultList();
+		model.addAttribute("achievements", achievements);
+		
 		return "team";
 	}
 	

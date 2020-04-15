@@ -23,7 +23,7 @@ import javax.persistence.OneToOne;
 	@NamedQuery(name="Achievement.byStudent",
 	query="SELECT a FROM Achievement a JOIN a.student s "
 			+ "WHERE s.id = :userId"),
-	@NamedQuery(name="Achievement.byTeacher",
+	@NamedQuery(name="Achievement.byTeam",
 	query="SELECT a FROM Achievement a JOIN a.team t "
 			+ "WHERE t.id = :teamId")
 })

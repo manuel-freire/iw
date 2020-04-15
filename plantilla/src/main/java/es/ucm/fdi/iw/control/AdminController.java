@@ -154,7 +154,7 @@ public class AdminController {
 		List<StTeam> teams = entityManager.createNamedQuery("StTeam.byClass", StTeam.class)
                 .setParameter("classId", classId).getResultList();
 		
-		List<User> students = entityManager.createNamedQuery("User.wholeClass", User.class)
+		List<User> students = entityManager.createNamedQuery("User.byClass", User.class)
                 .setParameter("classId", classId).getResultList();
 		
 		List<StClass> classList = entityManager.createNamedQuery("StClass.byTeacher", StClass.class)
@@ -358,7 +358,7 @@ public class AdminController {
 			
 			log.info("La información se ha cargado en la base de datos correctamente");
 			
-			model.addAttribute("users", entityManager.createNamedQuery("User.wholeClass", User.class)
+			model.addAttribute("users", entityManager.createNamedQuery("User.byClass", User.class)
                     .setParameter("classId", stClass.getId()).getResultList());
 			model.addAttribute("stClass", entityManager.find(StClass.class, stClass.getId()));
 	

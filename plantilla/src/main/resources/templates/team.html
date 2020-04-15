@@ -32,14 +32,28 @@
 
 			<div style="width:30%;"> 
 
-				<h2>Cambiar información de usuario</h2>
+				<h2>Miembros del equipo</h2>
+				<table th:if="${members}" class="adminTable">
+					<tr th:each="m: ${members}">
+						<td th:text="${m.username}">Usuario</a>
+						<td th:text="${' - '}"> - </a>
+						<td th:text="${m.elo}">ELO</a>
+					</tr>
+				</table>
 
-				</form>
 			</div>
 
 			<div style="width:70%;"> 
 
 				<h2 style="margin-bottom: :10px">Logros</h2>
+
+				<div class="scroll" th:if="${achievements}">
+					<div th:each="a: ${achievements}">
+						<span style="display: block;" th:text="'Objetivo: ' + ${a.currentObjective()}">Objetivo</span>
+						<span style="display: block;" th:text="'Nivel: ' + ${a.level}">Nivel</span>
+						<span style="display: block;" th:text="'Progreso: ' + ${a.progress} + '/' + ${a.currentLevel()}">Progreso</span>
+					</div>
+				</div>
 
 			</div>
 
@@ -53,24 +67,6 @@
 	</div>
 	
 <script>
-	// esto es algo feo, y se podría sacar a un JS externo
-	document.addEventListener("DOMContentLoaded", () => {
-		// selecciona los campos de contraseña
-		let ps = document.querySelectorAll('#usermod > input[type="password"]')
-		// cada vez que cambie uno de ellos...
-		ps[0].oninput = ps[0].onchange = ps[1].oninput = ps[1].onchange = () => {
-			// dice que si no son iguales, el segundo no es válido
-			ps[1].setCustomValidity(ps[0].value === ps[1].value ? 
-					"" : "Ambas contraseñas tienen que coincidir");
-		}
-	});
-
-	function getObjective(achievement) {
-		var levels = achievement.goal.levels.split(",");
-
-		return levels[achievement.level];
-	}
-
 </script>	
 
 </body>
