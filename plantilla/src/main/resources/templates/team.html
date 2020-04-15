@@ -5,11 +5,6 @@
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC - Estudiante</title>
 	<style>
-		.inner {
-			position: absolute;
-			top: 50%; left: 50%;
-			transform: translate(-50%, -50%);
-		}
 	</style>
 </head>
 <body>
@@ -20,20 +15,18 @@
 	<div class="container">
 	<div class="main">		
 		
-		<div class="container" style="position: relative;padding:10px">
+		<nav>
 
 			<h1 style="margin-left:25px;margin-right:25px;" th:text="${team.teamName}"></h1>
 
-			<img th:src="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}">
+			<img height="72" width="72"  th:src="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}">
 
-			<div class="inner">
-				<form th:action="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}" method="POST" enctype="multipart/form-data">
-					Nueva foto <input type="file" name="photo"/>
-					<button type="submit">Actualizar</button>
-				</form>
-			</div>
+			<form th:action="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}" method="POST" enctype="multipart/form-data">
+				Nueva foto <input type="file" name="photo"/>
+				<button type="submit">Actualizar</button>
+			</form>
 	
-		</div>
+		</nav>
 
 		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
 

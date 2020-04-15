@@ -30,11 +30,6 @@
 	        overflow-x: auto; 
 	        text-align:justify; 
 	    }
-		.inner {
-			position: absolute;
-			top: 50%; left: 50%;
-			transform: translate(-50%, -50%);
-		}
 	</style>
 </head>
 <body>
@@ -45,18 +40,16 @@
 	<div class="container">
 	<div class="main">
 
-		<div class="container" style="position: relative;">
+		<nav>
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis pruebas</h1>
 
-			<div class="inner">
-				<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-					Fichero de concurso <input type="file" name="contestfile"/>
-					<button type="submit">Crear concurso</button>
-				</form>
-			</div>
+			<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+				Fichero de concurso <input type="file" name="contestfile"/>
+				<button type="submit">Crear concurso</button>
+			</form>
 	
-		</div>
+		</nav>
 
 		<div class="container" style="display: flex; height: 100%;">
 			<div style="width:25%;">
