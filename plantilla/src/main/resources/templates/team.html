@@ -35,9 +35,9 @@
 				<h2>Miembros del equipo</h2>
 				<table th:if="${members}" class="adminTable">
 					<tr th:each="m: ${members}">
-						<td th:text="${m.username}">Usuario</a>
-						<td th:text="${' - '}"> - </a>
-						<td th:text="${m.elo}">ELO</a>
+						<td th:text="${m.username}">Usuario</td>
+						<td> - </td>
+						<td th:text="${m.elo}">ELO</td>
 					</tr>
 				</table>
 

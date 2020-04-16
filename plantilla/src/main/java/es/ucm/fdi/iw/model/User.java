@@ -35,20 +35,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 			+ "FROM User u "
 			+ "WHERE u.username = :username"),
 	@NamedQuery(name="User.byClass",
-	query="SELECT u FROM User u JOIN u.stClass st  "
+	query="SELECT u FROM User u JOIN u.stClass st "
 			+ "WHERE u.roles = 'USER' "
 			+ "AND u.enabled = 1 "
 			+ "AND st.id = :classId"),
 	@NamedQuery(name="User.userInClass",
-	query="SELECT u FROM User u JOIN u.stClass st  "
+	query="SELECT u FROM User u JOIN u.stClass st "
 			+ "WHERE u.username = :username "
 			+ "AND st.id = :classId "
 			+ "AND u.enabled = 1 "),
 	@NamedQuery(name="User.byTeam",
-	query="SELECT u FROM User u JOIN u.team t  "
+	query="SELECT u FROM User u JOIN u.team t "
 			+ "WHERE u.roles = 'USER' "
 			+ "AND u.enabled = 1 "
 			+ "AND t.id = :teamId "
+			+ "ORDER BY u.elo DESC"),
+	@NamedQuery(name="User.ranking",
+	query="SELECT u FROM User u JOIN u.stClass st "
+			+ "WHERE u.roles = 'USER' "
+			+ "AND u.enabled = 1 "
+			+ "AND st.id = :classId "
 			+ "ORDER BY u.elo DESC")
 })
 

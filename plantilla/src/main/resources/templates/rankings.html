@@ -3,25 +3,106 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
-	<title>RPC - Profesor</title>
+	<title>RPC - Estudiante</title>
+	<style>
+	</style>
 </head>
-<body>
+<body onload="fillRankings()">
 	<nav th:replace="fragments/nav.html :: nav">
 		Nav goes here
 	</nav>
 	
 	<div class="container">
-	<div class="main">
+	<div class="main">		
 		
-	<p>
-	Vista de rankings
-	</p>
-		
-	<footer th:replace="fragments/footer.html :: footer">
-		Footer goes here
-	</footer>
+		<nav>
+
+			<h1 style="margin-left:25px;margin-right:25px;">Clasificación</h1><div th:if="${session.u}">		
+				
+		</div>
 	
+		</nav>
+
+		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
+
+			<div style="width:50%;"> 
+
+				<h2 style="margin-bottom: :10px">Ranking de estudiantes</h2>
+
+				<div class="scroll" th:if="${rankingUser} AND ${positionUser}">
+
+					<table>
+						<tr>
+							<td>
+								<table>
+									<tr th:each="pu: ${positionUser}"><td th:text="${pu}"></td></tr>
+								</table>
+							</td>
+							<td>
+								<table>
+									<tr th:each="ru: ${rankingUser}">
+										<td th:text="${ru.username}">
+										<td> - </td>
+										<td th:text="${ru.elo}">
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+					
+				</div>
+
+			</div>
+
+			<div style="width:50%;"> 
+
+				<h2 style="margin-bottom: :10px">Ranking de equipos</h2>
+
+				<div class="scroll" th:if="${rankingTeam} AND ${positionTeam}">
+
+					<table>
+						<tr>
+							<td>
+								<table>
+									<tr th:each="pt: ${positionTeam}"><td th:text="${pt}"></td></tr>
+								</table>
+							</td>
+							<td>
+								<table>
+									<tr th:each="rt: ${rankingTeam}">
+										<td th:text="${rt.teamName}">
+										<td> - </td>
+										<td th:text="${rt.elo}">
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+					
+				</div>
+
+			</div>
+
+		</div>
+	
+		<footer th:replace="fragments/footer.html :: footer">
+			Footer goes here
+		</footer>
+
 	</div>
 	</div>
+	
+<script>
+
+	function fillRankings() {
+
+	}
+
+	function setRankingUser() {
+
+	}
+
+</script>	
+
 </body>
 </html>

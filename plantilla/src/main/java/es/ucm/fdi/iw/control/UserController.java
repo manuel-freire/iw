@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -90,10 +91,47 @@ public class UserController {
 		return "team";
 	}
 	
-	@GetMapping("/{id}/rankings")
-	public String rankings(@PathVariable long id, Model model, HttpSession session) {
+	@GetMapping("/{id}/rankings/{classId}")
+	public String rankings(@PathVariable long id, @PathVariable("classId") long classId,
+			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
+		
+		List<User> rankingUser = entityManager.createNamedQuery("User.ranking", User.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("rankingUser", rankingUser);
+		
+		List<Integer> positionUser = new ArrayList<>();
+		int pos = 1;
+		int max = rankingUser.get(0).getElo();
+		positionUser.add(pos);
+		for (int i=1; i < rankingUser.size(); i++) {
+			if (rankingUser.get(i).getElo() < max) {
+				pos++; max = rankingUser.get(i).getElo();
+				positionUser.add(pos);
+			} else {
+				positionUser.add(pos);
+			}
+		}
+		model.addAttribute("positionUser", positionUser);
+		
+		List<StTeam> rankingTeam = entityManager.createNamedQuery("StTeam.ranking", StTeam.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("rankingTeam", rankingTeam);	
+		
+		List<Integer> positionTeam = new ArrayList<>();
+		pos = 1;
+		max = rankingTeam.get(0).getElo();
+		positionTeam.add(pos);
+		for (int i=1; i < rankingTeam.size(); i++) {
+			if (rankingTeam.get(i).getElo() < max) {
+				pos++; max = rankingTeam.get(i).getElo();
+				positionTeam.add(pos);
+			} else {
+				positionTeam.add(pos);
+			}
+		}
+		model.addAttribute("positionTeam", positionTeam);	
 		
 		return "rankings";
 	}	

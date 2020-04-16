@@ -25,7 +25,11 @@ import javax.persistence.OneToMany;
 @NamedQueries({
 	@NamedQuery(name="StTeam.byClass",
 	query="SELECT stt FROM StTeam stt JOIN stt.stClass stc "
-			+ "WHERE stc.id = :classId")
+			+ "WHERE stc.id = :classId"),
+	@NamedQuery(name="StTeam.ranking",
+	query="SELECT stt FROM StTeam stt JOIN stt.stClass stc "
+			+ "WHERE stc.id = :classId "
+			+ "ORDER BY stt.elo DESC")
 })
 
 public class StTeam {
