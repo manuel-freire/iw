@@ -37,6 +37,7 @@ public class StClass {
 
 	private List<User> students = new ArrayList<>();
 	private List<StTeam> teamList = new ArrayList<>();
+	private List<Contest> classContest = new ArrayList<>();
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,6 +85,16 @@ public class StClass {
 
 	public void setTeamList(List<StTeam> teamList) {
 		this.teamList = teamList;
+	}
+	
+	@OneToMany(targetEntity = Contest.class, fetch = FetchType.EAGER)
+	@JoinColumn(name = "stClass")
+	public List<Contest> getClassContest() {
+		return classContest;
+	}
+
+	public void setClassContest(List<Contest> classContest) {
+		this.classContest = classContest;
 	}
 	
 	@Override

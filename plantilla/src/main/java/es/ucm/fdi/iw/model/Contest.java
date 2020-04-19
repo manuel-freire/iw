@@ -28,7 +28,10 @@ import org.hibernate.annotations.LazyCollectionOption;
 @NamedQueries({
 	@NamedQuery(name="Contest.byTeacher",
 	query="SELECT c FROM Contest c JOIN c.teacher t "
-			+ "WHERE t.id = :userId")
+			+ "WHERE t.id = :userId"),
+	@NamedQuery(name="Contest.byClass",
+	query="SELECT c FROM Contest c JOIN c.stClass stc "
+			+ "WHERE stc.id = :classId")
 })
 
 public class Contest {
@@ -37,6 +40,8 @@ public class Contest {
 	private String name;
 	private byte enabled;
 	private User teacher;
+	private StClass stClass;
+	
 	private List<Question> questions = new ArrayList<>();
 	private List<Result> results = new ArrayList<>();
 	
@@ -74,6 +79,16 @@ public class Contest {
 
 	public void setTeacher(User teacher) {
 		this.teacher = teacher;
+	}
+	
+	@ManyToOne(targetEntity = StClass.class, fetch = FetchType.EAGER)
+	@JoinColumn(name = "classContest")
+	public StClass getStClass() {
+		return stClass;
+	}
+
+	public void setStClass(StClass stClass) {
+		this.stClass = stClass;
 	}
 
 	@OneToMany(targetEntity = Question.class)

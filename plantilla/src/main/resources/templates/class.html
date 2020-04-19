@@ -101,13 +101,13 @@
 			<div style="width:34%;">
 				<div th:unless="${teams}" class="container">
 					<label for="quantity">Número de equipos:</label>
-					<input type="number" id="quantity" name="quantity" min="1" max="99" defaultValue="1">
+					<input type="number" id="quantity" name="quantity" min="2" max="99" defaultValue="2">
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>					
 
 				<div class="scroll" id="scrollTeam">
+					<h3>Lista de equipos</h3>
 					<table class="adminTable" id="teamTable" name="teamTable">
-					<tr><th>Lista de equipos</th></tr>
 					<tr id="teamList">
 						<td th:if="${teams}" th:each="t: ${teams}">
 							<div class="scroll">
@@ -126,15 +126,26 @@
 					<input type="hidden" name="teamComp" id="teamComp"/>
 					<input type="hidden" name="numTeams" id="numTeams"/>
 					<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
-  				</form>  
+  				</form>
+
+				<div class="scroll">
+					<h3>Lista de concursos</h3>
+					<table class="adminTable" id="contestTable" name="contestTable">
+						<tr th:if="${contests}" th:each="c: ${contests}">							
+							<form th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+								<button type="submit" th:text="${c.name}">Concurso</button>
+			  				</form>	
+						</tr>
+					</table>
+				</div>	
+
+				<form th:if="${stClass}" th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" method="POST" enctype="multipart/form-data">
+					Fichero de concurso <input type="file" name="contestfile"/>
+					<button type="submit">Crear concurso</button>
+				</form>
 
 			</div>
 		</div>
-
-		<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-			Fichero de clase <input type="file" name="classfile"/>
-			<button type="submit">Crear clase</button>
-		</form>
 			
 	</div>
 	</div>	

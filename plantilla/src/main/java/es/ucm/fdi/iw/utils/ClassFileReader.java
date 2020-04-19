@@ -26,6 +26,7 @@ public class ClassFileReader {
 			JSONObject jClass = new JSONObject(jsonClass);
 			stClass.setName(jClass.getString("nombreClase"));
 			stClass.setTeamList(new ArrayList<>());
+			stClass.setClassContest(new ArrayList<>());
 			
 			JSONArray jStudentsList = jClass.getJSONArray("alumnos");
 			JSONObject jStudent;

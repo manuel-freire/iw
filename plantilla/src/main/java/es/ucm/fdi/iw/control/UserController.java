@@ -35,6 +35,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Achievement;
+import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
@@ -135,6 +136,24 @@ public class UserController {
 		
 		return "rankings";
 	}	
+
+	@GetMapping("/{id}/play")
+	public String play(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		if (u.getRoles().contains("ADMIN")) {
+			List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+					.setParameter("userId", u.getId()).getResultList();
+			model.addAttribute("contestList", contestList);
+		} else {
+			
+		}
+		
+		
+		
+		return "play";
+	}
 
 	@PostMapping("/{id}")
 	@Transactional

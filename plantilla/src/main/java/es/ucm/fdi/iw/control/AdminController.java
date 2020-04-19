@@ -159,10 +159,14 @@ public class AdminController {
 		
 		List<StClass> classList = entityManager.createNamedQuery("StClass.byTeacher", StClass.class)
 				.setParameter("userId", id).getResultList();
+		
+		List<Contest> contests = entityManager.createNamedQuery("Contest.byClass", Contest.class)
+				.setParameter("classId", classId).getResultList();
 
 		model.addAttribute("teams", teams);
 		model.addAttribute("students", students);
 		model.addAttribute("classList", classList);
+		model.addAttribute("contests", contests);
 		
 		return classes(id, model, session);
 	}
@@ -309,7 +313,40 @@ public class AdminController {
 		}	
 		
 		return selectedClass(id, classId, model, session);
-	}	
+	}
+	
+	@PostMapping("/{id}/class/{classId}/addContest")
+	@Transactional
+	public String addContest(
+			HttpServletResponse response,
+			@RequestParam("contestfile") MultipartFile contestFile,
+			@PathVariable("id") long id,
+			@PathVariable("classId") long classId,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+
+		StClass stClass = entityManager.find(StClass.class, classId);
+		model.addAttribute("stClass", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return selectedClass(id, classId, model, session);
+		}
+		
+		log.info("Profesor {} subiendo fichero de clase", id);
+		if (contestFile.isEmpty()) {
+			log.info("El fichero está vacío");
+		} else {
+			String content = new String(contestFile.getBytes(), "UTF-8");
+			log.info("El fichero con los datos se ha cargado correctamente");
+			saveContestToDb(model, target, stClass, content);
+		}	
+		
+		return selectedClass(id, classId, model, session);
+	}		
 	
 	@PostMapping("/{id}/contest")
 	@Transactional
@@ -334,7 +371,7 @@ public class AdminController {
 		} else {
 			String content = new String(contestFile.getBytes(), "UTF-8");
 			log.info("El fichero con los datos se ha cargado correctamente");
-			saveContestToDb(model, target, content);
+			//saveContestToDb(model, target, content);
 		}
 
 		return contest(id, model, session);
@@ -369,7 +406,7 @@ public class AdminController {
 		return model;
 	}
 	
-	private Model saveContestToDb(Model model, User teacher, String content) {
+	private Model saveContestToDb(Model model, User teacher, StClass stClass, String content) {
 		log.info("Inicio del procesado del fichero de clase");		
 		Contest contest = ContestFileReader.readContestFile(content);
 		List<Question> questionList;
@@ -392,8 +429,10 @@ public class AdminController {
 			}
 			
 			contest.setTeacher(teacher);
+			contest.setStClass(stClass);
 			entityManager.persist(contest);	
 			teacher.getContests().add(contest);
+			stClass.getClassContest().add(contest);
 			
 			model.addAttribute("contest", entityManager.find(Contest.class, contest.getId()));	
 			
@@ -470,65 +509,4 @@ public class AdminController {
 		
 		return achievementList;
 	}
-	
-//	public List<User> dummyUsers() {
-//		List<User> users = new ArrayList<>();
-//		
-//		User u1 = new User();
-//		u1.setFirstName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-//		u1.setLastName("aaa aaa");
-//		u1.setUsername("ST.001");
-//		u1.setId(4);
-//		
-//		User u2 = new User();
-//		u2.setFirstName("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-//		u2.setLastName("bbb bbb");
-//		u2.setUsername("ST.002");
-//		u2.setId(5);
-//		
-//		User u3 = new User();
-//		u3.setFirstName("ccccccccccccccccccccccccccccccc");
-//		u3.setLastName("ccc ccc");
-//		u3.setUsername("ST.003");
-//		u3.setId(6);
-//		
-//		users.add(u1);
-//		users.add(u2);
-//		users.add(u3);
-//		users.add(u3);
-//		users.add(u2);
-//		users.add(u2);
-//		users.add(u1);
-//		users.add(u3);
-//		users.add(u3);
-//		users.add(u2);
-//		users.add(u1);
-//		users.add(u2);
-//		users.add(u3);
-//		users.add(u2);
-//		users.add(u1);
-//		users.add(u2);
-//		users.add(u2);
-//		users.add(u2);
-//		users.add(u1);
-//		users.add(u3);
-//		users.add(u3);
-//		users.add(u2);
-//		users.add(u1);
-//		users.add(u2);
-//		users.add(u3);
-//		users.add(u2);
-//		users.add(u1);
-//		users.add(u2);
-//		
-//		return users;
-//	}
-//	
-//	public StClass dummyClass() {
-//		StClass st = new StClass();
-//		st.setName("Clase de prueba");
-//		st.setId(2);
-//		
-//		return st;
-//	}
 }

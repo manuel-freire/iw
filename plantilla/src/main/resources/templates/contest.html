@@ -56,7 +56,7 @@
 				<div class="classBox">		
 					<form th:if="${contestList}" th:each="c: ${contestList}" 
 							th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
-						<button type="submit" th:text="${c.name}">Mis clases</button>
+						<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Concurso</button>
 	  				</form>					
 				</div>
 			</div>
