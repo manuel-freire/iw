@@ -228,6 +228,8 @@ INSERT INTO contest (id, enabled, name) VALUES (1, 1, 'Mi primer concurso');
 
 UPDATE contest SET teacher=1 where id=1;
 UPDATE contest SET contest_list=1 where id=1;
+UPDATE contest SET st_class=1 WHERE id=1;
+UPDATE contest SET class_contest=1 WHERE id=1;
 
 INSERT INTO question (id, text) VALUES (1, 'Pregunta 1: la repuesta es 1');
 

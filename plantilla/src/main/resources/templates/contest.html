@@ -63,7 +63,7 @@
 
 			<div style="width:75%;">
 				<div class="contestBox" th:if=${contest}>
-					<th th:text="${contest.name}"></th>
+					<h3 th:text="${contest.name}"></h3>
 					<div class="scroll">
 						<div th:each="q: ${contest.questions}">
 							<th th:text="${q.text}"></th>

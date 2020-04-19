@@ -139,7 +139,14 @@ public class AdminController {
 	}
 	
 	@GetMapping("/{id}/play")
-	public String play(Model model) {
+	public String play(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+				.setParameter("userId", u.getId()).getResultList();
+		model.addAttribute("contestList", contestList);
+		
 		return "play";
 	}	
 	
@@ -210,6 +217,22 @@ public class AdminController {
 		
 		return contest(id, model, session);
 	}
+	
+	@GetMapping("/{id}/play/{contestId}")
+	public String playContest(@PathVariable("id") long id, @PathVariable("contestId") long contestId,
+			Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+				.setParameter("userId", id).getResultList();
+		model.addAttribute("contestList", contestList);
+		
+		Contest contest = entityManager.find(Contest.class, contestId);
+		model.addAttribute("contest", contest);
+		
+		return play(id, model, session);
+	}	
 
 	@PostMapping("/{id}/class")
 	@Transactional

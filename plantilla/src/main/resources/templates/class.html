@@ -91,7 +91,7 @@
 						</ul>						
 					</div>
 
-					<form th:if="${users} AND ${stClass} OR ${students} AND ${stClass}"
+					<form th:if="${students} AND ${stClass}"
 							th:action="@{/admin/{id}/class/{classId}/createQR(id=${session.u.id},classId=${stClass.id})}">
 						<button type="submit">Descargar QR de acceso</button>
 	  				</form>   
@@ -99,7 +99,7 @@
 			</div>
 
 			<div style="width:34%;">
-				<div th:unless="${teams}" class="container">
+				<div th:if="${users}" class="container">
 					<label for="quantity">Número de equipos:</label>
 					<input type="number" id="quantity" name="quantity" min="2" max="99" defaultValue="2">
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
@@ -128,7 +128,7 @@
 					<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
   				</form>
 
-				<div class="scroll">
+				<div class="scroll" th:if="${stClass} AND ${students}">
 					<h3>Lista de concursos</h3>
 					<table class="adminTable" id="contestTable" name="contestTable">
 						<tr th:if="${contests}" th:each="c: ${contests}">							
@@ -137,12 +137,12 @@
 			  				</form>	
 						</tr>
 					</table>
-				</div>	
 
-				<form th:if="${stClass}" th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" method="POST" enctype="multipart/form-data">
-					Fichero de concurso <input type="file" name="contestfile"/>
-					<button type="submit">Crear concurso</button>
-				</form>
+					<formth:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" method="POST" enctype="multipart/form-data">
+						Fichero de concurso <input type="file" name="contestfile"/>
+						<button type="submit">Crear concurso</button>
+					</form>
+				</div>	
 
 			</div>
 		</div>

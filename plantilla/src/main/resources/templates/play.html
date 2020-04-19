@@ -50,28 +50,42 @@
 			<div style="width:25%;">
 				<div class="classBox">		
 					<form th:if="${contestList}" th:each="c: ${contestList}" 
-							th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
-						<button type="submit" th:text="${c.name}">Mis clases</button>
+							th:action="@{/admin/{id}/play/{contestId}(id=${session.u.id},contestId=${c.id})}">
+						<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
 	  				</form>					
 				</div>
 			</div>
 
 			<div style="width:75%;">
-				<div class="contestBox" th:if=${contest}>
-					<th th:text="${contest.name}"></th>
-					<div class="scroll">
-						<div th:each="q: ${contest.questions}">
-							<th th:text="${q.text}"></th>
-							<table th:unless="${q.answers == null}">
-								<tr  th:each="a: ${q.answers}">
-									<td th:text="${a.text}"></td>
-									<td> | </td>
-									<td th:text="${a.score}"></th>
-								</tr>
-							</table>
+				<form th:if=${contest}>
+					<div class="contestBox">
+						<h3 th:text="${contest.name}"></h3>
+						<div class="scroll">
+							<div th:each="q, iStatQ : ${contest.questions}">
+								<th th:text="${iStatQ.index + 1}"></th>
+								<th th:text="'  -  '"></th>
+								<th th:text="${q.text}"></th>
+								<table th:if="${q.answers}" style="margin-left: 20px">
+									<tr th:each="a, iStatA : ${q.answers}">
+										<td th:text="${iStatA.index + 1}"></td>
+										<td th:text="'  -  '"></td>
+										<td th:text="${a.text}"></td>
+									</tr>
+								</table>
+								<div class="container">
+									<label style="margin-right: 5px;">Respuesta:</label>
+									<select class="answer">
+										<option value="'X'" th:text="'Sin responder'">Opcion</option>
+										<option th:each="a, iStatA : ${q.answers}" value="${iStatA.index}" th:text="${iStatA.index + 1}">Opcion</option>
+									</select>									
+								</div>				
+							</div>
 						</div>
+						
+						<button style="margin-top: 5px;" type="submit">Terminar</button>
 					</div>
-				</div>
+
+				</form>
 			</div>			
 		</div>
 		

@@ -27,11 +27,12 @@ import org.hibernate.annotations.LazyCollectionOption;
 @Entity
 @NamedQueries({
 	@NamedQuery(name="Contest.byTeacher",
-	query="SELECT c FROM Contest c JOIN c.teacher t "
-			+ "WHERE t.id = :userId"),
+	query="SELECT c FROM Contest c JOIN c.teacher t JOIN c.stClass stc "
+			+ "WHERE t.id = :userId "
+			+ "ORDER BY stc.name DESC"),
 	@NamedQuery(name="Contest.byClass",
 	query="SELECT c FROM Contest c JOIN c.stClass stc "
-			+ "WHERE stc.id = :classId")
+			+ "WHERE stc.id = :classId ")
 })
 
 public class Contest {
