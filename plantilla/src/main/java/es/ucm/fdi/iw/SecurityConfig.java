@@ -39,7 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	            .antMatchers("/admin/**").hasRole("ADMIN")		// <-- administration
 	            .anyRequest().authenticated()
 	            .and()
-	        .formLogin()
+			.formLogin()
+				.loginPage("/login")
 	        	.permitAll().successHandler(loginSuccessHandler);// <-- called when login Ok; can redirect
 	}
 	

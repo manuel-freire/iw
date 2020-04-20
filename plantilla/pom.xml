@@ -66,14 +66,96 @@
 			<artifactId>owasp-java-html-sanitizer</artifactId>
 			<version>20180219.1</version>
 		</dependency>
+
+        <!-- 
+			principal librería de pruebas unitarias en entorno Java
+			https://mvnrepository.com/artifact/junit/junit 			
+		-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- 
+			para generar mockups (falsos objetos que simulan ser objetos reales)
+			en tus pruebas unitarias
+			https://mvnrepository.com/artifact/org.mockito/mockito-core 
+		-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 
+			para usar karate sobre servidores apache-tomcat
+			https://mvnrepository.com/artifact/com.intuit.karate/karate-apache 
+		-->
+        <dependency>
+            <groupId>com.intuit.karate</groupId>
+            <artifactId>karate-apache</artifactId>
+            <version>0.9.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 
+			karate usa chrome u otro navegador para automatizar pruebas
+			https://mvnrepository.com/artifact/com.intuit.karate/karate-junit4 
+		-->
+        <dependency>
+            <groupId>com.intuit.karate</groupId>
+            <artifactId>karate-junit4</artifactId>
+            <version>0.9.4</version>
+            <scope>test</scope>
+        </dependency>		
 	</dependencies>
 
 	<build>
+
+		<!--
+			para poder tener todos los recursos de prueba
+			mezclados con las pruebas en sí en src/test/java
+			(esto dice "los recursos están ahí, pero no incluyen los .java")
+		-->
+	    <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- 
+				surefire se encarga de pasar pruebas JUnit. No queremos
+				que se ejecute Karate siempre, sólo si se especifica
+				
+				mvn test -Dtest=KarateTests 
+				(ojo: sólo se pueden pasar con la aplicación funcionando!)
+			-->
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.1</version>
+                <configuration>
+                    <excludes>
+                        <exclude>karate/**/*.java</exclude>
+                    </excludes>
+                    <includes>
+                        <include>es/**/*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

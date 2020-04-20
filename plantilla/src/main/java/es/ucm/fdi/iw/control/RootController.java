@@ -33,5 +33,11 @@ public class RootController {
 	@GetMapping("/error")
 	public String error(Model model) {
 		return "error";
+	}
+	
+	@GetMapping("/login")
+	public String login(Model model) {
+		return "login";
 	}	
 }
+
