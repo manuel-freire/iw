@@ -43,11 +43,6 @@
 		<nav>
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis pruebas</h1>
-
-			<form th:action="@{/admin/{id}/contest(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-				Fichero de concurso <input type="file" name="contestfile"/>
-				<button type="submit">Crear concurso</button>
-			</form>
 	
 		</nav>
 

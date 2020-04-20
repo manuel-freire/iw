@@ -400,6 +400,33 @@ public class AdminController {
 		return contest(id, model, session);
 	}	
 	
+	@PostMapping("/{id}/play/{contestId}/results")
+	@Transactional
+	public String checkContest(
+			HttpServletResponse response,
+			@RequestParam("results") List<String> results,
+			@PathVariable("id") long id,
+			@PathVariable("contestId") long contestId,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return playContest(id, contestId, model, session);
+		}
+		
+		if (results == null || results.isEmpty()) {
+			log.info("No se han creado equipos o ningún alumno ha sido asignado");
+		} else {		
+			log.info("{}\n\n\nAQUI\n", results);
+		}	
+		
+		return "admin";
+	}
+	
 	private Model saveClassToDb(Model model, User teacher, String content) throws MalformedURLException, DocumentException, IOException {
 		log.info("Inicio del procesado del fichero de clase");		
 		StClass stClass = ClassFileReader.readClassFile(content);

@@ -57,7 +57,7 @@
 			<h1 style="margin-left:25px;margin-right:25px;">Mis clases</h1>
 
 			<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-				Fichero de clase <input type="file" name="classfile"/>
+				Fichero de clase <input type="file" name="classfile" required />
 				<button type="submit">Crear clase</button>
 			</form>
 	
@@ -138,8 +138,9 @@
 						</tr>
 					</table>
 
-					<formth:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" method="POST" enctype="multipart/form-data">
-						Fichero de concurso <input type="file" name="contestfile"/>
+					<form th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
+						method="POST" enctype="multipart/form-data">
+						Fichero de concurso <input type="file" name="contestfile" required/>
 						<button type="submit">Crear concurso</button>
 					</form>
 				</div>	

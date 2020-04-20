@@ -57,11 +57,11 @@
 			</div>
 
 			<div style="width:75%;">
-				<form th:if=${contest}>
+				<form th:if=${contest}  method="POST" th:action="@{/admin/{id}/play/{contestId}/results(id=${session.u.id},contestId=${contest.id})}">
 					<div class="contestBox">
 						<h3 th:text="${contest.name}"></h3>
 						<div class="scroll">
-							<div th:each="q, iStatQ : ${contest.questions}">
+							<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
 								<th th:text="${iStatQ.index + 1}"></th>
 								<th th:text="'  -  '"></th>
 								<th th:text="${q.text}"></th>
@@ -81,8 +81,10 @@
 								</div>				
 							</div>
 						</div>
-						
-						<button style="margin-top: 5px;" type="submit">Terminar</button>
+
+						<input type="hidden" name="results" id="results"/>
+						<button style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
+					
 					</div>
 
 				</form>
@@ -93,6 +95,27 @@
 	</div>
 
 	<script type="text/javascript">
+
+		function getAnswers() {
+
+			var question = document.getElementsByClassName('questionContainer');
+			var solution;
+			var answer;
+			var answerList = [];
+			var i;
+
+			for (i = 0; i < question.length; i++) {
+				solution = question[i].getElementsByClassName('answer')[0];
+				answer = solution.options[solution.selectedIndex].text;
+				answerList.push(answer);
+			} 
+
+			return answerList;
+		}
+
+		function setAnswers() {
+			document.getElementById("results").value = getAnswers();
+		}
 
 	</script>
 </body>
