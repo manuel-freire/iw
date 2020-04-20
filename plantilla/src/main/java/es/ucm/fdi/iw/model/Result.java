@@ -22,11 +22,16 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name="Question.byContest",
-//	query="SELECT q FROM Question q "
-//			+ "WHERE q.contest = :contestId")
-//})
+@NamedQueries({
+	@NamedQuery(name="Result.getResult",
+	query="SELECT r FROM Result r JOIN r.user u JOIN r.contest c "
+			+ "WHERE u.id = :userId "
+			+ "AND c.id = :contestId"),
+	@NamedQuery(name="Result.hasAnswer",
+	query="SELECT COUNT(r) FROM Result r JOIN r.user u JOIN r.contest c "
+			+ "WHERE u.id = :userId "
+			+ "AND c.id = :contestId"),
+})
 
 public class Result {
 	

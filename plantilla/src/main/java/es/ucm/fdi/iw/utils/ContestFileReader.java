@@ -38,6 +38,7 @@ public class ContestFileReader {
 			String[] answerData;
 			Question question;
 			Answer answer;			
+			Answer empty;
 			
 			for (int i = 0; i < jQuestionsList.length(); i++) {
 				jQuestion = jQuestionsList.getJSONObject(i);
@@ -46,6 +47,12 @@ public class ContestFileReader {
 				question.setContest(contest);
 				
 				answerList = new ArrayList<>();
+				empty = new Answer();
+				empty.setQuestion(question);
+				empty.setText("Sin responder");
+				empty.setScore(0);
+				answerList.add(empty);
+				
 				answerInput = jQuestion.getJSONArray("respuestas");
 				for(int j = 0; j < answerInput.length(); j++) {
 					answerData = answerInput.getString(j).split(ConstantsFromFile.SEPARATOR);

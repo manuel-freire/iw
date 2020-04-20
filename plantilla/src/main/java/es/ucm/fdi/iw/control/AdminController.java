@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Goal;
 import es.ucm.fdi.iw.model.Question;
+import es.ucm.fdi.iw.model.Result;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
@@ -231,8 +233,21 @@ public class AdminController {
 		Contest contest = entityManager.find(Contest.class, contestId);
 		model.addAttribute("contest", contest);
 		
+		Long solved = (Long)entityManager.createNamedQuery("Result.hasAnswer")
+				.setParameter("userId", id)
+				.setParameter("contestId", contestId).getSingleResult();
+		if (solved > 0) {
+			Result result = entityManager.createNamedQuery("Result.getResult", Result.class)
+					.setParameter("userId", id)
+					.setParameter("contestId", contestId).getSingleResult();
+			model.addAttribute("result", result);
+		}
+		
+		log.info(""+solved+"\n\n\n\n\n\n");
+		
+		
 		return play(id, model, session);
-	}	
+	}
 
 	@PostMapping("/{id}/class")
 	@Transactional
@@ -371,40 +386,40 @@ public class AdminController {
 		return selectedClass(id, classId, model, session);
 	}		
 	
-	@PostMapping("/{id}/contest")
-	@Transactional
-	public String createContestFromFile(
-			HttpServletResponse response,
-			@RequestParam("contestfile") MultipartFile contestFile,
-			@PathVariable("id") long id,
-			Model model, HttpSession session) throws IOException {
-		User target = entityManager.find(User.class, id);
-		model.addAttribute("user", target);
-		
-		// check permissions
-		User requester = (User)session.getAttribute("u");
-		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-			return contest(id, model, session);
-		}
-		
-		log.info("Profesor {} subiendo fichero de clase", id);
-		if (contestFile.isEmpty()) {
-			log.info("El fichero está vacío");
-		} else {
-			String content = new String(contestFile.getBytes(), "UTF-8");
-			log.info("El fichero con los datos se ha cargado correctamente");
-			//saveContestToDb(model, target, content);
-		}
-
-		return contest(id, model, session);
-	}	
+//	@PostMapping("/{id}/contest")
+//	@Transactional
+//	public String createContestFromFile(
+//			HttpServletResponse response,
+//			@RequestParam("contestfile") MultipartFile contestFile,
+//			@PathVariable("id") long id,
+//			Model model, HttpSession session) throws IOException {
+//		User target = entityManager.find(User.class, id);
+//		model.addAttribute("user", target);
+//		
+//		// check permissions
+//		User requester = (User)session.getAttribute("u");
+//		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+//			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+//			return contest(id, model, session);
+//		}
+//		
+//		log.info("Profesor {} subiendo fichero de clase", id);
+//		if (contestFile.isEmpty()) {
+//			log.info("El fichero está vacío");
+//		} else {
+//			String content = new String(contestFile.getBytes(), "UTF-8");
+//			log.info("El fichero con los datos se ha cargado correctamente");
+//			//saveContestToDb(model, target, content);
+//		}
+//
+//		return contest(id, model, session);
+//	}	
 	
 	@PostMapping("/{id}/play/{contestId}/results")
 	@Transactional
-	public String checkContest(
+	public String getResults(
 			HttpServletResponse response,
-			@RequestParam("results") List<String> results,
+			@RequestParam("results") List<String> answerList,
 			@PathVariable("id") long id,
 			@PathVariable("contestId") long contestId,
 			Model model, HttpSession session) throws IOException, DocumentException {
@@ -418,13 +433,24 @@ public class AdminController {
 			return playContest(id, contestId, model, session);
 		}
 		
-		if (results == null || results.isEmpty()) {
+		
+		if (answerList == null || answerList.isEmpty()) {
 			log.info("No se han creado equipos o ningún alumno ha sido asignado");
 		} else {		
-			log.info("{}\n\n\nAQUI\n", results);
+			Contest contest = entityManager.find(Contest.class, contestId);
+			
+			Result result = new Result();
+			result.setContest(contest);
+			result.setUser(target);
+			result.setAnswers(new ArrayList<>());
+			result = correction(result, contest, answerList);
+			entityManager.persist(result);
+			
+			model.addAttribute("result", result);
 		}	
 		
-		return "admin";
+
+		return playContest(id, contestId, model, session);
 	}
 	
 	private Model saveClassToDb(Model model, User teacher, String content) throws MalformedURLException, DocumentException, IOException {
@@ -558,5 +584,46 @@ public class AdminController {
 		}		
 		
 		return achievementList;
+	}
+	
+	private Result correction(Result result, Contest contest, List<String> answerList) {
+		Answer answer;
+		int index;
+		double score;
+		
+		int correct = 0;
+		double totalScore = 0;
+		boolean passed = false;
+		boolean perfect = false;		
+		
+		Answer empty = new Answer();
+		empty.setScore(0);
+		empty.setText("Sin responder");
+		
+		for (int i = 0; i < answerList.size(); i++) {
+			index = Integer.valueOf(answerList.get(i));
+			answer = contest.getQuestions().get(i).getAnswers().get(index);
+			result.getAnswers().add(answer);
+			
+			score = answer.getScore();
+			totalScore += score * 10;
+			if (score == 1) {
+				correct++;
+			}
+		}
+		
+		if (totalScore >= answerList.size() * 10 / 2) {
+			passed = true;
+			if (totalScore >= answerList.size() * 10) {
+				perfect = true;
+			}
+		}
+		
+		result.setCorrect(correct);
+		result.setPassed(passed);
+		result.setPerfect(perfect);
+		result.setScore(totalScore);
+		
+		return result;
 	}
 }

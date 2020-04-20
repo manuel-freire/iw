@@ -56,7 +56,7 @@
 				</div>
 			</div>
 
-			<div style="width:75%;">
+			<div style="width:50%;">
 				<form th:if=${contest}  method="POST" th:action="@{/admin/{id}/play/{contestId}/results(id=${session.u.id},contestId=${contest.id})}">
 					<div class="contestBox">
 						<h3 th:text="${contest.name}"></h3>
@@ -72,23 +72,31 @@
 										<td th:text="${a.text}"></td>
 									</tr>
 								</table>
-								<div class="container">
+								<div th:unless="${result}" class="container">
 									<label style="margin-right: 5px;">Respuesta:</label>
 									<select class="answer">
-										<option value="'X'" th:text="'Sin responder'">Opcion</option>
-										<option th:each="a, iStatA : ${q.answers}" value="${iStatA.index}" th:text="${iStatA.index + 1}">Opcion</option>
+										<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
 									</select>									
 								</div>				
 							</div>
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
-						<button style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
+						<button th:unless="${result}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
 					
 					</div>
 
 				</form>
-			</div>			
+			</div>	
+
+			<div style="width:25%;">
+				<div th:if="${result} AND ${contest}">		
+					<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
+					<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>
+					<h3 th:if="${result.perfect}" th:text="'ENHORABUENA. PUNTUACIÓN PERFECTA'"></h3>
+					<h3 th:text="${result.passed} ? 'Superada: SI' : 'Superada: NO'"></h3>	
+				</div>
+			</div>		
 		</div>
 		
 	</div>
@@ -106,7 +114,7 @@
 
 			for (i = 0; i < question.length; i++) {
 				solution = question[i].getElementsByClassName('answer')[0];
-				answer = solution.options[solution.selectedIndex].text;
+				answer = solution.options[solution.selectedIndex].value;
 				answerList.push(answer);
 			} 
 

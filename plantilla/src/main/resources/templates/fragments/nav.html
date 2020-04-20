@@ -52,7 +52,7 @@
 
 		<div th:if="${session.u}">			
 			<div th:if="${session.u.hasRole('USER')}">	
-				<form th:action="@{/user/{id}/rankings(id=${session.u.id})}">
+				<form th:action="@{/user/{id}/rankings/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
 					<button type="submit">Rankings</button>
   				</form>		
 			</div>					
