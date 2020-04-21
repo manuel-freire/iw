@@ -33,9 +33,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import com.itextpdf.text.DocumentException;
+
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Achievement;
+import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
+import es.ucm.fdi.iw.model.Result;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
@@ -136,23 +140,53 @@ public class UserController {
 		
 		return "rankings";
 	}	
-
-	@GetMapping("/{id}/play")
-	public String play(@PathVariable long id, Model model, HttpSession session) {
+	
+	@GetMapping("/{id}/play/{classId}")
+	public String play(@PathVariable("id") long id, @PathVariable("classId") long classId,
+			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
 		
-		if (u.getRoles().contains("ADMIN")) {
-			List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
-					.setParameter("userId", u.getId()).getResultList();
-			model.addAttribute("contestList", contestList);
-		} else {
-			
-		}
+		StClass stc = entityManager.find(StClass.class, classId);
+		model.addAttribute("stClass", stc);
 		
-		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClass", Contest.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("contestList", contestList);		
 		
 		return "play";
+	}	
+	
+	@GetMapping("/{id}/play/{classId}/{contestId}")
+	public String playContest(@PathVariable("id") long id, @PathVariable("classId") long classId, @PathVariable("contestId") long contestId,
+			Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		StClass stc = entityManager.find(StClass.class, classId);
+		model.addAttribute("stClass", stc);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClass", Contest.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("contestList", contestList);
+		
+		Contest contest = entityManager.find(Contest.class, contestId);
+		model.addAttribute("contest", contest);
+		
+		Long solved = (Long)entityManager.createNamedQuery("Result.hasAnswer")
+				.setParameter("userId", id)
+				.setParameter("contestId", contestId).getSingleResult();
+		if (solved > 0) {
+			Result result = entityManager.createNamedQuery("Result.getResult", Result.class)
+					.setParameter("userId", id)
+					.setParameter("contestId", contestId).getSingleResult();
+			model.addAttribute("result", result);
+		}
+		
+		log.info(""+solved+"\n\n\n\n\n\n");
+		
+		
+		return play(id, classId, model, session);
 	}
 
 	@PostMapping("/{id}")
@@ -180,6 +214,43 @@ public class UserController {
 		target.setUsername(edited.getUsername());
 		return "profile";
 	}	
+	
+	@PostMapping("/{id}/play/{classId}/{contestId}/results")
+	@Transactional
+	public String getResults(
+			HttpServletResponse response,
+			@RequestParam("results") List<String> answerList,
+			@PathVariable("id") long id,
+			@PathVariable("classId") long classId,
+			@PathVariable("contestId") long contestId,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return playContest(id, classId, contestId, model, session);
+		}
+		
+		if (answerList == null || answerList.isEmpty()) {
+			log.info("No se han creado equipos o ningún alumno ha sido asignado");
+		} else {		
+			Contest contest = entityManager.find(Contest.class, contestId);
+			
+			Result result = new Result();
+			result.setContest(contest);
+			result.setUser(target);
+			result.setAnswers(new ArrayList<>());
+			result = correction(result, contest, answerList);
+			entityManager.persist(result);
+			
+			model.addAttribute("result", result);
+		}	
+
+		return playContest(id, classId, contestId, model, session);
+	}
 	
 	@GetMapping(value="/{id}/photo")
 	public StreamingResponseBody getPhoto(@PathVariable long id, Model model) throws IOException {		
@@ -288,5 +359,46 @@ public class UserController {
 			log.info("Successfully uploaded photo for {} into {}!", id, f.getAbsolutePath());
 		}
 		return "team";
+	}
+	
+	private Result correction(Result result, Contest contest, List<String> answerList) {
+		Answer answer;
+		int index;
+		double score;
+		
+		int correct = 0;
+		double totalScore = 0;
+		boolean passed = false;
+		boolean perfect = false;		
+		
+		Answer empty = new Answer();
+		empty.setScore(0);
+		empty.setText("Sin responder");
+		
+		for (int i = 0; i < answerList.size(); i++) {
+			index = Integer.valueOf(answerList.get(i));
+			answer = contest.getQuestions().get(i).getAnswers().get(index);
+			result.getAnswers().add(answer);
+			
+			score = answer.getScore();
+			totalScore += score * 10;
+			if (score == 1) {
+				correct++;
+			}
+		}
+		
+		if (totalScore >= answerList.size() * 10 / 2) {
+			passed = true;
+			if (totalScore >= answerList.size() * 10) {
+				perfect = true;
+			}
+		}
+		
+		result.setCorrect(correct);
+		result.setPassed(passed);
+		result.setPerfect(perfect);
+		result.setScore(totalScore);
+		
+		return result;
 	}
 }
