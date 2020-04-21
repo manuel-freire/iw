@@ -13,7 +13,9 @@
 		<div class="logx" th:if="${session.u}">
 			<a id="received" th:href="@{/message/}" th:text="${session.unread} ? '📬': '📪'">📫</a>			
 			<a th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">administrar</a>
-			<a th:href="@{/logout}" href="/logout">logout</a>
+			<form th:action="@{/logout}" method="post">
+				<button type="submit">logout</button>
+			</form>
 			<a th:href="@{/user/{id}(id=${session.u.id})}">
 				<img class="userthumb" th:src="@{/user/{id}/photo(id=${session.u.id})}">
 				<span th:text="${session.u.username}">Pepe</span></a>						

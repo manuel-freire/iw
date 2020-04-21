@@ -35,13 +35,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	    http
 	        .authorizeRequests()
 	            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
-	            // .antMatchers("/clase/enter").permitAll() 		 <-- only when logging in to vote 
-	            .antMatchers("/admin/**").hasRole("ADMIN")		// <-- administration
+	            .antMatchers("/admin/**").hasRole("ADMIN")		 // <-- administration
 	            .anyRequest().authenticated()
 	            .and()
 			.formLogin()
 				.loginPage("/login")
-	        	.permitAll().successHandler(loginSuccessHandler);// <-- called when login Ok; can redirect
+				.permitAll().successHandler(loginSuccessHandler); // <-- called when login Ok; can redirect
 	}
 	
 	/**

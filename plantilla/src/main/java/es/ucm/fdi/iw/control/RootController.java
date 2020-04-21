@@ -8,8 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import es.ucm.fdi.iw.model.User;
-
 /**
  * Landing-page controller
  * 
@@ -36,8 +34,9 @@ public class RootController {
 	}
 	
 	@GetMapping("/login")
-	public String login(Model model) {
+	public String login() {
 		return "login";
-	}	
+	}
 }
+
 

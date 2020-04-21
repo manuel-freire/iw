@@ -6,20 +6,22 @@
 			mvn spring-boot:run
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.5.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
+		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>es.ucm</groupId>
-	<artifactId>plantilla</artifactId> 			    	<!-- cambia esto -->
-	<version>0.0.1-SNAPSHOT</version>	
+	<artifactId>plantilla</artifactId>					<!-- cambia esto -->
+	<version>0.0.1-SNAPSHOT</version>
 	<name>plantilla</name>								<!-- cambia esto -->
-	<description>Cambia esta descripción</description> 	<!-- cambia esto  -->
+	<description>Cambia esta descripción</description>	<!-- cambia esto  -->
 	<packaging>jar</packaging>
 
 	<properties>
@@ -58,8 +60,8 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
-    		<groupId>org.springframework.security</groupId>
-    		<artifactId>spring-security-messaging</artifactId>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-messaging</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
@@ -67,51 +69,76 @@
 			<version>20180219.1</version>
 		</dependency>
 
-        <!-- 
+		<!-- 
 			principal librería de pruebas unitarias en entorno Java
 			https://mvnrepository.com/artifact/junit/junit 			
 		-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 
 
-        <!-- 
+		<!-- 
 			para generar mockups (falsos objetos que simulan ser objetos reales)
 			en tus pruebas unitarias
 			https://mvnrepository.com/artifact/org.mockito/mockito-core 
 		-->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.2.4</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.2.4</version>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- 
+		<!-- 
 			para usar karate sobre servidores apache-tomcat
 			https://mvnrepository.com/artifact/com.intuit.karate/karate-apache 
 		-->
-        <dependency>
-            <groupId>com.intuit.karate</groupId>
-            <artifactId>karate-apache</artifactId>
-            <version>0.9.4</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-apache</artifactId>
+			<version>0.9.5</version>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- 
-			karate usa chrome u otro navegador para automatizar pruebas
+		<!-- 
+			integración entre karate y junit4
 			https://mvnrepository.com/artifact/com.intuit.karate/karate-junit4 
 		-->
-        <dependency>
-            <groupId>com.intuit.karate</groupId>
-            <artifactId>karate-junit4</artifactId>
-            <version>0.9.4</version>
-            <scope>test</scope>
-        </dependency>		
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-junit4</artifactId>
+			<version>0.9.5</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- 
+			karate usa chrome u otro navegador para automatizar pruebas
+			https://mvnrepository.com/artifact/com.intuit.karate/karate-core 
+		-->
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-core</artifactId>
+			<version>0.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- 
+			karate sólo quiere parsear xml válido, pero lo normal es escribir
+			html que no es xhtml válido. JSoup permite convertir lo uno a lo otro
+			https://mvnrepository.com/artifact/org.jsoup/jsoup
+			(solo hace falta cuando usas Karate para probar APIs; 
+			si automatizas navegador, no es necesario)
+		-->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.13.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -121,14 +148,14 @@
 			mezclados con las pruebas en sí en src/test/java
 			(esto dice "los recursos están ahí, pero no incluyen los .java")
 		-->
-	    <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </testResource>
-        </testResources>
+		<testResources>
+			<testResource>
+				<directory>src/test/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
 
 		<plugins>
 			<plugin>
@@ -144,19 +171,41 @@
 				(ojo: sólo se pueden pasar con la aplicación funcionando!)
 			-->
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
-                <configuration>
-                    <excludes>
-                        <exclude>karate/**/*.java</exclude>
-                    </excludes>
-                    <includes>
-                        <include>es/**/*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+				<configuration>
+					<excludes>
+						<exclude>karate/**/*.java</exclude>
+					</excludes>
+					<includes>
+						<include>es/**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<!-- 
+				para ejecutar karate desde fuera (pruebas externas de interfaz):
+				
+				mvn test -Dexec.args=src/test/karate-ui/login.feature
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<classpathScope>test</classpathScope>
+							<mainClass>com.intuit.karate.cli.Main</mainClass>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>
