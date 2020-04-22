@@ -30,11 +30,12 @@
 
 		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
 
-			<div style="width:30%;"> 
+			<div style="padding-left:25px;"> 
 
 				<h2>Miembros del equipo</h2>
 				<table th:if="${members}" class="adminTable">
-					<tr th:each="m: ${members}">
+					<tr th:each="m, iStatM : ${members}">
+						<td th:text="${iStatM.index + 1}"></td>
 						<td th:text="${m.username}">Usuario</td>
 						<td> - </td>
 						<td th:text="${m.elo}">ELO</td>
@@ -43,7 +44,7 @@
 
 			</div>
 
-			<div style="width:70%;"> 
+			<div style="padding-left:25px;"> 
 
 				<h2 style="margin-bottom: :10px">Logros</h2>
 

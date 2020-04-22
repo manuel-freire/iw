@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -76,7 +77,7 @@ public class Result {
 		this.contest = contest;
 	}
 
-	@ManyToMany(targetEntity = Answer.class)
+	@ManyToMany(targetEntity = Answer.class, fetch = FetchType.EAGER)
 	public List<Answer> getAnswers() {
 		return answers;
 	}

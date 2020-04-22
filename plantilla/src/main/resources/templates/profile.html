@@ -17,7 +17,7 @@
 		
 		<nav>
 
-			<h1 style="margin-left:25px;margin-right:25px;" th:text="${'Bienvenid@ ' + user.username}"></h1>
+			<h1 style="padding-left:25px;margin-right:25px;" th:text="${'Bienvenid@ ' + user.username}"></h1>
 
 			<img height="72" width="72" th:src="@{/user/{id}/photo(id=${user.id})}">
 
@@ -30,7 +30,7 @@
 
 		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
 
-			<div style="width:30%;"> 
+			<div style="margin-left:25px;"> 
 
 				<h2>Cambiar información de usuario</h2>
 
@@ -49,9 +49,9 @@
 				</form>
 			</div>
 
-			<div style="width:70%;"> 
+			<div style="padding-left:25px;"> 
 
-				<h2 style="margin-bottom: :10px">Logros</h2>
+				<h2 style="margin-bottom:10px">Logros</h2>
 
 				<div class="scroll" th:if="${achievements}">
 					<div th:each="a: ${achievements}">

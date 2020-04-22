@@ -25,11 +25,11 @@
 
 		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
 
-			<div style="width:50%;"> 
+			<div style="padding-left:25px;"> 
 
-				<h2 style="margin-bottom: :10px">Ranking de estudiantes</h2>
+				<h2 style="margin-bottom:10px;">Ranking de estudiantes</h2>
 
-				<div class="scroll" th:if="${rankingUser} AND ${positionUser}">
+				<div class="scroll" th:if="${rankingUser} AND ${positionUser}" style="margin-left:25;">
 
 					<table>
 						<tr>
@@ -54,11 +54,11 @@
 
 			</div>
 
-			<div style="width:50%;"> 
+			<div style="padding-left:25px;"> 
 
-				<h2 style="margin-bottom: :10px">Ranking de equipos</h2>
+				<h2 style="margin-bottom:10px;">Ranking de equipos</h2>
 
-				<div class="scroll" th:if="${rankingTeam} AND ${positionTeam}">
+				<div class="scroll" th:if="${rankingTeam} AND ${positionTeam}" style="margin-left:25;">
 
 					<table>
 						<tr>
@@ -93,15 +93,6 @@
 	</div>
 	
 <script>
-
-	function fillRankings() {
-
-	}
-
-	function setRankingUser() {
-
-	}
-
 </script>	
 
 </body>
