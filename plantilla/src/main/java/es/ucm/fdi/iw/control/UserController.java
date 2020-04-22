@@ -371,10 +371,6 @@ public class UserController {
 		boolean passed = false;
 		boolean perfect = false;		
 		
-		Answer empty = new Answer();
-		empty.setScore(0);
-		empty.setText("Sin responder");
-		
 		for (int i = 0; i < answerList.size(); i++) {
 			index = Integer.valueOf(answerList.get(i));
 			answer = contest.getQuestions().get(i).getAnswers().get(index);

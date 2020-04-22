@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -75,7 +76,7 @@ public class Result {
 		this.contest = contest;
 	}
 
-	@OneToMany(targetEntity = Answer.class)
+	@ManyToMany(targetEntity = Answer.class)
 	public List<Answer> getAnswers() {
 		return answers;
 	}

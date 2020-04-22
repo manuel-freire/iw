@@ -73,8 +73,8 @@
 								<th th:text="'  -  '"></th>
 								<th th:text="${q.text}"></th>
 								<table th:if="${q.answers}" style="margin-left: 20px">
-									<tr th:each="a, iStatA : ${q.answers}">
-										<td th:text="${iStatA.index + 1}"></td>
+									<tr th:each="a, iStatA : ${q.answers}" th:unless="${iStatA.index} == 0">
+										<td th:text="${iStatA.index}"></td>
 										<td th:text="'  -  '"></td>
 										<td th:text="${a.text}"></td>
 									</tr>
@@ -104,8 +104,8 @@
 								<th th:text="'  -  '"></th>
 								<th th:text="${q.text}"></th>
 								<table th:if="${q.answers}" style="margin-left: 20px">
-									<tr th:each="a, iStatA : ${q.answers}">
-										<td th:text="${iStatA.index + 1}"></td>
+									<tr th:each="a, iStatA : ${q.answers}" th:unless="${iStatA.index} == 0">
+										<td th:text="${iStatA.index}"></td>
 										<td th:text="'  -  '"></td>
 										<td th:text="${a.text}"></td>
 									</tr>
