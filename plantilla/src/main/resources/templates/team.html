@@ -58,6 +58,20 @@
 
 			</div>
 
+			<div style="padding-left:25px;"> 
+
+				<h2 style="margin-bottom: :10px">Trofeos</h2>
+				<div class="container" th:if="${team}">
+					<img class="gold"></img>
+					<h3 style="margin-left:10px;margin-right:10px" th:text="${team.gold}">T.oro</h3>
+					<img class="silver"></img>
+					<h3 style="margin-left:10px;margin-right:10px" th:text="${team.silver}">T.plata</h3>
+					<img class="bronze"></img>
+					<h3 style="margin-left:10px;margin-right:10px" th:text="${team.bronze}">T.bronce</h3>
+				</div>
+
+			</div>
+
 		</div>
 	
 		<footer th:replace="fragments/footer.html :: footer">

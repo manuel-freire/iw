@@ -7,11 +7,12 @@ import es.ucm.fdi.iw.model.Achievement;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Result;
+import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
 
 public class AutoCorrector {	
 	
-	public static Result correction(User user, Contest contest, List<String> answerList) {
+	public static Result correction(User user, StTeam team, Contest contest, List<String> answerList) {
 		Result result;
 		
 		int correct = 0;
@@ -57,6 +58,8 @@ public class AutoCorrector {
 			user.setCorrect(user.getCorrect() + correct);
 			user.setPassed(user.getPassed() + 1);
 			user.setPerfect(user.getPerfect() + 1);
+			team.setElo(team.getElo() + (int)Math.round(totalScore));
+			team.setCorrect(team.getCorrect() + correct);
 		}
 		
 		return result;
@@ -90,6 +93,33 @@ public class AutoCorrector {
 				case("ELO"):
 					a.setProgress(user.getElo());
 					if (user.getElo() >= Integer.parseInt(levels[a.getLevel()])) {
+						a.setLevel(a.getLevel() + 1);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		
+		return achievements;
+	}
+	
+	public static List<Achievement> updateAchievementsTeam(List<Achievement> achievements, StTeam team) {
+		String[] levels;
+		
+		for (Achievement a: achievements) {
+			levels = a.getGoal().getLevels().split(",");
+			
+			switch(a.getGoal().getKey()) {
+				case("CORRECT"):
+					a.setProgress(team.getCorrect());
+					if (team.getCorrect() >= Integer.parseInt(levels[a.getLevel()])) {
+						a.setLevel(a.getLevel() + 1);
+					}
+					break;
+				case("ELO"):
+					a.setProgress(team.getElo());
+					if (team.getElo() >= Integer.parseInt(levels[a.getLevel()])) {
 						a.setLevel(a.getLevel() + 1);
 					}
 					break;

@@ -236,17 +236,27 @@ public class UserController {
 			log.info("No se han creado equipos o ningún alumno ha sido asignado");
 		} else {		
 			Contest contest = entityManager.find(Contest.class, contestId);
-			List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byStudent", Achievement.class)
-					.setParameter("userId", target.getId()).getResultList();
+			StTeam team = entityManager.find(StTeam.class, target.getTeam().getId());
 			
-			Result result = AutoCorrector.correction(target, contest, answerList);
-			achievements = AutoCorrector.updateAchievementsUser(achievements, target);
-			target.setAchievementUser(achievements);
-			for(Achievement a : achievements)
-				entityManager.persist(a);
+			List<Achievement> achievementsU = entityManager.createNamedQuery("Achievement.byStudent", Achievement.class)
+					.setParameter("userId", target.getId()).getResultList();
+			List<Achievement> achievementsT = entityManager.createNamedQuery("Achievement.byTeam", Achievement.class)
+					.setParameter("teamId", team.getId()).getResultList();
+			
+			Result result = AutoCorrector.correction(target, team, contest, answerList);
+			achievementsU = AutoCorrector.updateAchievementsUser(achievementsU, target);
+			achievementsT = AutoCorrector.updateAchievementsTeam(achievementsT, team);
+			target.setAchievementUser(achievementsU);
+			team.setAchievementTeam(achievementsT);
+			
+			for(Achievement aU : achievementsU)
+				entityManager.persist(aU);
+			for(Achievement aT : achievementsT)
+				entityManager.persist(aT);
 
 			entityManager.persist(result);
 			entityManager.persist(target);
+			entityManager.persist(team);
 			
 			model.addAttribute("result", result);
 		}	

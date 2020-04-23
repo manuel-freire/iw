@@ -32,11 +32,7 @@ import javax.persistence.OneToMany;
 	@NamedQuery(name="Result.hasAnswer",
 	query="SELECT COUNT(r) FROM Result r JOIN r.user u JOIN r.contest c "
 			+ "WHERE u.id = :userId "
-			+ "AND c.id = :contestId"),
-	@NamedQuery(name="Result.deleteResult",
-			query="DELETE r FROM Result r JOIN r.user u JOIN r.contest c "
-					+ "WHERE u.id = :userId "
-					+ "AND c.id = :contestId"),
+			+ "AND c.id = :contestId")
 })
 
 public class Result {

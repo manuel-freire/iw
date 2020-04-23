@@ -41,6 +41,21 @@ nav>*{
 	width: 64px;
 	height: 64px;
 }
+.gold {
+	background-image: url(../img/gold.png);
+	width: 57px;
+	height: 57px;
+}
+.silver {
+	background-image: url(../img/silver.png);
+	width: 57px;
+	height: 57px;
+}
+.bronze {
+	background-image: url(../img/bronze.png);
+	width: 57px;
+	height: 57px;
+}
 .logx {
 	margin-left: auto;
 }

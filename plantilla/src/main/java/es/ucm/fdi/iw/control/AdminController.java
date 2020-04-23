@@ -408,7 +408,7 @@ public class AdminController {
 		} else {		
 			Contest contest = entityManager.find(Contest.class, contestId);
 			
-			Result result = AutoCorrector.correction(target, contest, answerList);
+			Result result = AutoCorrector.correction(target, target.getTeam(), contest, answerList);
 			entityManager.persist(result);
 			
 			model.addAttribute("result", result);
