@@ -48,6 +48,7 @@ import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
+import es.ucm.fdi.iw.utils.AutoCorrector;
 import es.ucm.fdi.iw.utils.ClassFileReader;
 import es.ucm.fdi.iw.utils.ContestFileReader;
 import es.ucm.fdi.iw.utils.PdfGenerator;
@@ -242,10 +243,7 @@ public class AdminController {
 					.setParameter("contestId", contestId).getSingleResult();
 			model.addAttribute("result", result);
 		}
-		
-		log.info(""+solved+"\n\n\n\n\n\n");
-		
-		
+				
 		return play(id, model, session);
 	}
 
@@ -386,35 +384,6 @@ public class AdminController {
 		return selectedClass(id, classId, model, session);
 	}		
 	
-//	@PostMapping("/{id}/contest")
-//	@Transactional
-//	public String createContestFromFile(
-//			HttpServletResponse response,
-//			@RequestParam("contestfile") MultipartFile contestFile,
-//			@PathVariable("id") long id,
-//			Model model, HttpSession session) throws IOException {
-//		User target = entityManager.find(User.class, id);
-//		model.addAttribute("user", target);
-//		
-//		// check permissions
-//		User requester = (User)session.getAttribute("u");
-//		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
-//			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
-//			return contest(id, model, session);
-//		}
-//		
-//		log.info("Profesor {} subiendo fichero de clase", id);
-//		if (contestFile.isEmpty()) {
-//			log.info("El fichero está vacío");
-//		} else {
-//			String content = new String(contestFile.getBytes(), "UTF-8");
-//			log.info("El fichero con los datos se ha cargado correctamente");
-//			//saveContestToDb(model, target, content);
-//		}
-//
-//		return contest(id, model, session);
-//	}	
-	
 	@PostMapping("/{id}/play/{contestId}/results")
 	@Transactional
 	public String getResults(
@@ -439,11 +408,7 @@ public class AdminController {
 		} else {		
 			Contest contest = entityManager.find(Contest.class, contestId);
 			
-			Result result = new Result();
-			result.setContest(contest);
-			result.setUser(target);
-			result.setAnswers(new ArrayList<>());
-			result = correction(result, contest, answerList);
+			Result result = AutoCorrector.correction(target, contest, answerList);
 			entityManager.persist(result);
 			
 			model.addAttribute("result", result);
@@ -584,42 +549,5 @@ public class AdminController {
 		}		
 		
 		return achievementList;
-	}
-	
-	private Result correction(Result result, Contest contest, List<String> answerList) {
-		Answer answer;
-		int index;
-		double score;
-		
-		int correct = 0;
-		double totalScore = 0;
-		boolean passed = false;
-		boolean perfect = false;		
-		
-		for (int i = 0; i < answerList.size(); i++) {
-			index = Integer.valueOf(answerList.get(i));
-			answer = contest.getQuestions().get(i).getAnswers().get(index);
-			result.getAnswers().add(answer);
-			
-			score = answer.getScore();
-			totalScore += score * 10;
-			if (score == 1) {
-				correct++;
-			}
-		}
-		
-		if (totalScore >= answerList.size() * 10 / 2) {
-			passed = true;
-			if (totalScore >= answerList.size() * 10) {
-				perfect = true;
-			}
-		}
-		
-		result.setCorrect(correct);
-		result.setPassed(passed);
-		result.setPerfect(perfect);
-		result.setScore(totalScore);
-		
-		return result;
 	}
 }

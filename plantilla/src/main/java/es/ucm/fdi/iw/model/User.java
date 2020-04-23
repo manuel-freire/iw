@@ -301,7 +301,7 @@ public class User {
 		stb.append("Nombre: " + this.getFirstName() + "\n");
 		stb.append("Apellidos: " + this.getLastName() + "\n");
 		stb.append("Usuario: " + this.getUsername() + "\n");
-		stb.append("Elo: " + Integer.toString(this.getElo()) + "\n");
+		stb.append("Elo: " + Double.toString(this.getElo()) + "\n");
 		
 	    return stb.toString();
 	}
