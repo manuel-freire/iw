@@ -65,7 +65,7 @@
 
 		<div class="container" style="display: flex; height: 100%;">
 
-			<div style="width:33%;">
+			<div style="padding-left:25px;">
 
 				<div class="classBox">		
 					<form th:if="${classList}" th:each="c: ${classList}" 
@@ -75,7 +75,7 @@
 				</div>
 			</div>
 
-			<div style="width:33%;">
+			<div style="padding-left:25px;">
 
 				<div class="classBox">
 					<h2 th:if="${stClass}" th:text="${stClass.name}">Clase de prueba</h2>
@@ -98,7 +98,7 @@
 				</div>
 			</div>
 
-			<div style="width:34%;">
+			<div style="padding-left:25px;">
 				<div th:if="${users}" class="container">
 					<label for="quantity">Número de equipos:</label>
 					<input type="number" id="quantity" name="quantity" min="2" max="99" defaultValue="2">

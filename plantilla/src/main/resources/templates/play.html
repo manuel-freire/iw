@@ -158,9 +158,9 @@
 							<td>
 								<table>
 									<tr th:each="a : ${result.answers}">
-										<td th:if="${a.score == 1}">&#9989;</td>
-										<td th:if="${a.score == 0}">&#10060;</td>
-										<td th:unless="${a.score == 1} OR ${a.score == 0}">&#10134;</td>
+										<td style="text-align:center" th:if="${a.score == 1}">&#9989;</td>
+										<td style="text-align:center" th:if="${a.score == 0}">&#10060;</td>
+										<td style="text-align:center" th:unless="${a.score == 1} OR ${a.score == 0}">&#10134;</td>
 									</tr>									
 								</table>
 							</td>
