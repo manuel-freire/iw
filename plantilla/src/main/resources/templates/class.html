@@ -6,7 +6,6 @@
 	<title>RPC - Profesor</title>	
 	<style>
 		.droptarget {
-			float: left; 
 			width: 175px; 
 			height: 15px;
 			padding: 5px;
@@ -15,28 +14,27 @@
 			vertical-align: middle;
 			cursor: move;
 		}
-		.classBox {
+		div.assetBox {
 			float: left; 
-			width: 300px; 
-			height: 600px;
-			padding: 5px;
+			display: block;
+			padding: 20px;
 			border: 1px solid #aaaaaa;
 			vertical-align: middle;
+			overflow:scroll;
 		}
 	    div.scroll { 
-	        margin:4px, 4px; 
-	        padding:4px; 
-	        width: 250px; 
-	        height: 300px; 
+	        padding:20px;
 	        overflow-x: hidden; 
 	        overflow-x: auto; 
 	        text-align:justify; 
+			border: 1px solid #aaaaaa;
 	    }
 	    div.team { 
-			width: 200px; 
-			height: 300px;
+			width: 225px; 
+			height: 150px;
 			margin: 5px;
 			padding: 5px;
+			border: 1px solid #aaaaaa;
 	        overflow-x: hidden; 
 	        overflow-x: auto; 
 	        text-align:justify; 
@@ -48,108 +46,133 @@
 		Nav goes here
 	</nav>
 	
-	<div class="container">
+	<div style="height:100%;" class="container">
 	<div class="main">
-
 
 		<nav>
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis clases</h1>
 
-			<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
-				Fichero de clase <input type="file" name="classfile" required />
-				<button type="submit">Crear clase</button>
+			<form style="margin:10px" th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+				Añadir nueva clase <input type="file" name="classfile" required />
+				<button style="margin:5px;" type="submit">Crear clase</button>
 			</form>
 	
 		</nav>
 
-		<div class="container" style="display: flex; height: 100%;">
-
-			<div style="padding-left:25px;">
-
-				<div class="classBox">		
-					<form th:if="${classList}" th:each="c: ${classList}" 
-							th:action="@{/admin/{id}/class/{classId}(id=${session.u.id},classId=${c.id})}">
-						<button type="submit" th:text="${c.name}">Mis clases</button>
-	  				</form>					
-				</div>
+		<div class="container">
+			
+			<div style="flex:none" class="scroll">		
+				<form th:if="${classList}" th:each="c: ${classList}" 
+						th:action="@{/admin/{id}/class/{classId}(id=${session.u.id},classId=${c.id})}">
+					<button type="submit" th:text="${c.name}">Mis clases</button>
+  				</form>					
 			</div>
 
-			<div style="padding-left:25px;">
+			<div th:if="${stClass}" style="flex:none" class="scroll">
 
-				<div class="classBox">
-					<h2 th:if="${stClass}" th:text="${stClass.name}">Clase de prueba</h2>
+				<h3 style="text-align:center;" th:text="${stClass.name}">Clase de prueba</h3>
+	
+				<div th:if="${users}" class="scroll" ondrop="drop(event, this)" ondragover="allowDrop(event)">
+					<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
+						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
+				</div>	
 
-					<div th:if="${users}" class="scroll" ondrop="drop(event, this)" ondragover="allowDrop(event)">
-						<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
-							th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
-					</div>
+				<table style="margin-bottom:10px" class="adminTable">	
+					<tr th:each="s: ${students}">
+						<td th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@</td>
+					</tr>						
+				</table>
 
-					<div th:if="${students}" class="scroll">
-						<ul>	
-							<li th:each="s: ${students}" th:text="${s.username + ' - ' + s.firstName + ' ' + s.lastName}"></li>						
-						</ul>						
-					</div>
-
+				<div style="text-align:center;">
 					<form th:if="${students} AND ${stClass}"
 							th:action="@{/admin/{id}/class/{classId}/createQR(id=${session.u.id},classId=${stClass.id})}">
-						<button type="submit">Descargar QR de acceso</button>
-	  				</form>   
-				</div>
+						<button style="margin:10px"type="submit">Descargar QR de acceso</button>
+	  				</form> 					
+				</div> 
+
 			</div>
 
-			<div style="padding-left:25px;">
-				<div th:if="${users}" class="container">
-					<label for="quantity">Número de equipos:</label>
-					<input type="number" id="quantity" name="quantity" min="2" max="99" defaultValue="2">
-					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
-				</div>					
+			<div th:if="${teams}" class="scroll">
 
-				<div class="scroll" id="scrollTeam">
-					<h3>Lista de equipos</h3>
+				<h3 style="text-align:center;">Lista de equipos</h3>
+
+				<div style="overflow-y:auto;" th:if="${teams}">
+
 					<table class="adminTable" id="teamTable" name="teamTable">
-					<tr id="teamList">
-						<td th:if="${teams}" th:each="t: ${teams}">
+					<tr th:each="t: ${teams}">
+						<td>
 							<div class="scroll">
-								<h2 th:text="${t.teamName}">Equipo X</h2>
-								<ul>	
-									<li th:each="s: ${t.members}" th:text="${s.username + ' - ' + s.firstName + ' ' + s.lastName}"></li>						
-								</ul>
+								<h3 style="text-align:center;" th:text="${t.teamName}">Equipo X</h3>
+								<table class="adminTable">	
+									<tr th:each="s: ${t.members}">
+										<td th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@</td>
+									</tr>						
+								</table>	
 							</div>
 						</td>
 					</tr>
 					</table>
 				</div>
 
-				<form th:if="${users} AND ${teams == null}" method="POST" 
-						th:action="@{/admin/{id}/class/{classId}/createTeams/(id=${session.u.id},classId=${stClass.id})}">
-					<input type="hidden" name="teamComp" id="teamComp"/>
-					<input type="hidden" name="numTeams" id="numTeams"/>
-					<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
-  				</form>
+			</div>
 
-				<div class="scroll" th:if="${stClass} AND ${students}">
-					<h3>Lista de concursos</h3>
-					<table class="adminTable" id="contestTable" name="contestTable">
-						<tr th:if="${contests}" th:each="c: ${contests}">							
-							<form th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
-								<button type="submit" th:text="${c.name}">Concurso</button>
-			  				</form>	
-						</tr>
-					</table>
+			<div th:if="${users}" class="scroll">
+
+				<h3 style="text-align:center;">Lista de equipos</h3>
+
+				<div th:if="${users}" style="text-align:center;">
+					<label for="quantity">Número de equipos:</label>
+					<input type="number" id="quantity" name="quantity" min="2" max="99" defaultValue="2">
+					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
+				</div>
+
+				<div class="scroll">
+					<table class="adminTable" id="teamTable" name="teamTable">
+					</table>					
+				</div>
+
+				<div style="text-align:center;">
+					<form th:if="${users} AND ${teams == null}" method="POST" class="smallform" 
+							th:action="@{/admin/{id}/class/{classId}/createTeams/(id=${session.u.id},classId=${stClass.id})}">
+						<input type="hidden" name="teamComp" id="teamComp"/>
+						<input type="hidden" name="numTeams" id="numTeams"/>
+						<button style="margin-top:10px" type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
+	  				</form>		
+				</div>			
+
+			</div>
+
+			<div th:if="${stClass} AND ${students}" class="scroll">
+
+				<h3 style="text-align:center;">Lista de concursos</h3>
+
+				<div style="text-align:center;" class="scroll">
 
 					<form th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
 						method="POST" enctype="multipart/form-data">
 						Fichero de concurso <input type="file" name="contestfile" required/>
 						<button type="submit">Crear concurso</button>
 					</form>
-				</div>	
+
+				</div>
+
+				<div style="text-align:center;" class="scroll">	
+					<form th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+							<button type="submit" th:text="${c.name}">Concurso</button>
+		  			</form>					
+				</div>
 
 			</div>
+
 		</div>
 			
 	</div>
 	</div>	
+		
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
 
 	<script type="text/javascript">
 
@@ -167,30 +190,29 @@
 			for (i = 0; i < quantity; i++) {
 				wrapper = document.createElement('div');
 
-				title = document.createElement('h2');
+				title = document.createElement('h3');
   				title.innerHTML = "Equipo " + "" + (i+1);
+  				title.setAttribute("style", "text-align:center;");
 
   				container = document.createElement('div');
   				container.setAttribute("class", "team");
-
-  				scroll = document.createElement('div');
-  				scroll.setAttribute("id", "team_" + "" + i);
-  				scroll.setAttribute("class", "scroll");
-  				scroll.setAttribute("ondrop", "drop(event, this)");
-  				scroll.setAttribute("ondragover", "allowDrop(event)");
+  				container.setAttribute("overflow", "scroll");
+  				container.setAttribute("ondrop", "drop(event, this)");
+  				container.setAttribute("ondragover", "allowDrop(event)");
 
   				team = document.createElement('td');
+  				row = document.createElement('tr');
 
-  				container.appendChild(scroll);
   				wrapper.appendChild(title);
   				wrapper.appendChild(container);
   				team.appendChild(wrapper);
-  				document.getElementById('teamList').appendChild(team);
+  				row.appendChild(team)
+  				document.getElementById('teamTable').appendChild(team);
   			}
 		}
 
 		function getTeamComp() {
-			var teams= document.getElementById('teamList').querySelectorAll(".scroll");
+			var teams= document.getElementById('teamTable').querySelectorAll(".team");
 			var members;
 			var teamComp = [];
 			var i;
