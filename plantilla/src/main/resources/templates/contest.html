@@ -13,23 +13,6 @@
 			border: 1px solid #aaaaaa;
 			vertical-align: middle;
 		}
-		.contestBox {
-			float: left; 
-			width: 500px; 
-			height: 600px;
-			padding: 5px;
-			border: 1px solid #aaaaaa;
-			vertical-align: middle;
-		}
-	    div.scroll { 
-	        margin:4px, 4px; 
-	        padding:4px; 
-	        width: 400px; 
-	        height: 300px; 
-	        overflow-x: hidden; 
-	        overflow-x: auto; 
-	        text-align:justify; 
-	    }
 	</style>
 </head>
 <body>
@@ -37,7 +20,7 @@
 		Nav goes here
 	</nav>
 	
-	<div class="container">
+	<div style="height:100%;" class="container">
 	<div class="main">
 
 		<nav>
@@ -46,33 +29,31 @@
 	
 		</nav>
 
-		<div class="container" style="display: flex; height: 100%;">
-			<div style="padding-left:25px;">
-				<div class="classBox">		
-					<form th:if="${contestList}" th:each="c: ${contestList}" 
-							th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
-						<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Concurso</button>
-	  				</form>					
-				</div>
+		<div class="container">
+
+			<div style="flex:none" class="scroll">		
+				<form style="margin:5px" th:if="${contestList}" th:each="c: ${contestList}" 
+						th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+					<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Concurso</button>
+  				</form>					
 			</div>
 
-			<div style="padding-left:25px;">
-				<div class="contestBox" th:if=${contest}>
-					<h3 th:text="${contest.name}"></h3>
-					<div class="scroll">
-						<div th:each="q: ${contest.questions}">
-							<th th:text="${q.text}"></th>
-							<table th:unless="${q.answers == null}">
-								<tr  th:each="a: ${q.answers}">
-									<td th:text="${a.text}"></td>
-									<td> | </td>
-									<td th:text="${a.score}"></th>
-								</tr>
-							</table>
-						</div>
-					</div>
+			<div th:if=${contest} style="flex:none" class="scroll">
+				<h2 style="text-align:center;" th:text="${contest.name}"></h2>
+
+				<div class="contestBox" th:each="q: ${contest.questions}">
+					<p th:text="${q.text}"></p>
+					<table th:unless="${q.answers == null}">
+						<tr  th:each="a: ${q.answers}">
+							<td th:text="${a.text}"></td>
+							<td>&rarr;</td>
+							<td th:text="${a.score}"></th>
+						</tr>
+					</table>
 				</div>
+
 			</div>			
+
 		</div>
 		
 	</div>

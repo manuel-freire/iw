@@ -63,6 +63,19 @@ nav>*{
 .logx form, .logx img {
 	display: inline;
 }
+.droptarget {
+	width: 175px; 
+	height: 15px;
+	padding: 5px;
+	border: 1px solid #aaaaaa;
+	text-align: center;
+	vertical-align: middle;
+	cursor: move;
+}
+.contestBox {
+	padding: 10px;
+	border: 1px solid #aaaaaa;
+}
 
 /* setup main container */
 div.container {
@@ -83,6 +96,31 @@ div.content {
 	border: 1px solid #aaaaaa;
 	padding:10px;
 	display: block;
+}
+div.assetBox {
+	float: left; 
+	display: block;
+	padding: 20px;
+	border: 1px solid #aaaaaa;
+	vertical-align: middle;
+	overflow:scroll;
+}
+div.scroll { 
+    padding:20px;
+    overflow-x: hidden; 
+    overflow-x: auto; 
+    text-align:justify; 
+	border: 1px solid #aaaaaa;
+}
+div.team { 
+	width: 225px; 
+	height: 150px;
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #aaaaaa;
+    overflow-x: hidden; 
+    overflow-x: auto; 
+    text-align:justify; 
 }
 
 /* setup footer */
