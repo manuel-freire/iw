@@ -79,11 +79,14 @@ nav>*{
 
 /* setup main container */
 div.container {
+    min-height: 0px;
 	display: flex;
 	flex:1;"
+	flex-wrap: wrap;
 }
 div.main {
 	height:100%; 
+    min-height: 0px;
 	width:100%; 
 	flex: auto;
 	display: flex;
@@ -107,9 +110,12 @@ div.assetBox {
 }
 div.scroll { 
     padding:20px;
+    min-height: 0px;
     overflow-x: hidden; 
-    overflow-x: auto; 
+    overflow-y: hidden; 
+	overflow: auto;
     text-align:justify; 
+    flex: 1;
 	border: 1px solid #aaaaaa;
 }
 div.team { 

@@ -5,55 +5,21 @@
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC - Profesor</title>	
 	<style>
-		.droptarget {
-			width: 175px; 
-			height: 15px;
-			padding: 5px;
-			border: 1px solid #aaaaaa;
-			text-align: center;
-			vertical-align: middle;
-			cursor: move;
-		}
-		div.assetBox {
-			float: left; 
-			display: block;
-			padding: 20px;
-			border: 1px solid #aaaaaa;
-			vertical-align: middle;
-			overflow:scroll;
-		}
-	    div.scroll { 
-	        padding:20px;
-	        overflow-x: hidden; 
-	        overflow-x: auto; 
-	        text-align:justify; 
-			border: 1px solid #aaaaaa;
-	    }
-	    div.team { 
-			width: 225px; 
-			height: 150px;
-			margin: 5px;
-			padding: 5px;
-			border: 1px solid #aaaaaa;
-	        overflow-x: hidden; 
-	        overflow-x: auto; 
-	        text-align:justify; 
-	    }
 	</style>
 </head>
-<body>
+<body onload="setScroll()">
 	<nav th:replace="fragments/nav.html :: nav">
 		Nav goes here
 	</nav>
 	
-	<div style="height:100%;" class="container">
+	<div style="height:100%;" id="container" class="container">
 	<div class="main">
 
 		<nav>
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis clases</h1>
 
-			<form style="margin:10px" th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
+			<form th:action="@{/admin/{id}/class(id=${session.u.id})}" method="POST" enctype="multipart/form-data">
 				Añadir nueva clase <input type="file" name="classfile" required />
 				<button style="margin:5px;" type="submit">Crear clase</button>
 			</form>
@@ -62,27 +28,26 @@
 
 		<div class="container">
 			
-			<div style="flex:none" class="scroll">		
-				<form th:if="${classList}" th:each="c: ${classList}" 
+			<div style="flex:0 1 auto;" class="scroll">		
+				<form style="margin:5px" th:if="${classList}" th:each="c: ${classList}" 
 						th:action="@{/admin/{id}/class/{classId}(id=${session.u.id},classId=${c.id})}">
 					<button type="submit" th:text="${c.name}">Mis clases</button>
   				</form>					
 			</div>
 
-			<div th:if="${stClass}" style="flex:none" class="scroll">
+			<div style="flex:0 1 auto;" th:if="${stClass}" class="scroll">
 
 				<h3 style="text-align:center;" th:text="${stClass.name}">Clase de prueba</h3>
 	
-				<div th:if="${users}" class="scroll" ondrop="drop(event, this)" ondragover="allowDrop(event)">
+				<div th:if="${users}" ondrop="drop(event, this)" ondragover="allowDrop(event)">
 					<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
 						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
 				</div>	
 
-				<table style="margin-bottom:10px" class="adminTable">	
-					<tr th:each="s: ${students}">
-						<td th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@</td>
-					</tr>						
-				</table>
+				<div>	
+					<p th:each="s: ${students}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@
+					</p>						
+				</div>
 
 				<div style="text-align:center;">
 					<form th:if="${students} AND ${stClass}"
@@ -93,31 +58,24 @@
 
 			</div>
 
-			<div th:if="${teams}" class="scroll">
+			<div style="flex:0 1 auto;" th:if="${teams}" class="scroll">
 
 				<h3 style="text-align:center;">Lista de equipos</h3>
 
 				<div style="overflow-y:auto;" th:if="${teams}">
 
-					<table class="adminTable" id="teamTable" name="teamTable">
-					<tr th:each="t: ${teams}">
-						<td>
-							<div class="scroll">
-								<h3 style="text-align:center;" th:text="${t.teamName}">Equipo X</h3>
-								<table class="adminTable">	
-									<tr th:each="s: ${t.members}">
-										<td th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@</td>
-									</tr>						
-								</table>	
-							</div>
-						</td>
-					</tr>
-					</table>
+					<div th:each="t: ${teams}">
+						<h3 style="text-align:center;" th:text="${t.teamName}">Equipo X</h3>
+						<div>	
+							<p th:each="s: ${t.members}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@
+							</p>						
+						</div>	
+					</div>
 				</div>
 
 			</div>
 
-			<div th:if="${users}" class="scroll">
+			<div th:if="${users}" style="flex:1;" class="scroll">
 
 				<h3 style="text-align:center;">Lista de equipos</h3>
 
@@ -127,10 +85,8 @@
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>
 
-				<div class="scroll">
-					<table class="adminTable" id="teamTable" name="teamTable">
-					</table>					
-				</div>
+				<table class="adminTable" id="teamTable" name="teamTable">
+				</table>	
 
 				<div style="text-align:center;">
 					<form th:if="${users} AND ${teams == null}" method="POST" class="smallform" 
@@ -143,11 +99,11 @@
 
 			</div>
 
-			<div th:if="${stClass} AND ${students}" class="scroll">
+			<div th:if="${stClass} AND ${students}" style="flex:1 0 auto;" class="scroll">
 
 				<h3 style="text-align:center;">Lista de concursos</h3>
 
-				<div style="text-align:center;" class="scroll">
+				<div style="text-align:center;">
 
 					<form th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
 						method="POST" enctype="multipart/form-data">
@@ -157,7 +113,7 @@
 
 				</div>
 
-				<div style="text-align:center;" class="scroll">	
+				<div style="text-align:center;">	
 					<form th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
 							<button type="submit" th:text="${c.name}">Concurso</button>
 		  			</form>					
@@ -175,6 +131,23 @@
 	</footer>
 
 	<script type="text/javascript">
+
+		function setScroll() {
+			var teams= document.getElementsByClassName("scroll");
+			var container = document.getElementById("container");
+			var height;
+
+			if (container) {				
+				for (i = 0; i < teams.length; i++) {
+					height = ""+ container.offsetHeight +"px";
+					console.log(height);					
+					teams[i].setAttribute("height", height);
+				} 
+			}
+
+			console.log(teams.length);
+			console.log(container.offsetHeight);
+		};
 
 		function createTeams(quantity) {
 			var container;
