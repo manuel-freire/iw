@@ -32,13 +32,13 @@
   				</form>		
 			</div>
 
-			<div style="flex:0 1 auto" class="scroll">
+			<div style="flex:1" class="scroll">
 				<form th:if="${contest} AND ${session.u.hasRole('ADMIN')}"  method="POST" 
 					th:action="@{/admin/{id}/play/{contestId}/results(id=${session.u.id},contestId=${contest.id})}">
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
 
-						<div th:each="q, iStatQ : ${contest.questions}">
+						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
 							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
 							<table style="margin:10px;" th:if="${q.answers}">
 								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -64,7 +64,7 @@
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
 
-						<div th:each="q, iStatQ : ${contest.questions}">
+						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
 							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
 							<table style="margin:10px;" th:if="${q.answers}">
 								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -86,55 +86,53 @@
 				</form>
 			</div>	
 
-			<div th:if="${result} AND ${contest}" style="flex:1">
-				<div >		
-					<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
-					<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>
-					<h3 th:if="${result.perfect}" th:text="'ENHORABUENA. PUNTUACIÓN PERFECTA'"></h3>
-					<h3 th:text="${result.passed} ? 'Superada: SI' : 'Superada: NO'"></h3>	
+			<div th:if="${result} AND ${contest}" style="flex:1" class="scroll">
+				<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
+				<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>
+				<h3 th:if="${result.perfect}" th:text="'ENHORABUENA. PUNTUACIÓN PERFECTA'"></h3>
+				<h3 th:text="${result.passed} ? 'Superada: SI' : 'Superada: NO'"></h3>	
 
-					<table>
-						<tr>
-							<td><h3 style="padding-right:15px" th:text="'Tu respuesta'"></h3></td>
-							<td><h3 style="padding-right:15px" th:text="'Solución'"></h3></td>
-							<td><h3 style="padding-right:15px" th:text="'Corrección'"></h3></td>
-							<td><h3 style="padding-right:15px" th:text="'Puntuación'"></h3></td>
-						</tr>
-						<tr>
-							<td>
-								<table>
-									<tr th:each="a : ${result.answers}">
-										<td th:text="${a.text}"></td>
-									</tr>									
-								</table>
-							</td>
-							<td>
-								<table>
-									<tr th:each="q : ${contest.questions}">
-										<td th:each="a : ${q.answers}" th:if="${a.score == 1}" th:text="${a.text}"></td>
-									</tr>									
-								</table>
-							</td>
-							<td>
-								<table>
-									<tr th:each="a : ${result.answers}">
-										<td style="text-align:center" th:if="${a.score == 1}">&#9989;</td>
-										<td style="text-align:center" th:if="${a.score == 0}">&#10060;</td>
-										<td style="text-align:center" th:unless="${a.score == 1} OR ${a.score == 0}">&#10134;</td>
-									</tr>									
-								</table>
-							</td>
-							<td>
-								<table>
-									<tr th:each="a : ${result.answers}">
-										<td th:text="${a.score}"></td>
-									</tr>									
-								</table>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</div>		
+				<table>
+					<tr>
+						<td><h3 style="padding-right:15px" th:text="'Tu respuesta'"></h3></td>
+						<td><h3 style="padding-right:15px" th:text="'Solución'"></h3></td>
+						<td><h3 style="padding-right:15px" th:text="'Corrección'"></h3></td>
+						<td><h3 style="padding-right:15px" th:text="'Puntuación'"></h3></td>
+					</tr>
+					<tr>
+						<td>
+							<table>
+								<tr th:each="a : ${result.answers}">
+									<td th:text="${a.text}"></td>
+								</tr>									
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr th:each="q : ${contest.questions}">
+									<td th:each="a : ${q.answers}" th:if="${a.score == 1}" th:text="${a.text}"></td>
+								</tr>									
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr th:each="a : ${result.answers}">
+									<td style="text-align:center" th:if="${a.score == 1}">&#9989;</td>
+									<td style="text-align:center" th:if="${a.score == 0}">&#10060;</td>
+									<td style="text-align:center" th:unless="${a.score == 1} OR ${a.score == 0}">&#10134;</td>
+								</tr>									
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr th:each="a : ${result.answers}">
+									<td th:text="${a.score}"></td>
+								</tr>									
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 		
 	</div>

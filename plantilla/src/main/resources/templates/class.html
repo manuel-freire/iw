@@ -113,7 +113,7 @@
 
 				</div>
 
-				<div style="flex:1;text-align:center;" class="scroll">	
+				<div style="flex:1;text-align:center;">	
 					<form style="text-align:center;"th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
 							<button style="margin:5px;" type="submit" th:text="${c.name}">Concurso</button>
 		  			</form>					

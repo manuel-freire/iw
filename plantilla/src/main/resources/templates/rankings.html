@@ -23,13 +23,13 @@
 	
 		</nav>
 
-		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
+		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container">
 
-			<div style="padding-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de estudiantes</h2>
 
-				<div class="scroll" th:if="${rankingUser} AND ${positionUser}" style="margin-left:25;">
+				<div th:if="${rankingUser} AND ${positionUser}">
 
 					<table>
 						<tr>
@@ -54,11 +54,11 @@
 
 			</div>
 
-			<div style="padding-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de equipos</h2>
 
-				<div class="scroll" th:if="${rankingTeam} AND ${positionTeam}" style="margin-left:25;">
+				<div th:if="${rankingTeam} AND ${positionTeam}">
 
 					<table>
 						<tr>
@@ -84,13 +84,13 @@
 			</div>
 
 		</div>
-	
-		<footer th:replace="fragments/footer.html :: footer">
-			Footer goes here
-		</footer>
 
 	</div>
 	</div>
+	
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
 	
 <script>
 </script>	

@@ -28,40 +28,36 @@
 	
 		</nav>
 
-		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
+		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container">
 
-			<div style="padding-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
-				<h2>Miembros del equipo</h2>
+				<h3 style="text-align:center;margin-bottom:15px">Miembros del equipo</h3>
 				<table th:if="${members}" class="adminTable">
 					<tr th:each="m, iStatM : ${members}">
-						<td th:text="${iStatM.index + 1}"></td>
-						<td th:text="${m.username}">Usuario</td>
-						<td> - </td>
-						<td th:text="${m.elo}">ELO</td>
+						<td th:text="${iStatM.index + 1} + '. ' + ${m.username} + ' - '  +${m.elo}" + ></td>
 					</tr>
 				</table>
 
 			</div>
 
-			<div style="padding-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
-				<h2 style="margin-bottom: :10px">Logros</h2>
+				<h3 h3 style="text-align:center;margin-bottom:15px">Logros</h3>
 
-				<div class="scroll" th:if="${achievements}">
-					<div th:each="a: ${achievements}">
-						<span style="display: block;" th:text="'Objetivo: ' + ${a.currentObjective()}">Objetivo</span>
-						<span style="display: block;" th:text="'Nivel: ' + ${a.level}">Nivel</span>
-						<span style="display: block;" th:text="'Progreso: ' + ${a.progress} + '/' + ${a.currentLevel()}">Progreso</span>
-					</div>
+				<div th:if="${achievements}" style="padding:10px" th:each="a: ${achievements}">
+					<span style="display: block;" th:text="'Objetivo: ' + ${a.currentObjective()}">Objetivo</span>
+					<span style="display: block;" th:text="'Nivel: ' + ${a.level}">Nivel</span>
+					<span style="display: block;" th:text="'Progreso: ' + ${a.progress} + '/' + ${a.currentLevel()}">Progreso</span>
 				</div>
 
 			</div>
 
-			<div style="padding-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
-				<h2 style="margin-bottom: :10px">Trofeos</h2>
-				<div class="container" th:if="${team}">
+				<h3 h3 style="text-align:center;margin-bottom:15px">Trofeos</h3>
+
+				<div th:if="${team}" style="padding:10px"  class="container">
 					<img class="gold"></img>
 					<h3 style="margin-left:10px;margin-right:10px" th:text="${team.gold}">T.oro</h3>
 					<img class="silver"></img>

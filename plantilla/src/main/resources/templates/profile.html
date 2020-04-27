@@ -28,11 +28,11 @@
 	
 		</nav>
 
-		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container" style="display: flex;height: 100%;">
+		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container">
 
-			<div style="margin-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
-				<h2>Cambiar información de usuario</h2>
+				<h3 style="text-align:center;margin-bottom:15px">Cambiar información de usuario</h3>
 
 				<form id="usermod" class="smallform" th:action="@{/user/{id}(id=${user.id})}" method="POST">		
 
@@ -49,16 +49,14 @@
 				</form>
 			</div>
 
-			<div style="padding-left:25px;"> 
+			<div style="flex:0 1 auto;" class="scroll"> 
 
-				<h2 style="margin-bottom:10px">Logros</h2>
+				<h3 style="text-align:center;margin-bottom:15px">Logros</h3>
 
-				<div class="scroll" th:if="${achievements}">
-					<div th:each="a: ${achievements}">
-						<span style="display: block;" th:text="'Objetivo: ' + ${a.currentObjective()}">Objetivo</span>
-						<span style="display: block;" th:text="'Nivel: ' + ${a.level}">Nivel</span>
-						<span style="display: block;" th:text="'Progreso: ' + ${a.progress} + '/' + ${a.currentLevel()}">Progreso</span>
-					</div>
+				<div th:if="${achievements}" style="padding:10px" th:each="a: ${achievements}">
+					<span style="display: block;" th:text="'Objetivo: ' + ${a.currentObjective()}">Objetivo</span>
+					<span style="display: block;" th:text="'Nivel: ' + ${a.level}">Nivel</span>
+					<span style="display: block;" th:text="'Progreso: ' + ${a.progress} + '/' + ${a.currentLevel()}">Progreso</span>
 				</div>
 
 			</div>
