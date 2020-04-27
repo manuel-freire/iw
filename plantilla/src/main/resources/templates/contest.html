@@ -31,25 +31,25 @@
 
 		<div class="container">
 
-			<div style="flex:none" class="scroll">		
+			<div style="flex:0 1 auto;" class="scroll">		
 				<form style="margin:5px" th:if="${contestList}" th:each="c: ${contestList}" 
 						th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
 					<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Concurso</button>
   				</form>					
 			</div>
 
-			<div th:if=${contest} style="flex:none" class="scroll">
+			<div th:if=${contest} style="flex:0 1 auto;text-align:center;" class="scroll">
 				<h2 style="text-align:center;" th:text="${contest.name}"></h2>
 
-				<div class="contestBox" th:each="q: ${contest.questions}">
+				<div thi:if="${contest.questions}" style="text-align:center;" th:each="q: ${contest.questions}">
 					<p th:text="${q.text}"></p>
-					<table th:unless="${q.answers == null}">
-						<tr  th:each="a: ${q.answers}">
+					<table style="margin:10px;" align="center" th:if="${q.answers}">
+						<tr th:each="a: ${q.answers}" th:if="${a.text} != 'Sin responder'">
 							<td th:text="${a.text}"></td>
 							<td>&rarr;</td>
 							<td th:text="${a.score}"></th>
 						</tr>
-					</table>
+					</table>			
 				</div>
 
 			</div>			
@@ -58,6 +58,10 @@
 		
 	</div>
 	</div>
+		
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
 
 	<script type="text/javascript">
 

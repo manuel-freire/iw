@@ -7,7 +7,7 @@
 	<style>
 	</style>
 </head>
-<body onload="setScroll()">
+<body>
 	<nav th:replace="fragments/nav.html :: nav">
 		Nav goes here
 	</nav>
@@ -58,11 +58,11 @@
 
 			</div>
 
-			<div style="flex:0 1 auto;" th:if="${teams}" class="scroll">
+			<div style="flex:1;" th:if="${teams}" class="scroll">
 
 				<h3 style="text-align:center;">Lista de equipos</h3>
 
-				<div style="overflow-y:auto;" th:if="${teams}">
+				<div style="text-align:center;" th:if="${teams}">
 
 					<div th:each="t: ${teams}">
 						<h3 style="text-align:center;" th:text="${t.teamName}">Equipo X</h3>
@@ -99,23 +99,23 @@
 
 			</div>
 
-			<div th:if="${stClass} AND ${students}" style="flex:1 0 auto;" class="scroll">
+			<div th:if="${stClass} AND ${students}" style="flex:1;" class="scroll">
 
 				<h3 style="text-align:center;">Lista de concursos</h3>
 
 				<div style="text-align:center;">
 
-					<form th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
+					<form style="margin:10px;text-align:center;" class="smallform" th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
 						method="POST" enctype="multipart/form-data">
-						Fichero de concurso <input type="file" name="contestfile" required/>
+						Añadir nuevo concurso <input type="file" name="contestfile" required/>
 						<button type="submit">Crear concurso</button>
 					</form>
 
 				</div>
 
-				<div style="text-align:center;">	
-					<form th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
-							<button type="submit" th:text="${c.name}">Concurso</button>
+				<div style="flex:1;text-align:center;" class="scroll">	
+					<form style="text-align:center;"th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+							<button style="margin:5px;" type="submit" th:text="${c.name}">Concurso</button>
 		  			</form>					
 				</div>
 
@@ -131,23 +131,6 @@
 	</footer>
 
 	<script type="text/javascript">
-
-		function setScroll() {
-			var teams= document.getElementsByClassName("scroll");
-			var container = document.getElementById("container");
-			var height;
-
-			if (container) {				
-				for (i = 0; i < teams.length; i++) {
-					height = ""+ container.offsetHeight +"px";
-					console.log(height);					
-					teams[i].setAttribute("height", height);
-				} 
-			}
-
-			console.log(teams.length);
-			console.log(container.offsetHeight);
-		};
 
 		function createTeams(quantity) {
 			var container;

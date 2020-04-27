@@ -4,33 +4,6 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC</title>
-	<style>
-		.classBox {
-			float: left; 
-			width: 300px; 
-			height: 800px;
-			padding: 5px;
-			border: 1px solid #aaaaaa;
-			vertical-align: middle;
-		}
-		.contestBox {
-			float: left; 
-			width: 500px; 
-			height: 600px;
-			padding: 5px;
-			border: 1px solid #aaaaaa;
-			vertical-align: middle;
-		}
-	    div.scroll { 
-	        margin:4px, 4px; 
-	        padding:4px; 
-	        width: 400px; 
-	        height: 300px; 
-	        overflow-x: hidden; 
-	        overflow-x: auto; 
-	        text-align:justify; 
-	    }
-	</style>
 </head>
 <body>
 	<nav th:replace="fragments/nav.html :: nav">
@@ -46,46 +19,38 @@
 	
 		</nav>
 
-		<div class="container" style="display: flex; height: 100%;">
-			<div style="padding-left:25px;">
-				<div th:if="${session.u.hasRole('ADMIN')}" class="classBox">		
-					<form th:if="${contestList}" th:each="c: ${contestList}" 
-							th:action="@{/admin/{id}/play/{contestId}(id=${session.u.id},contestId=${c.id})}">
-						<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
-	  				</form>		
-	  			</div>
-	  			<div th:unless="${session.u.hasRole('ADMIN')}" class="classBox">			
-					<form th:if="${contestList} AND ${session.u.hasRole('USER')}" th:each="c: ${contestList}" 
-							th:action="@{/user/{id}/play/{classId}/{contestId}(id=${session.u.id},classId=${stClass.id},contestId=${c.id})}">
-						<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
-	  				</form>				
-				</div>
+		<div class="container">
+
+			<div style="flex:0 1 auto" class="scroll">	
+				<form th:if="${contestList} AND ${session.u.hasRole('ADMIN')}" th:each="c: ${contestList}" 
+						th:action="@{/admin/{id}/play/{contestId}(id=${session.u.id},contestId=${c.id})}">
+					<button style="margin:5px;" type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
+  				</form>	
+				<form th:if="${contestList} AND ${session.u.hasRole('USER')}" th:each="c: ${contestList}" 
+						th:action="@{/user/{id}/play/{classId}/{contestId}(id=${session.u.id},classId=${stClass.id},contestId=${c.id})}">
+					<button style="margin:5px;" type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
+  				</form>		
 			</div>
 
-			<div style="padding-left:25px;">
+			<div style="flex:0 1 auto" class="scroll">
 				<form th:if="${contest} AND ${session.u.hasRole('ADMIN')}"  method="POST" 
 					th:action="@{/admin/{id}/play/{contestId}/results(id=${session.u.id},contestId=${contest.id})}">
-					<div class="contestBox">
-						<h3 th:text="${contest.name}"></h3>
-						<div class="scroll">
-							<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
-								<th th:text="${iStatQ.index + 1}"></th>
-								<th th:text="'  -  '"></th>
-								<th th:text="${q.text}"></th>
-								<table th:if="${q.answers}" style="margin-left: 20px">
-									<tr th:each="a, iStatA : ${q.answers}" th:unless="${iStatA.index} == 0">
-										<td th:text="${iStatA.index}"></td>
-										<td th:text="'  -  '"></td>
-										<td th:text="${a.text}"></td>
-									</tr>
-								</table>
-								<div th:unless="${result}" class="container">
-									<label style="margin-right: 5px;">Respuesta:</label>
-									<select class="answer">
-										<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
-									</select>									
-								</div>				
-							</div>
+					<div>
+						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
+
+						<div th:each="q, iStatQ : ${contest.questions}">
+							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
+							<table style="margin:10px;" th:if="${q.answers}">
+								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
+									<td th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
+								</tr>
+							</table>
+							<div th:unless="${result}">
+								<label style="margin-right: 5px;">Respuesta:</label>
+								<select class="answer">
+									<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
+								</select>									
+							</div>				
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
@@ -94,29 +59,24 @@
 					</div>
 				</form>
 
-				<form th:if="${contest} AND ${stClass} AND !${session.u.hasRole('ADMIN')}"  method="POST" 
+				<form th:if="${contest} AND ${stClass} AND ${session.u.hasRole('USER')}"  method="POST" 
 					th:action="@{/user/{id}/play/{classId}/{contestId}/results(id=${session.u.id},classId=${stClass.id},contestId=${contest.id})}">
-					<div class="contestBox">
-						<h3 th:text="${contest.name}"></h3>
-						<div class="scroll">
-							<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
-								<th th:text="${iStatQ.index + 1}"></th>
-								<th th:text="'  -  '"></th>
-								<th th:text="${q.text}"></th>
-								<table th:if="${q.answers}" style="margin-left: 20px">
-									<tr th:each="a, iStatA : ${q.answers}" th:unless="${iStatA.index} == 0">
-										<td th:text="${iStatA.index}"></td>
-										<td th:text="'  -  '"></td>
-										<td th:text="${a.text}"></td>
-									</tr>
-								</table>
-								<div th:unless="${result}" class="container">
-									<label style="margin-right: 5px;">Respuesta:</label>
-									<select class="answer">
-										<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
-									</select>									
-								</div>				
-							</div>
+					<div>
+						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
+
+						<div th:each="q, iStatQ : ${contest.questions}">
+							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
+							<table style="margin:10px;" th:if="${q.answers}">
+								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
+									<td th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
+								</tr>
+							</table>
+							<div th:unless="${result}">
+								<label style="margin-right: 5px;">Respuesta:</label>
+								<select class="answer">
+									<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
+								</select>									
+							</div>				
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
@@ -126,8 +86,8 @@
 				</form>
 			</div>	
 
-			<div style="padding-left:25px;">
-				<div th:if="${result} AND ${contest}">		
+			<div th:if="${result} AND ${contest}" style="flex:1">
+				<div >		
 					<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
 					<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>
 					<h3 th:if="${result.perfect}" th:text="'ENHORABUENA. PUNTUACIÓN PERFECTA'"></h3>
@@ -179,6 +139,10 @@
 		
 	</div>
 	</div>
+		
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
 
 	<script type="text/javascript">
 
