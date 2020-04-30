@@ -218,6 +218,17 @@ public class AdminController {
 		Contest contest = entityManager.find(Contest.class, contestId);
 		model.addAttribute("contest", contest);
 		
+		List<Result> resultList = entityManager.createNamedQuery("Result.byContest", Result.class)
+				.setParameter("contestId", contestId).getResultList();
+		model.addAttribute("resultList", resultList);
+		
+		StClass stClass = entityManager.createNamedQuery("StClass.contestOwner", StClass.class)
+				.setParameter("contestId", contestId).getSingleResult();
+		
+		List<User> students = entityManager.createNamedQuery("User.byClass", User.class)
+				.setParameter("classId", stClass.getId()).getResultList();
+		model.addAttribute("students", students);
+		
 		return contest(id, model, session);
 	}
 	
@@ -383,6 +394,41 @@ public class AdminController {
 		
 		return selectedClass(id, classId, model, session);
 	}		
+	
+	@PostMapping("/{id}/contest/{contestId}//toggleContest")
+	@Transactional
+	public String toggleContest(
+			HttpServletResponse response,
+			@PathVariable("id") long id,
+			@PathVariable("contestId") long contestId,
+			Model model, HttpSession session) throws IOException {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+				.setParameter("userId", id).getResultList();
+		model.addAttribute("contestList", contestList);
+		
+		Contest contest = entityManager.find(Contest.class, contestId);
+
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return selectedContest(id, contestId, model, session);
+		}
+		
+		if (contest.getEnabled() == 1) {
+			contest.setEnabled((byte)0); 
+		} else {
+			// enable user
+			contest.setEnabled((byte)1);
+		}
+		
+		model.addAttribute("contest", contest);
+		
+		return selectedContest(id, contestId, model, session);
+	}
 	
 	@PostMapping("/{id}/play/{contestId}/results")
 	@Transactional

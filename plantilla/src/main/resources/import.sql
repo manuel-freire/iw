@@ -224,7 +224,7 @@ INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achieve
 
 -- Creación de un concurso
 
-INSERT INTO contest (id, enabled, name) VALUES (1, 1, 'Mi primer concurso');
+INSERT INTO contest (id, enabled, complete, name) VALUES (1, 0, 0, 'Mi primer concurso');
 
 UPDATE contest SET teacher=1 where id=1;
 UPDATE contest SET contest_list=1 where id=1;
@@ -236,92 +236,113 @@ INSERT INTO question (id, text) VALUES (1, 'Pregunta 1: la repuesta es 1');
 UPDATE question SET questions=1 WHERE id=1;
 UPDATE question SET question_list=1 WHERE id=1;
 
-INSERT INTO answer (id, score, text) VALUES (1, 1, 'Respuesta 1');
-INSERT INTO answer (id, score, text) VALUES (2, 0, 'Respuesta 2');
-INSERT INTO answer (id, score, text) VALUES (3, 0.5, 'Respuesta 3');
-INSERT INTO answer (id, score, text) VALUES (4, 0, 'Respuesta 4');
 
+INSERT INTO answer (id, score, text) VALUES (1, 0, 'Sin responder');
 UPDATE answer SET answers=1 WHERE id=1;
 UPDATE answer SET answer_list=1 WHERE id=1;
+
+INSERT INTO answer (id, score, text) VALUES (2, 1, 'Respuesta 1');
+INSERT INTO answer (id, score, text) VALUES (3, 0, 'Respuesta 2');
+INSERT INTO answer (id, score, text) VALUES (4, 0.5, 'Respuesta 3');
+INSERT INTO answer (id, score, text) VALUES (5, 0, 'Respuesta 4');
+
 UPDATE answer SET answers=1 WHERE id=2;
 UPDATE answer SET answer_list=1 WHERE id=2;
 UPDATE answer SET answers=1 WHERE id=3;
 UPDATE answer SET answer_list=1 WHERE id=3;
 UPDATE answer SET answers=1 WHERE id=4;
 UPDATE answer SET answer_list=1 WHERE id=4;
+UPDATE answer SET answers=1 WHERE id=5;
+UPDATE answer SET answer_list=1 WHERE id=5;
 
 INSERT INTO question (id, text) VALUES (2, 'Pregunta 2: la repuesta es 2');
 
 UPDATE question SET questions=1 WHERE id=2;
 UPDATE question SET question_list=1 WHERE id=2;
 
-INSERT INTO answer (id, score, text) VALUES (5, 0.5, 'Respuesta 1');
-INSERT INTO answer (id, score, text) VALUES (6, 1, 'Respuesta 2');
-INSERT INTO answer (id, score, text) VALUES (7, 0.5, 'Respuesta 3');
-INSERT INTO answer (id, score, text) VALUES (8, 0, 'Respuesta 4');
-
-UPDATE answer SET answers=2 WHERE id=5;
-UPDATE answer SET answer_list=2 WHERE id=5;
+INSERT INTO answer (id, score, text) VALUES (6, 0, 'Sin responder');
 UPDATE answer SET answers=2 WHERE id=6;
 UPDATE answer SET answer_list=2 WHERE id=6;
+
+INSERT INTO answer (id, score, text) VALUES (7, 0.5, 'Respuesta 1');
+INSERT INTO answer (id, score, text) VALUES (8, 1, 'Respuesta 2');
+INSERT INTO answer (id, score, text) VALUES (9, 0.5, 'Respuesta 3');
+INSERT INTO answer (id, score, text) VALUES (10, 0, 'Respuesta 4');
+
 UPDATE answer SET answers=2 WHERE id=7;
 UPDATE answer SET answer_list=2 WHERE id=7;
 UPDATE answer SET answers=2 WHERE id=8;
 UPDATE answer SET answer_list=2 WHERE id=8;
+UPDATE answer SET answers=2 WHERE id=9;
+UPDATE answer SET answer_list=2 WHERE id=9;
+UPDATE answer SET answers=2 WHERE id=10;
+UPDATE answer SET answer_list=2 WHERE id=10;
 
 INSERT INTO question (id, text) VALUES (3, 'Pregunta 3: la repuesta es 3');
 
 UPDATE question SET questions=1 WHERE id=3;
 UPDATE question SET question_list=1 WHERE id=3;
 
-INSERT INTO answer (id, score, text) VALUES (9, 0.25, 'Respuesta 1');
-INSERT INTO answer (id, score, text) VALUES (10, 0.25, 'Respuesta 2');
-INSERT INTO answer (id, score, text) VALUES (11, 1, 'Respuesta 3');
-INSERT INTO answer (id, score, text) VALUES (12, 0.5, 'Respuesta 4');
-
-UPDATE answer SET answers=3 WHERE id=9;
-UPDATE answer SET answer_list=3 WHERE id=9;
-UPDATE answer SET answers=3 WHERE id=10;
-UPDATE answer SET answer_list=3 WHERE id=10;
+INSERT INTO answer (id, score, text) VALUES (11, 0, 'Sin responder');
 UPDATE answer SET answers=3 WHERE id=11;
 UPDATE answer SET answer_list=3 WHERE id=11;
+
+INSERT INTO answer (id, score, text) VALUES (12, 0.25, 'Respuesta 1');
+INSERT INTO answer (id, score, text) VALUES (13, 0.25, 'Respuesta 2');
+INSERT INTO answer (id, score, text) VALUES (14, 1, 'Respuesta 3');
+INSERT INTO answer (id, score, text) VALUES (15, 0.5, 'Respuesta 4');
+
 UPDATE answer SET answers=3 WHERE id=12;
 UPDATE answer SET answer_list=3 WHERE id=12;
+UPDATE answer SET answers=3 WHERE id=13;
+UPDATE answer SET answer_list=3 WHERE id=13;
+UPDATE answer SET answers=3 WHERE id=14;
+UPDATE answer SET answer_list=3 WHERE id=14;
+UPDATE answer SET answers=3 WHERE id=15;
+UPDATE answer SET answer_list=3 WHERE id=15;
 
 INSERT INTO question (id, text) VALUES (4, 'Pregunta 4: la repuesta es 4');
 
 UPDATE question SET questions=1 WHERE id=4;
 UPDATE question SET question_list=1 WHERE id=4;
 
-INSERT INTO answer (id, score, text) VALUES (13, 0.25, 'Respuesta 1');
-INSERT INTO answer (id, score, text) VALUES (14, 0, 'Respuesta 2');
-INSERT INTO answer (id, score, text) VALUES (15, 0, 'Respuesta 3');
-INSERT INTO answer (id, score, text) VALUES (16, 1, 'Respuesta 4');
-
-UPDATE answer SET answers=4 WHERE id=13;
-UPDATE answer SET answer_list=4 WHERE id=13;
-UPDATE answer SET answers=4 WHERE id=14;
-UPDATE answer SET answer_list=4 WHERE id=14;
-UPDATE answer SET answers=4 WHERE id=15;
-UPDATE answer SET answer_list=4 WHERE id=15;
+INSERT INTO answer (id, score, text) VALUES (16, 0, 'Sin responder');
 UPDATE answer SET answers=4 WHERE id=16;
 UPDATE answer SET answer_list=4 WHERE id=16;
+
+INSERT INTO answer (id, score, text) VALUES (17, 0.25, 'Respuesta 1');
+INSERT INTO answer (id, score, text) VALUES (18, 0, 'Respuesta 2');
+INSERT INTO answer (id, score, text) VALUES (19, 0, 'Respuesta 3');
+INSERT INTO answer (id, score, text) VALUES (20, 1, 'Respuesta 4');
+
+UPDATE answer SET answers=4 WHERE id=17;
+UPDATE answer SET answer_list=4 WHERE id=17;
+UPDATE answer SET answers=4 WHERE id=18;
+UPDATE answer SET answer_list=4 WHERE id=18;
+UPDATE answer SET answers=4 WHERE id=19;
+UPDATE answer SET answer_list=4 WHERE id=19;
+UPDATE answer SET answers=4 WHERE id=20;
+UPDATE answer SET answer_list=4 WHERE id=20;
 
 INSERT INTO question (id, text) VALUES (5, 'Pregunta 5: la repuesta es Ninguna');
 
 UPDATE question SET questions=1 WHERE id=5;
 UPDATE question SET question_list=1 WHERE id=5;
 
-INSERT INTO answer (id, score, text) VALUES (17, 0.5, 'Respuesta 1');
-INSERT INTO answer (id, score, text) VALUES (18, 0.5, 'Respuesta 2');
-INSERT INTO answer (id, score, text) VALUES (19, 0.5, 'Respuesta 3');
-INSERT INTO answer (id, score, text) VALUES (20, 1, 'Ninguna');
+INSERT INTO answer (id, score, text) VALUES (21, 0, 'Sin responder');
+UPDATE answer SET answers=5 WHERE id=21;
+UPDATE answer SET answer_list=5 WHERE id=21;
 
-UPDATE answer SET answers=5 WHERE id=17;
-UPDATE answer SET answer_list=5 WHERE id=17;
-UPDATE answer SET answers=5 WHERE id=18;
-UPDATE answer SET answer_list=5 WHERE id=18;
-UPDATE answer SET answers=5 WHERE id=19;
-UPDATE answer SET answer_list=5 WHERE id=19;
-UPDATE answer SET answers=5 WHERE id=20;
-UPDATE answer SET answer_list=5 WHERE id=20;
+INSERT INTO answer (id, score, text) VALUES (22, 0.5, 'Respuesta 1');
+INSERT INTO answer (id, score, text) VALUES (23, 0.5, 'Respuesta 2');
+INSERT INTO answer (id, score, text) VALUES (24, 0.5, 'Respuesta 3');
+INSERT INTO answer (id, score, text) VALUES (25, 1, 'Ninguna');
+
+UPDATE answer SET answers=5 WHERE id=22;
+UPDATE answer SET answer_list=5 WHERE id=22;
+UPDATE answer SET answers=5 WHERE id=23;
+UPDATE answer SET answer_list=5 WHERE id=23;
+UPDATE answer SET answers=5 WHERE id=24;
+UPDATE answer SET answer_list=5 WHERE id=24;
+UPDATE answer SET answers=5 WHERE id=25;
+UPDATE answer SET answer_list=5 WHERE id=25;

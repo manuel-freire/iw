@@ -40,6 +40,7 @@ public class Contest {
 	private long id;
 	private String name;
 	private byte enabled;
+	private byte complete;
 	private User teacher;
 	private StClass stClass;
 	
@@ -70,6 +71,14 @@ public class Contest {
 
 	public void setEnabled(byte enabled) {
 		this.enabled = enabled;
+	}
+
+	public byte getComplete() {
+		return complete;
+	}
+
+	public void setComplete(byte complete) {
+		this.complete = complete;
 	}
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)

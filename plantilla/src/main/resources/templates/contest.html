@@ -13,6 +13,10 @@
 			border: 1px solid #aaaaaa;
 			vertical-align: middle;
 		}
+		table, tr, td {
+			border: 1px solid black;
+			padding: 7px;
+		}
 	</style>
 </head>
 <body>
@@ -41,7 +45,7 @@
 			<div th:if=${contest} style="flex:0 1 auto;text-align:center;" class="scroll">
 				<h2 style="text-align:center;" th:text="${contest.name}"></h2>
 
-				<div thi:if="${contest.questions}" style="text-align:center;" th:each="q: ${contest.questions}">
+				<div thi:if="${contest.questions}" th:each="q: ${contest.questions}">
 					<p th:text="${q.text}"></p>
 					<table style="margin:10px;" align="center" th:if="${q.answers}">
 						<tr th:each="a: ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -52,7 +56,49 @@
 					</table>			
 				</div>
 
-			</div>			
+			</div>	
+
+			<div th:if=${contest} style="display:flex;flex-direction:column;flex:1;text-align:center;" class="scroll">	
+				<div align="left" style="display:block">
+					<nav>
+						<h3 th:text="${contest.enabled} == 1 ? 'Estado: ACTIVO' : 'Estado: INACTIVO'"></h3>
+
+						<form style="margin:5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/toggleContest(id=${session.u.id},contestId=${contest.id})}">
+							<button type="submit">Activar/ desactivar</button>
+		  				</form>	
+					</nav>
+					<nav class="container">
+						<h3 th:text="${resultList.size()} + '/' + ${students.size()} + ' estudiantes han participado'"></h3>
+
+						<form style="margin:5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/completeContest(id=${session.u.id},contestId=${contest.id})}">
+							<button type="submit">Terminar concurso</button>
+		  				</form>	
+					</nav>					
+				</div>	
+				<div class="container">
+					<div class="scroll" style="padding: 10px">
+						<table style="margin: 15px">
+							<tr style="background-color:lightgray;">
+								<td> Usuario </td>
+								<td th:each="i: ${#numbers.sequence(0, contest.questions.size()-1)}" th:text="'P' + ${i+1}"> Usuario </td>
+								<td> Puntuación </td>
+								<td> Resultado </td>
+							</tr>
+							<tr th:each="r: ${resultList}">
+								<td th:text="${r.user.firstName + ' ' + r.user.lastName}"></td>
+								<td th:each="a: ${r.answers}" th:text="${a.score}"></td>
+								<td th:text="${r.score}"></td>
+								<td th:if="${r.passed} AND !${r.perfect}" th:text="'SUPERADO'"></td>
+								<td th:if="${r.passed} AND ${r.perfect}" th:text="'PERFECTO'"></td>
+								<td th:unless="${r.passed}" th:text="'FALLIDO'"></td>
+							</tr>
+						</table>
+					</div>
+				</div>	
+				<div class="container">
+					
+				</div>					
+			</div>		
 
 		</div>
 		
