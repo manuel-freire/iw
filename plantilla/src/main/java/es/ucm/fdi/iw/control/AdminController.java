@@ -229,6 +229,8 @@ public class AdminController {
 				.setParameter("classId", stClass.getId()).getResultList();
 		model.addAttribute("students", students);
 		
+		model.addAttribute("stats", getContestStats(contest));
+		
 		return contest(id, model, session);
 	}
 	
@@ -595,5 +597,33 @@ public class AdminController {
 		}		
 		
 		return achievementList;
+	}
+	
+	private List<String> getContestStats(Contest contest) {
+		List<String> contestStats = new ArrayList<>();
+		StringBuilder sb;
+		Answer a;
+		Long count;
+		
+		for(Question q : contest.getQuestions()) {
+			sb = new StringBuilder();
+			sb.append(q.getText() + "|");
+			for(int i = 0; i < q.getAnswers().size()-1; i++) {
+				a = q.getAnswers().get(i);
+				count = (Long)entityManager.createNamedQuery("Result.numAnswers")
+				.setParameter("answerId", a.getId())
+				.setParameter("contestId", contest.getId()).getSingleResult();
+				sb.append(a.getText() + "-->" + count + ",");
+			}
+			a = q.getAnswers().get(q.getAnswers().size()-1);
+			count = (Long)entityManager.createNamedQuery("Result.numAnswers")
+			.setParameter("answerId", a.getId())
+			.setParameter("contestId", contest.getId()).getSingleResult();
+			sb.append(a.getText() + ":" + Long.toString(count));
+			
+			contestStats.add(sb.toString());
+		}
+		
+		return contestStats;		
 	}
 }

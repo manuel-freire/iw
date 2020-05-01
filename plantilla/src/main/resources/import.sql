@@ -15,35 +15,35 @@ INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,cor
 	2, 1, 'ST.00A', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumno', '00A', 1000, 0, 0, 0
+	'Alumno', '00A', 1050, 5, 1, 1
 );
 
 INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
 	3, 1, 'ST.00B', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumno', '00B', 1000, 0, 0, 0
+	'Alumno', '00B', 1035, 3, 1, 0
 );
 
 INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
 	4, 1, 'ST.00C', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumna', '00C', 1000, 0, 0, 0
+	'Alumna', '00C', 1030, 2, 1, 0
 );
 
 INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
 	5, 1, 'ST.00D', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumna', '00D', 1000, 0, 0, 0
+	'Alumna', '00D', 1043, 4, 1, 0
 );
  
 INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
 	6, 1, 'ST.00E', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumna', '00E', 1000, 0, 0, 0
+	'Alumna', '00E', 1013, 1, 0, 0
 );
  
 INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
@@ -88,11 +88,11 @@ UPDATE user SET students=1 WHERE id=7;
 
 -- Creación de los equipos y asignación de los alumnos
 
-INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (1, 0, 0, 1000, 0, 0,'Equipo A');
+INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (1, 0, 0, 1093, 0, 0,'Equipo A');
 
-INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (2, 0, 0, 1000, 0, 0,'Equipo B');
+INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (2, 0, 0, 1048 0, 0,'Equipo B');
 
-INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (3, 0, 0, 1000, 0, 0,'Equipo C');
+INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (3, 0, 0, 1030 0, 0,'Equipo C');
 
 UPDATE user SET team=1 WHERE id=2;
 UPDATE user SET members=1 WHERE id=2;
@@ -162,34 +162,34 @@ INSERT INTO goal(id,description,levels,target,key) VALUES (
 
 -- Creación de los logros para los jugadores
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (1, 1, 0, 0, 2, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (2, 3, 0, 0, 2, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (3, 4, 0, 0, 2, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (4, 5, 0, 1000, 2, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (1, 1, 1, 5, 2, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (2, 3, 1, 1, 2, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (3, 4, 1, 1, 2, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (4, 5, 0, 1050, 2, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (5, 8, 0, 0, 2, null);
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (6, 1, 0, 0, 3, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (7, 3, 0, 0, 3, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (6, 1, 0, 3, 3, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (7, 3, 1, 1, 3, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (8, 4, 0, 0, 3, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (9, 5, 0, 1000, 3, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (9, 5, 0, 1035, 3, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (10, 8, 0, 0, 3, null);
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (11, 1, 0, 0, 4, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (12, 3, 0, 0, 4, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (11, 1, 0, 2, 4, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (12, 3, 1, 1, 4, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (13, 4, 0, 0, 4, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (14, 5, 0, 1000, 4, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (14, 5, 0, 1030, 4, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (15, 8, 0, 0, 4, null);
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (16, 1, 0, 0, 5, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (17, 3, 0, 0, 5, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (16, 1, 0, 4, 5, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (17, 3, 1, 1, 5, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (18, 4, 0, 0, 5, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (19, 5, 0, 1000, 5, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (19, 5, 0, 1043, 5, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (20, 8, 0, 0, 5, null);
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (21, 1, 0, 0, 6, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (21, 1, 0, 1, 6, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (22, 3, 0, 0, 6, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (23, 4, 0, 0, 6, null);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (24, 5, 0, 1000, 6, null);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (24, 5, 0, 1013, 6, null);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (25, 8, 0, 0, 6, null);
 
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (26, 1, 0, 0, 7, null);
@@ -346,3 +346,88 @@ UPDATE answer SET answers=5 WHERE id=24;
 UPDATE answer SET answer_list=5 WHERE id=24;
 UPDATE answer SET answers=5 WHERE id=25;
 UPDATE answer SET answer_list=5 WHERE id=25;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Creación de las respuestas de los alumnos
+
+insert into result (id, correct, passed, perfect, score) values (1, 5, true, true, 50.0);
+
+UPDATE result SET results=1 WHERE id=1;
+UPDATE result SET contest=1 WHERE id=1;
+UPDATE result SET result_list=2 WHERE id=1;
+UPDATE result SET user=2 WHERE id=1;
+
+insert into result_answers (result_id, answers_id) values (1, 2);
+insert into result_answers (result_id, answers_id) values (1, 8);
+insert into result_answers (result_id, answers_id) values (1, 14);
+insert into result_answers (result_id, answers_id) values (1, 20);
+insert into result_answers (result_id, answers_id) values (1,25);
+
+insert into result (id, correct, passed, perfect, score) values (2, 3, true, false, 35.0);
+
+UPDATE result SET results=1 WHERE id=2;
+UPDATE result SET contest=1 WHERE id=2;
+UPDATE result SET result_list=3 WHERE id=2;
+UPDATE result SET user=3 WHERE id=2;
+
+insert into result_answers (result_id, answers_id) values (2, 3);
+insert into result_answers (result_id, answers_id) values (2, 7);
+insert into result_answers (result_id, answers_id) values (2, 14);
+insert into result_answers (result_id, answers_id) values (2, 20);
+insert into result_answers (result_id, answers_id) values (2, 25);
+
+insert into result (id, correct, passed, perfect, score) values (3, 2, true, false, 30.0);
+
+UPDATE result SET results=1 WHERE id=3;
+UPDATE result SET contest=1 WHERE id=3;
+UPDATE result SET result_list=4 WHERE id=3;
+UPDATE result SET user=4 WHERE id=3;
+
+insert into result_answers (result_id, answers_id) values (3, 4);
+insert into result_answers (result_id, answers_id) values (3, 9);
+insert into result_answers (result_id, answers_id) values (3, 14);
+insert into result_answers (result_id, answers_id) values (3, 20);
+insert into result_answers (result_id, answers_id) values (3, 21);
+
+insert into result (id, correct, passed, perfect, score) values (4, 4, true, false, 43.0);
+
+UPDATE result SET results=1 WHERE id=4;
+UPDATE result SET contest=1 WHERE id=4;
+UPDATE result SET result_list=5 WHERE id=4;
+UPDATE result SET user=5 WHERE id=4;
+
+insert into result_answers (result_id, answers_id) values (4, 2);
+insert into result_answers (result_id, answers_id) values (4, 8);
+insert into result_answers (result_id, answers_id) values (4, 14);
+insert into result_answers (result_id, answers_id) values (4, 17);
+insert into result_answers (result_id, answers_id) values (4,25);
+
+insert into result (id, correct, passed, perfect, score) values (5, 1, false, false, 13.0);
+
+UPDATE result SET results=1 WHERE id=5;
+UPDATE result SET contest=1 WHERE id=5;
+UPDATE result SET result_list=6 WHERE id=5;
+UPDATE result SET user=6 WHERE id=5;
+
+insert into result_answers (result_id, answers_id) values (5, 2);
+insert into result_answers (result_id, answers_id) values (5, 6);
+insert into result_answers (result_id, answers_id) values (5, 11);
+insert into result_answers (result_id, answers_id) values (5, 17);
+insert into result_answers (result_id, answers_id) values (5,25);
+
+insert into result (id, correct, passed, perfect, score) values (6, 0, false, false, 0.0);
+
+UPDATE result SET results=1 WHERE id=6;
+UPDATE result SET contest=1 WHERE id=6;
+UPDATE result SET result_list=7 WHERE id=6;
+UPDATE result SET user=7 WHERE id=6;
+
+insert into result_answers (result_id, answers_id) values (6, 1);
+insert into result_answers (result_id, answers_id) values (6, 6);
+insert into result_answers (result_id, answers_id) values (6, 11);
+insert into result_answers (result_id, answers_id) values (6, 16);
+insert into result_answers (result_id, answers_id) values (6,21);

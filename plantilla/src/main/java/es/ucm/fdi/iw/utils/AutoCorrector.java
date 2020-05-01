@@ -6,6 +6,7 @@ import java.util.List;
 import es.ucm.fdi.iw.model.Achievement;
 import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
+import es.ucm.fdi.iw.model.Question;
 import es.ucm.fdi.iw.model.Result;
 import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;

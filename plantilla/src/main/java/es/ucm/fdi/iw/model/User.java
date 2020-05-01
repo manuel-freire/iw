@@ -39,6 +39,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 			+ "WHERE u.roles = 'USER' "
 			+ "AND u.enabled = 1 "
 			+ "AND st.id = :classId"),
+	@NamedQuery(name="User.numStudents",
+	query="SELECT COUNT(u) FROM User u JOIN u.stClass st "
+			+ "WHERE u.roles = 'USER' "
+			+ "AND u.enabled = 1 "
+			+ "AND st.id = :classId"),
 	@NamedQuery(name="User.userInClass",
 	query="SELECT u FROM User u JOIN u.stClass st "
 			+ "WHERE u.username = :username "

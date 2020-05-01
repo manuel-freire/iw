@@ -4,7 +4,6 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC</title>
-	 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> 
 </head>
 <body>
 	<nav th:replace="fragments/nav.html :: nav">
@@ -118,9 +117,9 @@
 						<td>
 							<table>
 								<tr th:each="a : ${result.answers}">
-									<td style="text-align:center" th:if="${a.score >= 1}">&#9989;</td>
-									<td style="text-align:center" th:if="${a.score <= 0}">&#10060;</td>
-									<td style="text-align:center" th:unless="${a.score >= 1} OR ${a.score <= 0}">&#10134;</td>
+									<td th:if="${a.score >= 1}">&#9989;</td>
+									<td th:if="${a.score <= 0}">&#10060;</td>
+									<td th:unless="${a.score >= 1} OR ${a.score <= 0}">&#10134;</td>
 								</tr>									
 							</table>
 						</td>
@@ -133,8 +132,6 @@
 						</td>
 					</tr>
 				</table>
-
-				<div style="flex:1" class="scroll" id="piechart">
 					
 				</div>
 				
@@ -150,9 +147,6 @@
 	</footer>
 
 	<script type="text/javascript">
-
-		google.charts.load('current', {'packages':['corechart']});
-		google.charts.setOnLoadCallback(drawChart);
 
 		function getAnswers() {
 
@@ -173,25 +167,6 @@
 
 		function setAnswers() {
 			document.getElementById("results").value = getAnswers();
-		}
-
-		function drawChart() {
-			var data = google.visualization.arrayToDataTable([
-				['Task', 'Hours per Day'],
-				['Work', 8],
-				['Friends', 2],
-				['Eat', 2],
-				['TV', 2],
-				['Gym', 2],
-				['Sleep', 8]
-			]);
-
-			// Optional; add a title and set the width and height of the chart
-			var options = {'title':'My Average Day'};
-
-			// Display the chart inside the <div> element with id="piechart"
-			var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-			chart.draw(data, options);
 		}
 
 	</script>
