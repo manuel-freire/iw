@@ -88,11 +88,11 @@ UPDATE user SET students=1 WHERE id=7;
 
 -- Creación de los equipos y asignación de los alumnos
 
-INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (1, 0, 0, 1093, 0, 0,'Equipo A');
+INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (1, 0, 9, 1093, 0, 0,'Equipo A');
 
-INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (2, 0, 0, 1048 0, 0,'Equipo B');
+INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (2, 0, 4, 1048, 0, 0,'Equipo B');
 
-INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (3, 0, 0, 1030 0, 0,'Equipo C');
+INSERT INTO st_team (id, bronze, correct, elo, gold, silver, team_name) VALUES (3, 0, 2, 1030, 0, 0,'Equipo C');
 
 UPDATE user SET team=1 WHERE id=2;
 UPDATE user SET members=1 WHERE id=2;
@@ -205,16 +205,16 @@ INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achieve
 
 -- Creación de los logros para los equipos
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (31, 2, 0, 0, null, 1);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (32, 6, 0, 1000, null, 1);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (31, 2, 0, 9, null, 1);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (32, 6, 0, 1093, null, 1);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (33, 7, 0, 0, null, 1);
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (34, 2, 0, 0, null, 2);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (35, 6, 0, 1000, null, 2);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (34, 2, 0, 4, null, 2);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (35, 6, 0, 1048, null, 2);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (36, 7, 0, 0, null, 2);
 
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (37, 2, 0, 0, null, 3);
-INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (38, 6, 0, 1000, null, 3);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (37, 2, 0, 2, null, 3);
+INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (38, 6, 0, 1030, null, 3);
 INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achievement_team) VALUES (39, 7, 0, 0, null, 3);
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -224,7 +224,7 @@ INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achieve
 
 -- Creación de un concurso
 
-INSERT INTO contest (id, enabled, complete, name) VALUES (1, 0, 0, 'Mi primer concurso');
+INSERT INTO contest (id, enabled, complete, name) VALUES (1, 1, 0, 'Mi primer concurso');
 
 UPDATE contest SET teacher=1 where id=1;
 UPDATE contest SET contest_list=1 where id=1;

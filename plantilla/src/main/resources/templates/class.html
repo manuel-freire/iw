@@ -39,12 +39,12 @@
 
 				<h3 style="text-align:center;" th:text="${stClass.name}">Clase de prueba</h3>
 	
-				<div th:if="${users}" ondrop="drop(event, this)" ondragover="allowDrop(event)">
-					<div th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
+				<div th:if="${users}"style="text-align:center;" ondrop="drop(event, this)" ondragover="allowDrop(event)" class="scroll">
+					<div style="margin: 5px" th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
 						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
 				</div>	
 
-				<div>	
+				<div th:if="${students}" class="scroll">	
 					<p th:each="s: ${students}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@
 					</p>						
 				</div>
@@ -62,14 +62,11 @@
 
 				<h3 style="text-align:center;">Lista de equipos</h3>
 
-				<div style="text-align:center;" th:if="${teams}">
+				<div style="text-align:center;" th:if="${teams}"  class="scroll">
 
 					<div th:each="t: ${teams}">
 						<h3 style="text-align:center;" th:text="${t.teamName}">Equipo X</h3>
-						<div>	
-							<p th:each="s: ${t.members}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@
-							</p>						
-						</div>	
+						<p th:each="s: ${t.members}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@</p>			
 					</div>
 				</div>
 
@@ -85,8 +82,10 @@
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>
 
-				<table class="adminTable" id="teamTable" name="teamTable">
-				</table>	
+				<div class="scroll">
+					<table style="padding: 10px" class="adminTable" id="teamTable" name="teamTable">
+					</table>	
+				</div>
 
 				<div style="text-align:center;">
 					<form th:if="${users} AND ${teams == null}" method="POST" class="smallform" 
@@ -105,18 +104,19 @@
 
 				<div style="text-align:center;">
 
-					<form style="margin:10px;text-align:center;" class="smallform" th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
+					<form style="margin:10px;text-align:center;" th:action="@{/admin/{id}/class/{classId}/addContest(id=${session.u.id},classId=${stClass.id})}" 
 						method="POST" enctype="multipart/form-data">
-						Añadir nuevo concurso <input type="file" name="contestfile" required/>
+						<input type="file" name="contestfile" required/>
 						<button type="submit">Crear concurso</button>
 					</form>
 
 				</div>
 
-				<div style="flex:1;text-align:center;">	
-					<form style="text-align:center;"th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+				<div style="flex:1;text-align:center;" class="scroll">	
+					<form style="text-align:center;" th:if="${contests}" th:each="c: ${contests}" th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
 							<button style="margin:5px;" type="submit" th:text="${c.name}">Concurso</button>
-		  			</form>					
+		  			</form>			
+  					<h3 th:unless="${contests} OR ${contestList.size()} > 0" th:text="'No existen pruebas disponibles de momento.'"></h3>			
 				</div>
 
 			</div>

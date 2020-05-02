@@ -32,24 +32,14 @@
 				<div th:if="${rankingUser} AND ${positionUser}">
 
 					<table>
-						<tr>
-							<td>
-								<table>
-									<tr th:each="pu: ${positionUser}"><td th:text="${pu}"></td></tr>
-								</table>
-							</td>
-							<td>
-								<table>
-									<tr th:each="ru: ${rankingUser}">
-										<td th:text="${ru.username}">
-										<td> - </td>
-										<td th:text="${ru.elo}">
-									</tr>
-								</table>
-							</td>
+						<tr th:each="ru, iStatR : ${rankingUser}">
+							<td><img height="48" width="48" th:src="@{/user/{id}/photo(id=${ru.id})}"></td>
+							<td th:text="${positionUser[iStatR.index]}"></td>
+							<td th:text="${ru.username}"></td>
+							<td> - </td>
+							<td th:text="${ru.elo}"></td>
 						</tr>
-					</table>
-					
+					</table>					
 				</div>
 
 			</div>
@@ -61,21 +51,12 @@
 				<div th:if="${rankingTeam} AND ${positionTeam}">
 
 					<table>
-						<tr>
-							<td>
-								<table>
-									<tr th:each="pt: ${positionTeam}"><td th:text="${pt}"></td></tr>
-								</table>
-							</td>
-							<td>
-								<table>
-									<tr th:each="rt: ${rankingTeam}">
-										<td th:text="${rt.teamName}">
-										<td> - </td>
-										<td th:text="${rt.elo}">
-									</tr>
-								</table>
-							</td>
+						<tr th:each="rt, iStatR : ${rankingTeam}">
+							<td><img height="48" width="48" th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
+							<td th:text="${positionTeam[iStatR.index]}"></td>
+							<td th:text="${rt.teamName}">
+							<td> - </td>
+							<td th:text="${rt.elo}">
 						</tr>
 					</table>
 					

@@ -61,20 +61,25 @@
 
 			<div th:if=${contest} style="display:flex;flex-direction:column;flex:1;text-align:center;padding:0px" class="scroll" >	
 				<div align="left" style="display:block">
-					<nav>
+
+					<nav th:if="${contest.complete}">
+						<h3 th:text="'Estado: TERMINADO'"></h3>
+					</nav>
+					<nav th:unless="${contest.complete}">
 						<h3 th:text="${contest.enabled} == 1 ? 'Estado: ACTIVO' : 'Estado: INACTIVO'"></h3>
 
 						<form style="margin:5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/toggleContest(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Activar/ desactivar</button>
 		  				</form>	
 					</nav>
-					<nav class="container">
+					<nav th:unless="${contest.complete}" class="container">
 						<h3 th:text="${resultList.size()} + '/' + ${students.size()} + ' estudiantes han participado'"></h3>
 
 						<form style="margin:5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/completeContest(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Terminar concurso</button>
 		  				</form>	
-					</nav>					
+					</nav>		
+
 				</div>	
 				<div class="container">
 					<div class="scroll" style="padding: 0px">
@@ -138,9 +143,11 @@
 				answerStats = questionStats[1].split(",");
 
 				for(j=0; j < answerStats.length; j++) {
-					answer = answerStats[j].split(":");
+					answer = answerStats[j].split("-->");
 					chartData.push([answer[0], parseInt(answer[1])]);
 				}
+
+				console.log(chartData);
 
 				data = google.visualization.arrayToDataTable(chartData);
 				options = {'title':questionStats[0],'sliceVisibilityThreshold':0};
