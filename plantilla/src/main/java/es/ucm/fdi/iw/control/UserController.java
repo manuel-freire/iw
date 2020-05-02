@@ -151,7 +151,7 @@ public class UserController {
 		StClass stc = entityManager.find(StClass.class, classId);
 		model.addAttribute("stClass", stc);
 		
-		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClass", Contest.class)
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("contestList", contestList);		
 		
@@ -167,7 +167,7 @@ public class UserController {
 		StClass stc = entityManager.find(StClass.class, classId);
 		model.addAttribute("stClass", stc);
 		
-		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClass", Contest.class)
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("contestList", contestList);
 		
@@ -316,8 +316,8 @@ public class UserController {
 		return "profile";
 	}	
 	
-	@GetMapping(value="/{id}/team/{teamId}/photo")
-	public StreamingResponseBody getTeamPhoto(@PathVariable long id, @PathVariable("teamId") String teamId,
+	@GetMapping(value="/team/{teamId}/photo")
+	public StreamingResponseBody getTeamPhoto(@PathVariable("teamId") String teamId,
 			Model model) throws IOException {		
 		File f = localData.getFile("team", ""+teamId);
 		InputStream in;

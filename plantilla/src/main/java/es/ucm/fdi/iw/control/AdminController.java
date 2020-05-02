@@ -170,7 +170,7 @@ public class AdminController {
 		List<StClass> classList = entityManager.createNamedQuery("StClass.byTeacher", StClass.class)
 				.setParameter("userId", id).getResultList();
 		
-		List<Contest> contests = entityManager.createNamedQuery("Contest.byClass", Contest.class)
+		List<Contest> contests = entityManager.createNamedQuery("Contest.byClassTeacher", Contest.class)
 				.setParameter("classId", classId).getResultList();
 
 		model.addAttribute("teams", teams);
@@ -425,8 +425,35 @@ public class AdminController {
 		} else {
 			// enable user
 			contest.setEnabled((byte)1);
+			entityManager.persist(contest);
 		}
 		
+		model.addAttribute("contest", contest);
+		
+		return selectedContest(id, contestId, model, session);
+	}
+	
+	
+	
+	@PostMapping("/{id}/contest/{contestId}//completeContest")
+	@Transactional
+	public String completeContest(
+			HttpServletResponse response,
+			@PathVariable("id") long id,
+			@PathVariable("contestId") long contestId,
+			Model model, HttpSession session) throws IOException {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return selectedContest(id, contestId, model, session);
+		}
+		
+		Contest contest = entityManager.find(Contest.class, contestId);
+		contest.setComplete((byte)1);		
 		model.addAttribute("contest", contest);
 		
 		return selectedContest(id, contestId, model, session);
@@ -619,7 +646,7 @@ public class AdminController {
 			count = (Long)entityManager.createNamedQuery("Result.numAnswers")
 			.setParameter("answerId", a.getId())
 			.setParameter("contestId", contest.getId()).getSingleResult();
-			sb.append(a.getText() + ":" + Long.toString(count));
+			sb.append(a.getText() + "-->" + Long.toString(count));
 			
 			contestStats.add(sb.toString());
 		}

@@ -30,9 +30,13 @@ import org.hibernate.annotations.LazyCollectionOption;
 	query="SELECT c FROM Contest c JOIN c.teacher t JOIN c.stClass stc "
 			+ "WHERE t.id = :userId "
 			+ "ORDER BY stc.name DESC"),
-	@NamedQuery(name="Contest.byClass",
+	@NamedQuery(name="Contest.byClassTeacher",
 	query="SELECT c FROM Contest c JOIN c.stClass stc "
-			+ "WHERE stc.id = :classId ")
+			+ "WHERE stc.id = :classId"),
+	@NamedQuery(name="Contest.byClassUser",
+	query="SELECT c FROM Contest c JOIN c.stClass stc "
+			+ "WHERE stc.id = :classId "
+			+ "AND (c.enabled = 1 OR c.complete = 1)"),
 })
 
 public class Contest {
