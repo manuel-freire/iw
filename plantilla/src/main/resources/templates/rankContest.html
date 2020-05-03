@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><th:block th:replace="fragments/head :: header"/>
+	<title>RPC - Profesor</title>
+	<style>
+		.classBox {
+			float: left; 
+			width: 300px; 
+			height: 800px;
+			padding: 5px;
+			border: 1px solid #aaaaaa;
+			vertical-align: middle;
+		}
+		table, tr, td {
+			border: 1px solid black;
+			padding: 7px;
+		}
+	</style>
+</head>
+<body>
+	<nav th:replace="fragments/nav.html :: nav">
+		Nav goes here
+	</nav>
+	
+	<div style="height:100%;" class="container">
+	<div class="main">
+
+		<nav>
+
+			<h1 style="margin-left:25px;margin-right:25px;">Mis pruebas</h1>
+	
+		</nav>
+
+		<div class="container">
+
+			<div style="flex:0 1 auto;" class="scroll">		
+				<form style="margin:5px" th:if="${contestList}" th:each="c: ${contestList}" 
+						th:action="@{/admin/{id}/contest/{contestId}(id=${session.u.id},contestId=${c.id})}">
+					<button type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Concurso</button>
+  				</form>					
+			</div>
+
+			<div th:if=${contest} style="flex:0 1 auto;text-align:center;" class="scroll">
+				<h2 style="text-align:center;" th:text="${contest.name}"></h2>
+
+				<div thi:if="${contest.questions}" th:each="q: ${contest.questions}">
+					<p th:text="${q.text}"></p>
+					<table style="margin:10px;" align="center" th:if="${q.answers}">
+						<tr th:each="a: ${q.answers}" th:if="${a.text} != 'Sin responder'">
+							<td th:text="${a.text}"></td>
+							<td>&rarr;</td>
+							<td th:text="${a.score}"></th>
+						</tr>
+					</table>			
+				</div>
+
+			</div>	
+
+			<div style="flex:0 1 auto;" class="scroll"> 
+
+				<h2 style="margin-bottom:10px;">Ranking de estudiantes</h2>
+
+				<div th:if="${results} AND ${positionUser}">
+
+					<table>
+						<tr th:each="r, iStatR : ${results}">
+							<td><img height="48" width="48" th:src="@{/user/{id}/photo(id=${r.user.getId()})}"></td>
+							<td th:text="${positionUser[iStatR.index]}"></td>
+							<td th:text="${r.user.getUsername()}"></td>
+							<td> - </td>
+							<td th:text="${r.score}"></td>
+						</tr>
+					</table>
+										
+				</div>
+
+			</div>
+
+			<div style="flex:0 1 auto;" class="scroll"> 
+
+				<h2 style="margin-bottom:10px;">Ranking de equipos</h2>
+
+				<div th:if="${rankingTeam} AND ${positionTeam}">
+
+					<table>
+						<tr th:each="rt, iStatR : ${rankingTeam}">
+							<td th:text="${positionTeam[iStatR.index]}"></td>
+							<td th:text="${rt}">
+							<td> - </td>
+							<td th:text="${scoreTeam[iStatR.index]}">
+						</tr>
+					</table>
+					
+				</div>
+
+			</div>
+				
+
+		</div>
+		
+	</div>
+	</div>
+		
+	<footer th:replace="fragments/footer.html :: footer">
+		Footer goes here
+	</footer>
+
+	<script th:inline="javascript">
+
+		
+	</script>
+</body>
+</html>

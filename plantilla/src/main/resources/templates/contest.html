@@ -64,6 +64,10 @@
 
 					<nav th:if="${contest.complete}">
 						<h3 th:text="'Estado: TERMINADO'"></h3>
+
+						<form style="margin:5px" th:action="@{/admin/{id}/contest/{contestId}/ranking(id=${session.u.id},contestId=${contest.id})}">
+							<button type="submit">Ver clasificación</button>
+		  				</form>	
 					</nav>
 					<nav th:unless="${contest.complete}">
 						<h3 th:text="${contest.enabled} == 1 ? 'Estado: ACTIVO' : 'Estado: INACTIVO'"></h3>

@@ -29,7 +29,8 @@
 				<form th:if="${contestList} AND ${session.u.hasRole('USER')}" th:each="c: ${contestList}" 
 						th:action="@{/user/{id}/play/{classId}/{contestId}(id=${session.u.id},classId=${stClass.id},contestId=${c.id})}">
 					<button style="margin:5px;" type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
-  				</form>		
+  				</form>	
+  				<h3 th:unless="${contestList.size()} > 0" th:text="'No existen pruebas disponibles de momento.'"></h3>	
 			</div>
 
 			<div style="flex:1" class="scroll">
@@ -99,43 +100,30 @@
 						<td><h3 style="padding-right:15px" th:text="'Corrección'"></h3></td>
 						<td><h3 style="padding-right:15px" th:text="'Puntuación'"></h3></td>
 					</tr>
-					<tr>
+					<tr th:each="a, iStatA : ${result.answers}">
+						<td th:text="${a.text}"></td>	
 						<td>
 							<table>
-								<tr th:each="a : ${result.answers}">
-									<td th:text="${a.text}"></td>
+								<tr th:each="q : ${contest.questions[iStatA.index].answers}" >
+									<td  th:if="${q.score == 1}" th:text="${q.text}"></td>
 								</tr>									
 							</table>
 						</td>
-						<td>
-							<table>
-								<tr th:each="q : ${contest.questions}">
-									<td th:each="a : ${q.answers}" th:if="${a.score == 1}" th:text="${a.text}"></td>
-								</tr>									
-							</table>
-						</td>
-						<td>
-							<table>
-								<tr th:each="a : ${result.answers}">
-									<td th:if="${a.score >= 1}">&#9989;</td>
-									<td th:if="${a.score <= 0}">&#10060;</td>
-									<td th:unless="${a.score >= 1} OR ${a.score <= 0}">&#10134;</td>
-								</tr>									
-							</table>
-						</td>
-						<td>
-							<table>
-								<tr th:each="a : ${result.answers}">
-									<td th:text="${a.score}"></td>
-								</tr>									
-							</table>
-						</td>
+						<td th:if="${a.score >= 1}">&#9989;</td>
+						<td th:if="${a.score <= 0}">&#10060;</td>
+						<td th:unless="${a.score >= 1} OR ${a.score <= 0}">&#10134;</td>
+						<td th:text="${a.score}"></td>
 					</tr>
 				</table>
-					
-				</div>
-				
+
+				<h3 th:text="${contest.complete} ? 'CLASIFICACIÓN FINAL DISPONIBLE' : 'ESPERANDO CLASIFICACIÓN FINAL...'"></h3>
+
+				<form th:if="${session.u.hasRole('ADMIN')}" method="POST" th:action="@{/admin/{id}/play/{contestId}/retry(id=${session.u.id},contestId=${contest.id})}">
+					<button style="margin:5px;" type="submit">Intentar de nuevo</button>
+  				</form>	
+
 			</div>
+					
 
 		</div>
 		

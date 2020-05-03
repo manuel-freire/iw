@@ -29,6 +29,9 @@ import javax.persistence.OneToMany;
 			+ "WHERE t.id = :userId"),
 	@NamedQuery(name="StClass.contestOwner",
 	query="SELECT st FROM StClass st JOIN st.classContest c "
+			+ "WHERE c.id = :contestId"),
+	@NamedQuery(name="StClass.contestTeams",
+	query="SELECT tl FROM StClass st JOIN st.classContest c JOIN st.teamList tl "
 			+ "WHERE c.id = :contestId")
 })
 

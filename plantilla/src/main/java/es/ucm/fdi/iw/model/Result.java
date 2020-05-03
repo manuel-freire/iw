@@ -40,6 +40,12 @@ import javax.persistence.OneToMany;
 	query="SELECT COUNT(r) FROM Result r JOIN r.contest c JOIN r.answers a "
 			+ "WHERE a.id = :answerId "
 			+ "AND c.id = :contestId"),
+	@NamedQuery(name="Result.userRanking",
+	query="SELECT r FROM Result r JOIN r.user u JOIN r.contest c "
+			+ "WHERE u.roles = 'USER' "
+			+ "AND u.enabled = 1 "
+			+ "AND c.id = :contestId "
+			+ "ORDER BY r.score DESC"),
 })
 
 public class Result {

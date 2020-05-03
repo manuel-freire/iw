@@ -9,7 +9,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -234,6 +240,96 @@ public class AdminController {
 		return contest(id, model, session);
 	}
 	
+	@GetMapping("/{id}/contest/{contestId}/ranking")
+	public String contestRanking(@PathVariable("id") long id, @PathVariable("contestId") long contestId,
+			Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byTeacher", Contest.class)
+				.setParameter("userId", id).getResultList();
+		model.addAttribute("contestList", contestList);
+		
+		Contest contest = entityManager.find(Contest.class, contestId);
+		model.addAttribute("contest", contest);
+		
+		List<Result> results = entityManager.createNamedQuery("Result.userRanking", Result.class)
+				.setParameter("contestId", contestId).getResultList();
+		model.addAttribute("results", results);
+
+		List<StTeam> teams = entityManager.createNamedQuery("StClass.contestTeams", StTeam.class)
+				.setParameter("contestId", contestId).getResultList();
+		
+		Map<String, Double> sumScores = new HashMap<>();	
+		for (StTeam s : teams) {
+			sumScores.put(s.getTeamName(), 0.0);
+		}
+		
+		List<Integer> positionUser = new ArrayList<>();
+		String team;
+		int pos = 1;
+		double score;
+		double max = results.get(0).getScore();
+		positionUser.add(pos);
+		for (int i=0; i < results.size(); i++) {
+			score = results.get(i).getScore();
+			
+			if ( score < max) {
+				pos++; max = score;
+				positionUser.add(pos);
+			} else {
+				positionUser.add(pos);
+			}
+			
+			team = results.get(i).getUser().getTeam().getTeamName();
+			sumScores.put(team, sumScores.get(team) + score);
+		}
+
+		model.addAttribute("positionUser", positionUser);		
+		
+		LinkedHashMap<String, Double> sortedTeams = new LinkedHashMap<>();
+		sumScores.entrySet()
+	    .stream()
+	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
+	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
+		
+		List<Integer> positionTeam = new ArrayList<>();
+		pos = 1;
+		max = (double) sortedTeams.values().toArray()[0];
+		positionTeam.add(pos);
+		for (int k=0; k < sortedTeams.values().size(); k++) {
+			score = (double) sortedTeams.values().toArray()[k];
+			if ( score < max) {
+				pos++; max = score;
+				positionTeam.add(pos);
+			} else {
+				positionTeam.add(pos);
+			}
+		}
+        
+		model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
+		model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
+		model.addAttribute("positionTeam", positionTeam);	
+		
+		return "rankContest";
+	}	
+	
+	@GetMapping("/{id}/play/{classId}")
+	public String play(@PathVariable("id") long id, @PathVariable("classId") long classId,
+			Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		StClass stc = entityManager.find(StClass.class, classId);
+		model.addAttribute("stClass", stc);
+		
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("contestList", contestList);		
+		
+		return "play";
+	}	
+	
 	@GetMapping("/{id}/play/{contestId}")
 	public String playContest(@PathVariable("id") long id, @PathVariable("contestId") long contestId,
 			Model model, HttpSession session) {
@@ -425,7 +521,6 @@ public class AdminController {
 		} else {
 			// enable user
 			contest.setEnabled((byte)1);
-			entityManager.persist(contest);
 		}
 		
 		model.addAttribute("contest", contest);
@@ -490,6 +585,31 @@ public class AdminController {
 		}	
 		
 
+		return playContest(id, contestId, model, session);
+	}
+	
+	@PostMapping("/{id}/play/{contestId}/retry")
+	@Transactional
+	public String retryContest(
+			HttpServletResponse response,
+			@PathVariable("id") long id,
+			@PathVariable("contestId") long contestId,
+			Model model, HttpSession session) throws IOException, DocumentException {
+		User target = entityManager.find(User.class, id);
+		model.addAttribute("user", target);
+		
+		// check permissions
+		User requester = (User)session.getAttribute("u");
+		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
+			return playContest(id, contestId, model, session);
+		}
+				
+		Result result = entityManager.createNamedQuery("Result.getResult", Result.class)
+		.setParameter("userId", id)
+		.setParameter("contestId", contestId).getSingleResult();	
+		entityManager.remove(result);
+		
 		return playContest(id, contestId, model, session);
 	}
 	
