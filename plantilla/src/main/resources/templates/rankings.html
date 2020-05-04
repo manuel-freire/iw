@@ -25,43 +25,54 @@
 
 		<div th:if="(${session.u.id} eq ${user.id}) or ${user.hasRole('ADMIN')}" class="container">
 
-			<div style="flex:0 1 auto;" class="scroll"> 
+			<div th:if="${classList}" style="flex:0 1 auto;" class="scroll">		
+				<form style="margin:5px" th:each="c: ${classList}" 
+						th:action="@{/admin/{id}/rankings/{classId}(id=${session.u.id},classId=${c.id})}">
+					<button type="submit" th:text="${c.name}">Clase</button>
+  				</form>					
+			</div>
+
+			<div th:if="${contestList} AND ${stClass}" style="flex:0 1 auto;" class="scroll">	
+
+				<form style="margin:5px" th:action="@{/user/{id}/rankings/{classId}(id=${session.u.id},classId=${stClass.id})}">
+					<button type="submit">Global</button>
+  				</form>	
+
+				<form style="margin:5px" th:each="c: ${contestList}" 
+						th:action="@{/user/{id}/rankings/{classId}/{contestId}(id=${session.u.id},classId=${stClass.id},contestId=${c.id})}">
+					<button type="submit" th:text="${c.name}">Concurso</button>
+  				</form>					
+			</div>
+
+			<div th:if="${rankingUser} AND ${positionUser}" style="flex:0 1 auto;" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de estudiantes</h2>
 
-				<div th:if="${rankingUser} AND ${positionUser}">
-
-					<table>
-						<tr th:each="ru, iStatR : ${rankingUser}">
-							<td><img height="48" width="48" th:src="@{/user/{id}/photo(id=${ru.id})}"></td>
-							<td th:text="${positionUser[iStatR.index]}"></td>
-							<td th:text="${ru.username}"></td>
-							<td> - </td>
-							<td th:text="${ru.elo}"></td>
-						</tr>
-					</table>
-										
-				</div>
+				<table>
+					<tr th:each="ru, iStatR : ${rankingUser}">
+						<td><img height="48" width="48" th:src="@{/user/{id}/photo(id=${ru.id})}"></td>
+						<td th:text="${positionUser[iStatR.index]}"></td>
+						<td th:text="${ru.username}"></td>
+						<td> - </td>
+						<td th:text="${ru.elo}"></td>
+					</tr>
+				</table>
 
 			</div>
 
-			<div style="flex:0 1 auto;" class="scroll"> 
+			<div th:if="${rankingTeam} AND ${positionTeam}" style="flex:0 1 auto;" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de equipos</h2>
 
-				<div th:if="${rankingTeam} AND ${positionTeam}">
-
-					<table>
-						<tr th:each="rt, iStatR : ${rankingTeam}">
-							<td><img height="48" width="48" th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
-							<td th:text="${positionTeam[iStatR.index]}"></td>
-							<td th:text="${rt.teamName}">
-							<td> - </td>
-							<td th:text="${rt.elo}">
-						</tr>
-					</table>
-					
-				</div>
+				<table>
+					<tr th:each="rt, iStatR : ${rankingTeam}">
+						<td><img height="48" width="48" th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
+						<td th:text="${positionTeam[iStatR.index]}"></td>
+						<td th:text="${rt.teamName}">
+						<td> - </td>
+						<td th:text="${rt.elo}">
+					</tr>
+				</table>
 
 			</div>
 

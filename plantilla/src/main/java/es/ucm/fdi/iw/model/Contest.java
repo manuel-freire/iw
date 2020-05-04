@@ -37,6 +37,10 @@ import org.hibernate.annotations.LazyCollectionOption;
 	query="SELECT c FROM Contest c JOIN c.stClass stc "
 			+ "WHERE stc.id = :classId "
 			+ "AND (c.enabled = 1 OR c.complete = 1)"),
+	@NamedQuery(name="Contest.byClassComplete",
+	query="SELECT c FROM Contest c JOIN c.stClass stc "
+			+ "WHERE stc.id = :classId "
+			+ "AND c.complete = 1"),
 })
 
 public class Contest {

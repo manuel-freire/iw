@@ -46,7 +46,7 @@
 									<td th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
 								</tr>
 							</table>
-							<div th:unless="${result}">
+							<div th:unless="${result} OR ${contest.complete == 1}">
 								<label style="margin-right: 5px;">Respuesta:</label>
 								<select class="answer">
 									<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
@@ -55,7 +55,7 @@
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
-						<button th:unless="${result}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
+						<button th:unless="${result} OR ${contest.complete == 1}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
 					
 					</div>
 				</form>
@@ -72,7 +72,7 @@
 									<td th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
 								</tr>
 							</table>
-							<div th:unless="${result}">
+							<div th:unless="${result} OR ${contest.complete == 1}">
 								<label style="margin-right: 5px;">Respuesta:</label>
 								<select class="answer">
 									<option th:each="a, iStatA : ${q.answers}" th:value="${iStatA.index}" th:text="${a.text}">Opcion</option>
@@ -81,7 +81,7 @@
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
-						<button th:unless="${result}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
+						<button th:unless="${result} OR ${contest.complete == 1}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
 					
 					</div>
 				</form>

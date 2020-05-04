@@ -28,6 +28,14 @@
 
 		<div th:if="${session.u}">			
 			<div th:if="${session.u.hasRole('ADMIN')}">	
+				<form th:action="@{/admin/{id}/rankings(id=${session.u.id})}">
+					<button type="submit">Rankings</button>
+  				</form>		
+			</div>					
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('ADMIN')}">	
 				<form th:action="@{/admin/{id}/play(id=${session.u.id})}">
 					<button type="submit">Jugar</button>
   				</form>		
@@ -54,6 +62,14 @@
 			<div th:if="${session.u.hasRole('USER')}">	
 				<form th:action="@{/user/{id}/rankings/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
 					<button type="submit">Rankings</button>
+  				</form>		
+			</div>					
+		</div>
+
+		<div th:if="${session.u}">			
+			<div th:if="${session.u.hasRole('USER')}">	
+				<form th:action="@{/user/{id}/play/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
+					<button type="submit">Jugar</button>
   				</form>		
 			</div>					
 		</div>

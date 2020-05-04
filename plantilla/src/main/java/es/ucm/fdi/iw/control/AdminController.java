@@ -147,6 +147,18 @@ public class AdminController {
 		return "contest";
 	}
 	
+	@GetMapping("/{id}/rankings")
+	public String rankings(@PathVariable long id, Model model, HttpSession session) {
+		User u = entityManager.find(User.class, id);
+		model.addAttribute("user", u);
+		
+		List<StClass> classList = entityManager.createNamedQuery("StClass.byTeacher", StClass.class)
+				.setParameter("userId", u.getId()).getResultList();
+		model.addAttribute("classList", classList);
+		
+		return "rankings";
+	}
+	
 	@GetMapping("/{id}/play")
 	public String play(@PathVariable long id, Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
@@ -314,21 +326,50 @@ public class AdminController {
 		return "rankContest";
 	}	
 	
-	@GetMapping("/{id}/play/{classId}")
-	public String play(@PathVariable("id") long id, @PathVariable("classId") long classId,
+	@GetMapping("/{id}/rankings/{classId}")
+	public String rankings(@PathVariable long id, @PathVariable("classId") long classId,
 			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
 		
-		StClass stc = entityManager.find(StClass.class, classId);
-		model.addAttribute("stClass", stc);
-		
-		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
+		List<User> rankingUser = entityManager.createNamedQuery("User.ranking", User.class)
 				.setParameter("classId", classId).getResultList();
-		model.addAttribute("contestList", contestList);		
+		model.addAttribute("rankingUser", rankingUser);
 		
-		return "play";
-	}	
+		List<Integer> positionUser = new ArrayList<>();
+		int pos = 1;
+		int max = rankingUser.get(0).getElo();
+		positionUser.add(pos);
+		for (int i=1; i < rankingUser.size(); i++) {
+			if (rankingUser.get(i).getElo() < max) {
+				pos++; max = rankingUser.get(i).getElo();
+				positionUser.add(pos);
+			} else {
+				positionUser.add(pos);
+			}
+		}
+		model.addAttribute("positionUser", positionUser);
+		
+		List<StTeam> rankingTeam = entityManager.createNamedQuery("StTeam.ranking", StTeam.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("rankingTeam", rankingTeam);	
+		
+		List<Integer> positionTeam = new ArrayList<>();
+		pos = 1;
+		max = rankingTeam.get(0).getElo();
+		positionTeam.add(pos);
+		for (int i=1; i < rankingTeam.size(); i++) {
+			if (rankingTeam.get(i).getElo() < max) {
+				pos++; max = rankingTeam.get(i).getElo();
+				positionTeam.add(pos);
+			} else {
+				positionTeam.add(pos);
+			}
+		}
+		model.addAttribute("positionTeam", positionTeam);	
+		
+		return rankings(id, model, session);
+	}
 	
 	@GetMapping("/{id}/play/{contestId}")
 	public String playContest(@PathVariable("id") long id, @PathVariable("contestId") long contestId,
@@ -353,7 +394,7 @@ public class AdminController {
 			model.addAttribute("result", result);
 		}
 				
-		return play(id, model, session);
+		return "play";
 	}
 
 	@PostMapping("/{id}/class")
