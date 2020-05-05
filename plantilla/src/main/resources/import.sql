@@ -4,53 +4,53 @@
 --
 
 --Creación de un profesor y alumnos de prueba
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	1, 1, 'a', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'ADMIN',
-	'Profesor', 'Fesor', 0, 0, 0, 0
+	'Profesor', 'Fesor', 0, 0, 0, 0, 0
 );
 
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	2, 1, 'ST.00A', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumno', '00A', 1050, 5, 1, 1
+	'Alumno', '00A', 1050, 5, 1, 1, 0
 );
 
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	3, 1, 'ST.00B', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumno', '00B', 1035, 3, 1, 0
+	'Alumno', '00B', 1035, 3, 1, 0, 0
 );
 
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	4, 1, 'ST.00C', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumna', '00C', 1030, 2, 1, 0
+	'Alumna', '00C', 1030, 2, 1, 0, 0
 );
 
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	5, 1, 'ST.00D', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumna', '00D', 1043, 4, 1, 0
+	'Alumna', '00D', 1043, 4, 1, 0, 0
 );
  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	6, 1, 'ST.00E', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumna', '00E', 1013, 1, 0, 0
+	'Alumna', '00E', 1013, 1, 0, 0, 0
 );
  
-INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect) VALUES (
+INSERT INTO user(id,enabled,username,password,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	7, 1, 'ST.00F', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u',
 	'USER',
-	'Alumno', '00F', 1000, 0, 0, 0
+	'Alumno', '00F', 1000, 0, 0, 0, 0
 );
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ INSERT INTO goal(id,description,levels,target,key) VALUES (
 );
 
 INSERT INTO goal(id,description,levels,target,key) VALUES (
-	7, 'Acumulad XXX trofeos', '1,3,5,10,15', 'TEAM', 'TROPHY'
+	7, 'Acumulad XXX trofeos', '1,3,5,10,15', 'TEAM', 'TOP'
 );
 
 INSERT INTO goal(id,description,levels,target,key) VALUES (

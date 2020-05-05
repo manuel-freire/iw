@@ -5,6 +5,10 @@
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC - Estudiante</title>
 	<style>
+		table, tr, td {
+			border: 1px solid black;
+			padding: 7px;
+		}
 	</style>
 </head>
 <body onload="fillRankings()">
@@ -44,13 +48,13 @@
   				</form>					
 			</div>
 
-			<div th:if="${rankingUser} AND ${positionUser}" style="flex:0 1 auto;" class="scroll"> 
+			<div th:if="${rankingUser} AND ${positionUser}" style="flex:1;" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de estudiantes</h2>
 
 				<table>
 					<tr th:each="ru, iStatR : ${rankingUser}">
-						<td><img height="48" width="48" th:src="@{/user/{id}/photo(id=${ru.id})}"></td>
+						<td><img height="64" width="64" th:src="@{/user/{id}/photo(id=${ru.id})}"></td>
 						<td th:text="${positionUser[iStatR.index]}"></td>
 						<td th:text="${ru.username}"></td>
 						<td> - </td>
@@ -60,13 +64,13 @@
 
 			</div>
 
-			<div th:if="${rankingTeam} AND ${positionTeam}" style="flex:0 1 auto;" class="scroll"> 
+			<div th:if="${rankingTeam} AND ${positionTeam}" style="flex:1;" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de equipos</h2>
 
 				<table>
 					<tr th:each="rt, iStatR : ${rankingTeam}">
-						<td><img height="48" width="48" th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
+						<td><img height="64" width="64" th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
 						<td th:text="${positionTeam[iStatR.index]}"></td>
 						<td th:text="${rt.teamName}">
 						<td> - </td>
