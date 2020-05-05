@@ -24,7 +24,9 @@ const ws = {
 	initialize: (endpoint, subs = []) => {
 		try {
 			ws.stompClient = Stomp.client(endpoint);
-			ws.stompClient.reconnect_delay = (ws.retries -- > 0) ? 2000 : 0;
+			ws.stompClient.reconnect_delay = 2000;
+			// only works on modified stomp.js, not on original from mantainer's site
+			ws.stompClient.reconnect_callback = () => ws.retries -- > 0;
 			ws.stompClient.connect(ws.headers, () => {
 		        ws.connected = true;
 		        console.log('Connected to ', endpoint, ' - subscribing...');		        

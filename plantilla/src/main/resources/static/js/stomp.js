@@ -461,6 +461,11 @@
                 if (typeof _this.debug === "function") {
                   _this.debug('STOMP: attempting to reconnect');
                 }
+                if (typeof _this.reconnect_callback === "function") {
+                  if ( ! _this.reconnect_callback()) {
+                    return () => {};
+                  }
+                }
                 return _this._connect();
               }
             };
