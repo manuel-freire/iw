@@ -89,6 +89,7 @@ public class User {
 	private int correct;
 	private int passed;
 	private int perfect;	
+	private int top;	
 	
 	private StTeam team;
 	private StClass stClass;
@@ -236,6 +237,14 @@ public class User {
 
 	public void setPerfect(int perfect) {
 		this.perfect = perfect;
+	}
+
+	public int getTop() {
+		return top;
+	}
+
+	public void setTop(int top) {
+		this.top = top;
 	}
 	
 	@ManyToOne(targetEntity = StTeam.class)

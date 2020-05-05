@@ -253,6 +253,7 @@ public class AdminController {
 	}
 	
 	@GetMapping("/{id}/contest/{contestId}/ranking")
+	@Transactional
 	public String contestRanking(@PathVariable("id") long id, @PathVariable("contestId") long contestId,
 			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
@@ -272,56 +273,7 @@ public class AdminController {
 		List<StTeam> teams = entityManager.createNamedQuery("StClass.contestTeams", StTeam.class)
 				.setParameter("contestId", contestId).getResultList();
 		
-		Map<String, Double> sumScores = new HashMap<>();	
-		for (StTeam s : teams) {
-			sumScores.put(s.getTeamName(), 0.0);
-		}
-		
-		List<Integer> positionUser = new ArrayList<>();
-		String team;
-		int pos = 1;
-		double score;
-		double max = results.get(0).getScore();
-		positionUser.add(pos);
-		for (int i=0; i < results.size(); i++) {
-			score = results.get(i).getScore();
-			
-			if ( score < max) {
-				pos++; max = score;
-				positionUser.add(pos);
-			} else {
-				positionUser.add(pos);
-			}
-			
-			team = results.get(i).getUser().getTeam().getTeamName();
-			sumScores.put(team, sumScores.get(team) + score);
-		}
-
-		model.addAttribute("positionUser", positionUser);		
-		
-		LinkedHashMap<String, Double> sortedTeams = new LinkedHashMap<>();
-		sumScores.entrySet()
-	    .stream()
-	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
-	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
-		
-		List<Integer> positionTeam = new ArrayList<>();
-		pos = 1;
-		max = (double) sortedTeams.values().toArray()[0];
-		positionTeam.add(pos);
-		for (int k=0; k < sortedTeams.values().size(); k++) {
-			score = (double) sortedTeams.values().toArray()[k];
-			if ( score < max) {
-				pos++; max = score;
-				positionTeam.add(pos);
-			} else {
-				positionTeam.add(pos);
-			}
-		}
-        
-		model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
-		model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
-		model.addAttribute("positionTeam", positionTeam);	
+		getContestRanking(teams, results, model);
 		
 		return "rankContest";
 	}	
@@ -813,5 +765,117 @@ public class AdminController {
 		}
 		
 		return contestStats;		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void getContestRanking(List<StTeam> teams, List<Result> results, Model model) {
+		
+		Map<StTeam, Double> sumScores = new HashMap<>();	
+		for (StTeam s : teams) {
+			sumScores.put(s, 0.0);
+		}
+		
+		List<Integer> positionUser = new ArrayList<>();
+		StTeam team;
+		int pos = 1;
+		double score;
+		double max = results.get(0).getScore();
+		for (int i=0; i < results.size(); i++) {
+			score = results.get(i).getScore();
+			
+			if ( score < max) {
+				pos++; max = score;
+				positionUser.add(pos);
+			} else {
+				positionUser.add(pos);
+			}
+			
+			team = results.get(i).getUser().getTeam();
+			sumScores.put(team, sumScores.get(team) + score);
+		}
+
+		model.addAttribute("positionUser", positionUser);	
+		updateAchievementsUser(results, positionUser);
+		
+		LinkedHashMap<StTeam, Double> sortedTeams = new LinkedHashMap<>();
+		sumScores.entrySet()
+	    .stream()
+	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
+	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
+		
+		List<Integer> positionTeam = new ArrayList<>();
+		pos = 1;
+		max = (double) sortedTeams.values().toArray()[0];
+		for (int k=0; k < sortedTeams.values().size(); k++) {
+			score = (double) sortedTeams.values().toArray()[k];
+			if ( score < max) {
+				pos++; max = score;
+				positionTeam.add(pos);
+			} else {
+				positionTeam.add(pos);
+			}
+		}
+        
+		model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
+		model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
+		model.addAttribute("positionTeam", positionTeam);
+		updateAchievementsTeam((List<StTeam>)(Object)Arrays.asList(sortedTeams.keySet().toArray()), positionTeam);
+	}
+	
+	private void updateAchievementsUser(List<Result> results, List<Integer> positionUser) {
+		User u;
+		Achievement a;
+		String[] levels;
+		
+		for (int i = 0; i < results.size() && positionUser.get(i) < 4; i++) {
+			u = entityManager.find(User.class, results.get(i).getUser().getId());
+			u.setTop(u.getTop()+1);
+			
+			a = entityManager.createNamedQuery("Achievement.byStudentRanking", Achievement.class)
+					.setParameter("userId", u.getId()).getSingleResult();
+			a.setProgress(u.getTop());
+
+			levels = a.getGoal().getLevels().split(",");
+			if (u.getTop() >= Integer.parseInt(levels[a.getLevel()])) {
+				a.setLevel(a.getLevel() + 1);
+			}	
+		}
+	}
+	
+	private void updateAchievementsTeam(List<StTeam> teams, List<Integer> positionTeam) {
+		StTeam t;
+		Achievement a;
+		String[] levels;
+		int trophies;
+		
+		for (int i = 0; i < teams.size()  && positionTeam.get(i) < 4; i++) {
+			t = entityManager.find(StTeam.class, teams.get(i).getId());
+			switch(positionTeam.get(i)) {
+				case(1):
+					t.setGold(t.getGold()+1);
+					break;
+				case(2):
+					t.setSilver(t.getSilver()+1);
+					break;
+				case(3):
+					t.setBronze(t.getBronze()+1);
+					break;
+				default:
+					break;
+			}
+
+			a = entityManager.createNamedQuery("Achievement.byTeamRanking", Achievement.class)
+					.setParameter("teamId", t.getId()).getSingleResult();
+			trophies = t.getBronze()+t.getSilver()+t.getGold();
+			a.setProgress(trophies);
+
+			levels = a.getGoal().getLevels().split(",");
+			if (trophies >= Integer.parseInt(levels[a.getLevel()])) {
+				a.setLevel(a.getLevel() + 1);
+			}
+
+			entityManager.persist(t);
+			entityManager.persist(a);
+		}
 	}
 }

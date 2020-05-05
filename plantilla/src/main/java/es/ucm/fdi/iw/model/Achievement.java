@@ -25,7 +25,15 @@ import javax.persistence.OneToOne;
 			+ "WHERE s.id = :userId"),
 	@NamedQuery(name="Achievement.byTeam",
 	query="SELECT a FROM Achievement a JOIN a.team t "
-			+ "WHERE t.id = :teamId")
+			+ "WHERE t.id = :teamId"),
+	@NamedQuery(name="Achievement.byStudentRanking",
+	query="SELECT a FROM Achievement a JOIN a.student s "
+			+ "WHERE s.id = :userId "
+			+ "AND (a.goal.key = 'TOP')"),
+	@NamedQuery(name="Achievement.byTeamRanking",
+	query="SELECT a FROM Achievement a JOIN a.team t "
+			+ "WHERE t.id = :teamId "
+			+ "AND (a.goal.key = 'TOP')")
 })
 
 public class Achievement {

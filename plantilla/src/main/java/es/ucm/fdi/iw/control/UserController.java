@@ -177,56 +177,7 @@ public class UserController {
 		List<StTeam> teams = entityManager.createNamedQuery("StClass.contestTeams", StTeam.class)
 				.setParameter("contestId", contestId).getResultList();
 		
-		Map<String, Double> sumScores = new HashMap<>();	
-		for (StTeam s : teams) {
-			sumScores.put(s.getTeamName(), 0.0);
-		}
-		
-		List<Integer> positionUser = new ArrayList<>();
-		String team;
-		int pos = 1;
-		double score;
-		double max = results.get(0).getScore();
-		positionUser.add(pos);
-		for (int i=0; i < results.size(); i++) {
-			score = results.get(i).getScore();
-			
-			if ( score < max) {
-				pos++; max = score;
-				positionUser.add(pos);
-			} else {
-				positionUser.add(pos);
-			}
-			
-			team = results.get(i).getUser().getTeam().getTeamName();
-			sumScores.put(team, sumScores.get(team) + score);
-		}
-
-		model.addAttribute("positionUser", positionUser);		
-		
-		LinkedHashMap<String, Double> sortedTeams = new LinkedHashMap<>();
-		sumScores.entrySet()
-	    .stream()
-	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
-	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
-		
-		List<Integer> positionTeam = new ArrayList<>();
-		pos = 1;
-		max = (double) sortedTeams.values().toArray()[0];
-		positionTeam.add(pos);
-		for (int k=0; k < sortedTeams.values().size(); k++) {
-			score = (double) sortedTeams.values().toArray()[k];
-			if ( score < max) {
-				pos++; max = score;
-				positionTeam.add(pos);
-			} else {
-				positionTeam.add(pos);
-			}
-		}
-        
-		model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
-		model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
-		model.addAttribute("positionTeam", positionTeam);	
+		getContestRanking(teams, results, model);	
 		
 		return "rankContest";
 	}	
@@ -460,5 +411,59 @@ public class UserController {
 			log.info("Successfully uploaded photo for {} into {}!", id, f.getAbsolutePath());
 		}
 		return "team";
+	}
+	
+private void getContestRanking(List<StTeam> teams, List<Result> results, Model model) {
+		
+		Map<StTeam, Double> sumScores = new HashMap<>();	
+		for (StTeam s : teams) {
+			sumScores.put(s, 0.0);
+		}
+		
+		List<Integer> positionUser = new ArrayList<>();
+		StTeam team;
+		int pos = 1;
+		double score;
+		double max = results.get(0).getScore();
+		positionUser.add(pos);
+		for (int i=0; i < results.size(); i++) {
+			score = results.get(i).getScore();
+			
+			if ( score < max) {
+				pos++; max = score;
+				positionUser.add(pos);
+			} else {
+				positionUser.add(pos);
+			}
+			
+			team = results.get(i).getUser().getTeam();
+			sumScores.put(team, sumScores.get(team) + score);
+		}
+
+		model.addAttribute("positionUser", positionUser);		
+		
+		LinkedHashMap<StTeam, Double> sortedTeams = new LinkedHashMap<>();
+		sumScores.entrySet()
+	    .stream()
+	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
+	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
+		
+		List<Integer> positionTeam = new ArrayList<>();
+		pos = 1;
+		max = (double) sortedTeams.values().toArray()[0];
+		positionTeam.add(pos);
+		for (int k=0; k < sortedTeams.values().size(); k++) {
+			score = (double) sortedTeams.values().toArray()[k];
+			if ( score < max) {
+				pos++; max = score;
+				positionTeam.add(pos);
+			} else {
+				positionTeam.add(pos);
+			}
+		}
+        
+		model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
+		model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
+		model.addAttribute("positionTeam", positionTeam);	
 	}
 }

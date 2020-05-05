@@ -150,4 +150,28 @@ public class StTeam {
 		
 	    return stb.toString();
 	}
+	
+	//Depends only on account number
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) id;  
+        return result;
+    }
+ 
+    //Compare only account numbers
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        StTeam other = (StTeam) obj;
+        if (id != other.id)
+            return false;
+        return true;
+    }
 }
