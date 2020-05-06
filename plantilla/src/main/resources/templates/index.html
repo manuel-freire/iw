@@ -13,22 +13,20 @@
 	<div class="container">
 	<div class="main">
 	
-	<h1 th:text="#{index.welcome}">Bienvenido a Role Playing Class</h1>
-	
-	<p>
-	Esta plantilla sirve para lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
-	Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis 
-	dis parturient montes, nascetur ridiculus mus. Donec qu
-	</p>
-	
-	<div th:if="${session.u == null}">
-	<h4>Intenta ver un perfil</h4>
-	<ul>
-		<li><a th:href="@{/user/1}">Uno</a>
-		<li><a th:href="@{/user/2}">Dos</a>
-		<li><a th:href="@{/user/3}">Tres</a>
-	</li>
-	</div>
+		<div class="container">
+			<div class="home_box">
+				
+				<h3>¡Que empiece el desafío!</h3>
+
+				<h3>¡Profesores! Es el momento de plantear un reto a los alumnos. Cread vuestras pruebas y comprobad si el estudio está dando sus frutos.</h3>
+
+				<h3>¡Estudiantes! Unios a vuestros compañeros e intentad llevar a vuestro equipo hasta lo más alto de la clasificación. El esfuerzo de cada miembro cuenta y juntos conseguireis la victoria.</h3>
+
+				<h3>RPC es una plataforma para gamificación del aula en la que los profesores podrán organizar pruebas en las que sus alumnos participarán por equipos para intentar alcanzar el puesto más alto del ranking y desbloquear múltiples logros, tanto individuales como conjuntos.</h3>
+			</div>
+
+			<div class="teamwork"></div>
+		</div>
 	
 	</div>
 	</div>

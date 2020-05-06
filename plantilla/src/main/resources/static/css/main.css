@@ -9,18 +9,12 @@
 html, body{ 
 	height:100%; 
 	margin:0; 
+	background-image: url(../img/background.jpg);
 }
 body {
 	min-height:100%; 
 	display: flex;
 	flex-direction: column;
-}
-
-
-/* for debugging purposes - remove borders for a cleaner look */
-div, nav, footer {
-	border-top: 1px solid gray;
-	border-bottom: 1px solid gray;
 }
 
 /* setup nav & children */
@@ -38,7 +32,10 @@ nav>*{
 	font-weight: bold;
 }
 .logo {
-	background-image: url(../img/logo.png);
+	background-image: url(../img/crown.png);
+	background-size: contain;
+	background-repeat:no-repeat;
+	background-position: center center;
 	width: 64px;
 	height: 64px;
 }
@@ -56,6 +53,20 @@ nav>*{
 	background-image: url(../img/bronze.png);
 	width: 57px;
 	height: 57px;
+}
+.teamwork {
+	width: 65%;
+	background-image: url(../img/teamwork.jpg);
+	background-size: contain;
+	background-repeat:no-repeat;
+	background-position: center center;
+	margin: 50px
+}
+.home_box {
+	flex: 35%;
+	margin: 50px;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.75);
 }
 .logx {
 	margin-left: auto;
@@ -120,13 +131,14 @@ div.scroll {
 }
 div.team { 
 	width: 225px; 
-	height: 150px;
+	height: 175px;
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid #aaaaaa;
     overflow-x: hidden; 
     overflow-x: auto; 
     text-align:justify; 
+	overflow: auto;
 }
 
 /* setup footer */
