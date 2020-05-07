@@ -288,37 +288,42 @@ public class AdminController {
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("rankingUser", rankingUser);
 		
-		List<Integer> positionUser = new ArrayList<>();
-		int pos = 1;
-		int max = rankingUser.get(0).getElo();
-		positionUser.add(pos);
-		for (int i=1; i < rankingUser.size(); i++) {
-			if (rankingUser.get(i).getElo() < max) {
-				pos++; max = rankingUser.get(i).getElo();
-				positionUser.add(pos);
-			} else {
-				positionUser.add(pos);
+		int pos, max;
+		if(!rankingUser.isEmpty()) {
+			List<Integer> positionUser = new ArrayList<>();
+			pos = 1;
+			max = rankingUser.get(0).getElo();
+			positionUser.add(pos);
+			for (int i=1; i < rankingUser.size(); i++) {
+				if (rankingUser.get(i).getElo() < max) {
+					pos++; max = rankingUser.get(i).getElo();
+					positionUser.add(pos);
+				} else {
+					positionUser.add(pos);
+				}
 			}
+			model.addAttribute("positionUser", positionUser);
 		}
-		model.addAttribute("positionUser", positionUser);
 		
 		List<StTeam> rankingTeam = entityManager.createNamedQuery("StTeam.ranking", StTeam.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("rankingTeam", rankingTeam);	
 		
-		List<Integer> positionTeam = new ArrayList<>();
-		pos = 1;
-		max = rankingTeam.get(0).getElo();
-		positionTeam.add(pos);
-		for (int i=1; i < rankingTeam.size(); i++) {
-			if (rankingTeam.get(i).getElo() < max) {
-				pos++; max = rankingTeam.get(i).getElo();
-				positionTeam.add(pos);
-			} else {
-				positionTeam.add(pos);
+		if(!rankingTeam.isEmpty()) {
+			List<Integer> positionTeam = new ArrayList<>();
+			pos = 1;
+			max = rankingTeam.get(0).getElo();
+			positionTeam.add(pos);
+			for (int i=1; i < rankingTeam.size(); i++) {
+				if (rankingTeam.get(i).getElo() < max) {
+					pos++; max = rankingTeam.get(i).getElo();
+					positionTeam.add(pos);
+				} else {
+					positionTeam.add(pos);
+				}
 			}
+			model.addAttribute("positionTeam", positionTeam);	
 		}
-		model.addAttribute("positionTeam", positionTeam);	
 		
 		return rankings(id, model, session);
 	}
