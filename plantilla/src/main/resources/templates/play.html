@@ -13,7 +13,7 @@
 	<div class="container">
 	<div class="main">
 
-		<nav>
+		<nav style="background-color: rgba(255, 255, 255, 0.75);">
 
 			<h1 style="margin-left:25px;margin-right:25px;">Selecciona una prueba para resolver:</h1>
 	
@@ -39,7 +39,7 @@
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
 
-						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
+						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer" style="background-color: rgba(255, 255, 255, 0.75);padding:7px"> 
 							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
 							<table style="margin:10px;" th:if="${q.answers}">
 								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -55,7 +55,7 @@
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
-						<button th:unless="${result} OR ${contest.complete == 1}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
+						<button th:unless="${result} OR ${contest.complete == 1}" style="margin: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
 					
 					</div>
 				</form>
@@ -65,7 +65,7 @@
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
 
-						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer">
+						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer" style="background-color: rgba(255, 255, 255, 0.75);padding:7px">
 							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
 							<table style="margin:10px;" th:if="${q.answers}">
 								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -81,7 +81,7 @@
 						</div>
 
 						<input type="hidden" name="results" id="results"/>
-						<button th:unless="${result} OR ${contest.complete == 1}" style="margin-top: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
+						<button th:unless="${result} OR ${contest.complete == 1}" style="margin: 5px;" onclick="setAnswers()" type="submit">Terminar</button>
 					
 					</div>
 				</form>

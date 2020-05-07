@@ -14,9 +14,32 @@
 			vertical-align: middle;
 		}
 		table, tr, td {
-			border: 1px solid black;
+			background-color: rgba(255, 255, 255, 0.75);
+			border-collapse: collapse;
 			padding: 7px;
 		}
+		tr {
+			border: 1px solid #aaaaaa;
+		}
+		.resultsTable {
+			border: 1px solid #aaaaaa;
+			background-color: rgba(255, 255, 255, 0.75);
+			border-collapse: collapse;
+			padding: 7px;
+		}
+		.resultsTable tr {
+			border: 1px solid #aaaaaa;
+			background-color: rgba(255, 255, 255, 0.75);
+			border-collapse: collapse;
+			padding: 7px;
+		}
+		.resultsTable td {
+			border: 1px solid #aaaaaa;
+			background-color: rgba(255, 255, 255, 0.75);
+			border-collapse: collapse;
+			padding: 7px;
+		}
+
 	</style>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> 
 </head>
@@ -28,7 +51,7 @@
 	<div style="height:100%;" class="container">
 	<div class="main">
 
-		<nav>
+		<nav style="background-color: rgba(255, 255, 255, 0.75);">
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis pruebas</h1>
 	
@@ -46,7 +69,7 @@
 			<div th:if=${contest} style="flex:0 1 auto;text-align:center;" class="scroll">
 				<h2 style="text-align:center;" th:text="${contest.name}"></h2>
 
-				<div thi:if="${contest.questions}" th:each="q: ${contest.questions}">
+				<div thi:if="${contest.questions}" th:each="q: ${contest.questions}" style="background-color: rgba(255, 255, 255, 0.75);padding:10px">
 					<p th:text="${q.text}"></p>
 					<table style="margin:10px;" align="center" th:if="${q.answers}">
 						<tr th:each="a: ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -62,32 +85,32 @@
 			<div th:if=${contest} style="display:flex;flex-direction:column;flex:1;text-align:center;padding:0px" class="scroll" >	
 				<div align="left" style="display:block">
 
-					<nav th:if="${contest.complete}">
+					<nav th:if="${contest.complete}" style="margin-left: 20px">
 						<h3 th:text="'Estado: TERMINADO'"></h3>
 
 						<form style="margin:5px" th:action="@{/admin/{id}/contest/{contestId}/ranking(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Ver clasificación</button>
 		  				</form>	
 					</nav>
-					<nav th:unless="${contest.complete}">
+					<nav th:unless="${contest.complete}" style="margin-left: 20px">
 						<h3 th:text="${contest.enabled} == 1 ? 'Estado: ACTIVO' : 'Estado: INACTIVO'"></h3>
 
-						<form style="margin:5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/toggleContest(id=${session.u.id},contestId=${contest.id})}">
+						<form method="POST" th:action="@{/admin/{id}/contest/{contestId}/toggleContest(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Activar/ desactivar</button>
 		  				</form>	
 					</nav>
-					<nav th:unless="${contest.complete}" class="container">
+					<nav th:unless="${contest.complete}" style="margin-left: 20px"  class="container">
 						<h3 th:text="${resultList.size()} + '/' + ${students.size()} + ' estudiantes han participado'"></h3>
 
-						<form style="margin:5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/completeContest(id=${session.u.id},contestId=${contest.id})}">
+						<form style="margin: 5px" method="POST" th:action="@{/admin/{id}/contest/{contestId}/completeContest(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Terminar concurso</button>
 		  				</form>	
 					</nav>		
 
 				</div>	
 				<div class="container">
-					<div class="scroll" style="padding: 0px">
-						<table style="margin: 15px">
+					<div class="scroll" style="padding: 0px;margin-top:5px;margin-bottom:5px">
+						<table class="resultsTable" style="margin: 15px">
 							<tr style="background-color:lightgray;">
 								<td> Usuario </td>
 								<td th:each="i: ${#numbers.sequence(0, contest.questions.size()-1)}" th:text="'P' + ${i+1}"> Usuario </td>
@@ -105,7 +128,7 @@
 						</table>
 					</div>
 				</div>	
-				<div class="scroll" style="padding:0px">
+				<div class="scroll" style="padding:0px;margin-top:5px;margin-bottom:5px">
 					<div class="container">
 						<div th:if="${stats}" th:each="s, iStatS : ${stats}" th:id="'g' + ${iStatS.index}"></div>
 					</div>

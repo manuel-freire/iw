@@ -6,7 +6,8 @@
 	<title>RPC - Profesor</title>
 	<style>
 		table, tr, td {
-			border: 1px solid black;
+			background-color: rgba(255, 255, 255, 0.75);
+			border-collapse: collapse;
 			padding: 7px;
 		}
 	</style>
@@ -19,7 +20,7 @@
 	<div style="height:100%;" class="container">
 	<div class="main">
 
-		<nav>
+		<nav style="background-color: rgba(255, 255, 255, 0.75);">
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis pruebas</h1>
 	
@@ -62,35 +63,39 @@
 
 			</div>	
 
-			<div th:if="${results} AND ${positionUser}"style="flex:1;" class="scroll"> 
+			<div th:if="${results} AND ${positionUser}" style="flex:1;text-align: center" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de estudiantes</h2>
 
-				<table>
-					<tr th:each="r, iStatR : ${results}">
-						<td><img height="64" width="64" th:src="@{/user/{id}/photo(id=${r.user.getId()})}"></td>
-						<td th:text="${positionUser[iStatR.index]}"></td>
-						<td th:text="${r.user.getUsername()}"></td>
-						<td> - </td>
-						<td th:text="${r.score}"></td>
-					</tr>
-				</table>
+				<div style="display: inline-block">
+					<table>
+						<tr th:each="r, iStatR : ${results}">
+							<td><img height="64" width="64" th:src="@{/user/{id}/photo(id=${r.user.getId()})}"></td>
+							<td th:text="${positionUser[iStatR.index]}"></td>
+							<td th:text="${r.user.getUsername()}"></td>
+							<td> - </td>
+							<td th:text="${r.score}"></td>
+						</tr>
+					</table>
+				</div>
 
 			</div>
 
-			<div th:if="${rankingTeam} AND ${positionTeam}"style="flex:1;" class="scroll"> 
+			<div th:if="${rankingTeam} AND ${positionTeam}" style="flex:1;text-align: center" class="scroll"> 
 
 				<h2 style="margin-bottom:10px;">Ranking de equipos</h2>
 
-				<table>
-					<tr th:each="rt, iStatR : ${rankingTeam}">
-						<td><img height="64" width="64"  th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
-						<td th:text="${positionTeam[iStatR.index]}"></td>
-						<td th:text="${rt.teamName}">
-						<td> - </td>
-						<td th:text="${scoreTeam[iStatR.index]}">
-					</tr>
-				</table>
+				<div style="display: inline-block">
+					<table>
+						<tr th:each="rt, iStatR : ${rankingTeam}">
+							<td><img height="64" width="64"  th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
+							<td th:text="${positionTeam[iStatR.index]}"></td>
+							<td th:text="${rt.teamName}"></td>
+							<td> - </td>
+							<td th:text="${scoreTeam[iStatR.index]}"></td>
+						</tr>
+					</table>
+				</div>
 
 			</div>
 				

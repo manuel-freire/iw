@@ -15,7 +15,7 @@
 	<div style="height:100%;" id="container" class="container">
 	<div class="main">
 
-		<nav>
+		<nav style="background-color: rgba(255, 255, 255, 0.75);">
 
 			<h1 style="margin-left:25px;margin-right:25px;">Mis clases</h1>
 
@@ -28,7 +28,7 @@
 
 		<div class="container">
 			
-			<div style="flex:0 1 auto;" class="scroll">		
+			<div style="flex:0 1 auto;margin:20px" class="scroll">		
 				<form style="margin:5px" th:if="${classList}" th:each="c: ${classList}" 
 						th:action="@{/admin/{id}/class/{classId}(id=${session.u.id},classId=${c.id})}">
 					<button type="submit" th:text="${c.name}">Mis clases</button>
@@ -76,23 +76,23 @@
 
 				<h3 style="text-align:center;">Lista de equipos</h3>
 
-				<div th:if="${users}" style="text-align:center;">
+				<div th:if="${users}" style="text-align:center;margin:10px">
 					<label for="quantity">Número de equipos:</label>
 					<input type="number" id="quantity" name="quantity" min="2" max="99" defaultValue="2">
 					<button onclick="createTeams(document.getElementById('quantity').value)">Añadir equipos</button>
 				</div>
 
-				<div class="scroll">
+				<div style="margin: 0px" class="scroll">
 					<table style="padding: 10px" class="adminTable" id="teamTable" name="teamTable">
 					</table>	
 				</div>
 
-				<div style="text-align:center;">
+				<div style="text-align:center;margin:10px">
 					<form th:if="${users} AND ${teams == null}" method="POST" class="smallform" 
 							th:action="@{/admin/{id}/class/{classId}/createTeams/(id=${session.u.id},classId=${stClass.id})}">
 						<input type="hidden" name="teamComp" id="teamComp"/>
 						<input type="hidden" name="numTeams" id="numTeams"/>
-						<button style="margin-top:10px" type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
+						<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>
 	  				</form>		
 				</div>			
 
