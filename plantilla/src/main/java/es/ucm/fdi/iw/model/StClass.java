@@ -17,7 +17,7 @@ import javax.persistence.OneToMany;
 
 
 /**
- * A class consist of a group of students coordinated by a teacher
+ * A class consists of a group of students coordinated by a teacher
  *
  * @author aitorcay
  */

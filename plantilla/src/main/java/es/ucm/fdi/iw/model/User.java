@@ -18,9 +18,10 @@ import javax.persistence.OneToMany;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
- * A user; can be an Admin, a Student, or a Teacher
+ * A user; can be a Student or a Teacher
  *
  * Teacher can create classes and contest and organize students into groups
+ * Students can participate in contest and get points for their teams and themselves
  *
  * @author aitorcay
  */

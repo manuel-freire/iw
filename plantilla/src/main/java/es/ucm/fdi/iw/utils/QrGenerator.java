@@ -26,10 +26,23 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ConstantsFromFile;
 
+/**
+ * Generates a QR code with a link to the profile of a student
+ * @author aitorcay
+ */
+
 public class QrGenerator {
 	
 	private static final Logger log = LogManager.getLogger(QrGenerator.class);
 	
+	
+	/**
+	 * Genera el código QR de acceso para un usuario
+	 * 
+	 * @param id		id del usuario
+	 * @param username	nombre de usario
+	 * @throws UnknownHostException
+	 */
 	public static void generateQrCode(String id, String username) throws UnknownHostException {
 		InetAddress inetAddress = InetAddress.getLocalHost();
 		String url = "http://" + inetAddress.getHostAddress() + ":" +ConstantsFromFile.PORT + "/user/" + id;

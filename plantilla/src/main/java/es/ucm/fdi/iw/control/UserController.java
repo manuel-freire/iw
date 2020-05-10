@@ -54,7 +54,7 @@ import es.ucm.fdi.iw.utils.AutoCorrector;
 /**
  * User-administration controller
  * 
- * @author mfreire
+ * @author aitorcay
  */
 @Controller()
 @RequestMapping("user")
@@ -71,11 +71,20 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	/**
+	 * Vista del perfil del estudiante
+	 * 
+	 * @param id		id del usuario loggeado
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 */
 	@GetMapping("/{id}")
 	public String getUser(@PathVariable long id, Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
 		
+		//Lista de logros asociados a un estudiante
 		List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byStudent", Achievement.class)
 				.setParameter("userId", u.getId()).getResultList();
 		model.addAttribute("achievements", achievements);
@@ -83,18 +92,27 @@ public class UserController {
 		return "profile";
 	}
 
+	/**
+	 * Vista del equipo al que pertenece el estudiante
+	 * 
+	 * @param id		id del usuario loggeado
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 */
 	@GetMapping("/{id}/team")
 	public String team(@PathVariable long id, Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
 		
+		//Equipo al que pertenece el estudiante
 		StTeam team = entityManager.find(StTeam.class, u.getTeam().getId());
 		model.addAttribute("team", team);
-		
+		//Miembros del equipo
 		List<User> members = entityManager.createNamedQuery("User.byTeam", User.class)
 				.setParameter("teamId", u.getTeam().getId()).getResultList();
 		model.addAttribute("members", members);
-		
+		//Lista de logros asociados al equipo
 		List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byTeam", Achievement.class)
 				.setParameter("teamId", u.getTeam().getId()).getResultList();
 		model.addAttribute("achievements", achievements);
@@ -102,23 +120,31 @@ public class UserController {
 		return "team";
 	}
 	
+	/**
+	 * Vista con el ranking de las puntuaciones acumuladas por los estudiantes y equipos de una clase
+	 * 
+	 * @param id		id del usuario loggeado
+	 * @param classId	id de la clase
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 */
 	@GetMapping("/{id}/rankings/{classId}")
 	public String rankings(@PathVariable long id, @PathVariable("classId") long classId,
 			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
-		
 		StClass stc = entityManager.find(StClass.class, classId);
 		model.addAttribute("stClass", stc);
-		
+		//Lista de pruebas finalizadas asociadas a la clase
 		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassComplete", Contest.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("contestList", contestList);
-		
+		//Lista de estudiantes de la clase
 		List<User> rankingUser = entityManager.createNamedQuery("User.ranking", User.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("rankingUser", rankingUser);
-		
+		//En caso de que varios estudiantes hayan logrado la misma puntuación compartirán la posición de la clasificación
 		List<Integer> positionUser = new ArrayList<>();
 		int pos = 1;
 		int max = rankingUser.get(0).getElo();
@@ -131,12 +157,13 @@ public class UserController {
 				positionUser.add(pos);
 			}
 		}
-		model.addAttribute("positionUser", positionUser);
 		
+		model.addAttribute("positionUser", positionUser);
 		List<StTeam> rankingTeam = entityManager.createNamedQuery("StTeam.ranking", StTeam.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("rankingTeam", rankingTeam);	
-		
+
+		//En caso de que varios equipos hayan logrado la misma puntuación compartirán la posición de la clasificación
 		List<Integer> positionTeam = new ArrayList<>();
 		pos = 1;
 		max = rankingTeam.get(0).getElo();
@@ -154,43 +181,61 @@ public class UserController {
 		return "rankings";
 	}	
 	
+	/**
+	 * Vista con la clasificación de los alumnos y equipos participantes en una prueba
+	 * 
+	 * @param id		id del usuario loggeado
+	 * @param classId
+	 * @param contestId	id de la prueba
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 */
 	@GetMapping("/{id}/rankings/{classId}/{contestId}")
 	public String rankContest(@PathVariable long id, @PathVariable("classId") long classId, @PathVariable("contestId") long contestId,
 			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
-		
 		StClass stc = entityManager.find(StClass.class, classId);
 		model.addAttribute("stClass", stc);
-		
-		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassComplete", Contest.class)
-				.setParameter("classId", classId).getResultList();
-		model.addAttribute("contestList", contestList);
-		
 		Contest contest = entityManager.find(Contest.class, contestId);
 		model.addAttribute("contest", contest);
 		
+		//Lita de concursos asociados a la clase
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassComplete", Contest.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("contestList", contestList);
+		//Lista de resultados de los estudiantes
 		List<Result> results = entityManager.createNamedQuery("Result.userRanking", Result.class)
 				.setParameter("contestId", contestId).getResultList();
 		model.addAttribute("results", results);
-
+		//Lista de los equipos participantes
 		List<StTeam> teams = entityManager.createNamedQuery("StClass.contestTeams", StTeam.class)
 				.setParameter("contestId", contestId).getResultList();
-		
+		//Generación de la clasificación de la prueba
 		getContestRanking(teams, results, model);	
 		
 		return "rankContest";
 	}	
 	
+	/**
+	 * Vista para resolver las pruebas asociadas a una clase
+	 * 
+	 * @param id		id del usuario loggeado
+	 * @param classId	id de la clase
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 */
 	@GetMapping("/{id}/play/{classId}")
 	public String play(@PathVariable("id") long id, @PathVariable("classId") long classId,
 			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
-		
 		StClass stc = entityManager.find(StClass.class, classId);
 		model.addAttribute("stClass", stc);
 		
+		//Lista de pruebas asociadas a una clase
 		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
 				.setParameter("classId", classId).getResultList();
 		model.addAttribute("contestList", contestList);		
@@ -198,22 +243,31 @@ public class UserController {
 		return "play";
 	}	
 	
+	/**
+	 * Vista para la resolución de una prueba concreta
+	 * 
+	 * @param id		id del usuario loggeado
+	 * @param classId	id de la clase
+	 * @param contestId id de la prueba
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 */
 	@GetMapping("/{id}/play/{classId}/{contestId}")
 	public String playContest(@PathVariable("id") long id, @PathVariable("classId") long classId, @PathVariable("contestId") long contestId,
 			Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
-		
 		StClass stc = entityManager.find(StClass.class, classId);
-		model.addAttribute("stClass", stc);
-		
-		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
-				.setParameter("classId", classId).getResultList();
-		model.addAttribute("contestList", contestList);
-		
+		model.addAttribute("stClass", stc);		
 		Contest contest = entityManager.find(Contest.class, contestId);
 		model.addAttribute("contest", contest);
 		
+		//Lista de concursos asociados a una clase
+		List<Contest> contestList = entityManager.createNamedQuery("Contest.byClassUser", Contest.class)
+				.setParameter("classId", classId).getResultList();
+		model.addAttribute("contestList", contestList);
+		//Si la prueba ya ha sido resuelta se mostrarán los resultados
 		Long solved = (Long)entityManager.createNamedQuery("Result.hasAnswer")
 				.setParameter("userId", id)
 				.setParameter("contestId", contestId).getSingleResult();
@@ -227,6 +281,18 @@ public class UserController {
 		return play(id, classId, model, session);
 	}
 
+	/**
+	 * Actualiza la información de un usuario
+	 * 
+	 * @param response	para gestión de las peticiones HTTP
+	 * @param id		id del usuario loggeado
+	 * @param edited	usuario con la información actualizada
+	 * @param pass2		confirmación de la contraseña
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 * @throws IOException
+	 */
 	@PostMapping("/{id}")
 	@Transactional
 	public String postUser(
@@ -238,6 +304,7 @@ public class UserController {
 		User target = entityManager.find(User.class, id);
 		model.addAttribute("user", target);
 		
+		//Comprobación de permisos
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&
 				! requester.hasRole(Role.ADMIN)) {			
@@ -253,6 +320,20 @@ public class UserController {
 		return "profile";
 	}	
 	
+	/**
+	 * Obtiene los resultados de un estudiante en una prueba
+	 * 
+	 * @param response		para gestión de las peticiones HTTP
+	 * @param answerList	lista con las respuestas de la prueba
+	 * @param id			id del usuario loggeado
+	 * @param classId		id de la clase
+	 * @param contestId		id de la prueba
+	 * @param model			modelo que contendrá la información
+	 * @param session		sesión asociada al usuario
+	 * @return				vista a mostrar
+	 * @throws IOException
+	 * @throws DocumentException
+	 */
 	@PostMapping("/{id}/play/{classId}/{contestId}/results")
 	@Transactional
 	public String getResults(
@@ -265,7 +346,7 @@ public class UserController {
 		User target = entityManager.find(User.class, id);
 		model.addAttribute("user", target);
 		
-		// check permissions
+		//Comprobación de permisos
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&	! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "No eres profesor, y éste no es tu perfil");
@@ -283,6 +364,7 @@ public class UserController {
 			List<Achievement> achievementsT = entityManager.createNamedQuery("Achievement.byTeam", Achievement.class)
 					.setParameter("teamId", team.getId()).getResultList();
 			
+			//Corrección de las respuestas y actualización de los logros en función de los resultados
 			Result result = AutoCorrector.correction(target, team, contest, answerList);
 			achievementsU = AutoCorrector.updateAchievementsUser(achievementsU, target);
 			achievementsT = AutoCorrector.updateAchievementsTeam(achievementsT, team);
@@ -304,6 +386,14 @@ public class UserController {
 		return playContest(id, classId, contestId, model, session);
 	}
 	
+	/**
+	 * Obtiene la foto de perfil de un usuario
+	 * 
+	 * @param id	id del usuario loggeado
+	 * @param model	modelo que contendrá la información
+	 * @return		foto de perfil
+	 * @throws IOException
+	 */
 	@GetMapping(value="/{id}/photo")
 	public StreamingResponseBody getPhoto(@PathVariable long id, Model model) throws IOException {		
 		File f = localData.getFile("user", ""+id);
@@ -322,6 +412,17 @@ public class UserController {
 		};
 	}
 	
+	/**
+	 * Actualiza la foto de perfil de un usuario
+	 * 
+	 * @param response	para gestión de las peticiones HTTP
+	 * @param photo		nueva foto
+	 * @param id		id del usuario loggeado
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 * @throws IOException
+	 */
 	@PostMapping("/{id}/photo")
 	public String postPhoto(
 			HttpServletResponse response,
@@ -356,6 +457,14 @@ public class UserController {
 		return "profile";
 	}	
 	
+	/**
+	 * Obtiene la foto de perfil de un equipo
+	 * 
+	 * @param teamId	id	id del usuario loggeado
+	 * @param model		modelo que contendrá la información
+	 * @return			foto de perfil
+	 * @throws IOException
+	 */
 	@GetMapping(value="/team/{teamId}/photo")
 	public StreamingResponseBody getTeamPhoto(@PathVariable("teamId") String teamId,
 			Model model) throws IOException {		
@@ -375,6 +484,18 @@ public class UserController {
 		};
 	}
 	
+	/**
+	 * Actualiza la foto de perfil de un equipo
+	 * 
+	 * @param response	para gestión de las peticiones HTTP
+	 * @param photo		nueva foto
+	 * @param id		id del usuario loggeado
+	 * @param teamId	id del equipo
+	 * @param model		modelo que contendrá la información
+	 * @param session	sesión asociada al usuario
+	 * @return			vista a mostrar
+	 * @throws IOException
+	 */
 	@PostMapping("/{id}/team/{teamId}/photo")
 	public String postTeamPhoto(
 			HttpServletResponse response,
@@ -413,7 +534,14 @@ public class UserController {
 		return "team";
 	}
 	
-private void getContestRanking(List<StTeam> teams, List<Result> results, Model model) {
+	/**
+	 * Genera la clasificación de estudiantes y equipos para una prueba finalizada
+	 * 
+	 * @param teams		lista de equipos
+	 * @param results	lista de los resultados de los estudiantes
+	 * @param model		modelo que contendrá la información
+	 */
+	private void getContestRanking(List<StTeam> teams, List<Result> results, Model model) {
 		
 		Map<StTeam, Double> sumScores = new HashMap<>();	
 		for (StTeam s : teams) {
@@ -426,6 +554,7 @@ private void getContestRanking(List<StTeam> teams, List<Result> results, Model m
 		double score;
 		double max = results.get(0).getScore();
 		positionUser.add(pos);
+		//En caso de que varios estudiantes hayan logrado la misma puntuación compartirán la posición de la clasificación
 		for (int i=0; i < results.size(); i++) {
 			score = results.get(i).getScore();
 			
@@ -447,7 +576,8 @@ private void getContestRanking(List<StTeam> teams, List<Result> results, Model m
 	    .stream()
 	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
 	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
-		
+
+		//En caso de que varios equipos hayan logrado la misma puntuación compartirán la posición de la clasificación
 		List<Integer> positionTeam = new ArrayList<>();
 		pos = 1;
 		max = (double) sortedTeams.values().toArray()[0];

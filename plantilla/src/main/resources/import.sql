@@ -224,7 +224,7 @@ INSERT INTO achievement (id, goal_id, level, progress, achievement_user, achieve
 
 -- Creación de un concurso
 
-INSERT INTO contest (id, enabled, complete, name) VALUES (1, 1, 0, 'Mi primer concurso');
+INSERT INTO contest (id, enabled, complete, checked, name) VALUES (1, 1, 0, 0, 'Mi primer concurso');
 
 UPDATE contest SET teacher=1 where id=1;
 UPDATE contest SET contest_list=1 where id=1;

@@ -11,8 +11,22 @@ import es.ucm.fdi.iw.model.Result;
 import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
 
+/**
+ * Corrects a contest given a set of answers and returns the results
+ * @author aitorcay
+ */
+
 public class AutoCorrector {	
 	
+	/**
+	 * Dada una prueba y conjunto de respuestas realiza la corrección de las mismas
+	 * 
+	 * @param user			estudiante que resolvió la prueba
+	 * @param team			equipo al que pertenece el estudiante
+	 * @param contest		prueba resuelta
+	 * @param answerList	conjunto de respuestas
+	 * @return				resultados obtenidos en la prueba
+	 */
 	public static Result correction(User user, StTeam team, Contest contest, List<String> answerList) {
 		Result result;
 		
@@ -66,6 +80,13 @@ public class AutoCorrector {
 		return result;
 	}
 	
+	/**
+	 * Actualiza los logros de un estudiante en función de los resultados obtenidos en una prueba
+	 * 
+	 * @param achievements	logros del estudiante
+	 * @param user			usuario que resolvió la prueba
+	 * @return				lista de logros actualizada
+	 */
 	public static List<Achievement> updateAchievementsUser(List<Achievement> achievements, User user) {
 		String[] levels;
 		
@@ -105,6 +126,13 @@ public class AutoCorrector {
 		return achievements;
 	}
 	
+	/**
+	 * Actualiza los logros de un equipo en función de los resultados obtenidos en una prueba por uno de sus miembros
+	 * 
+	 * @param achievements	logros del equipo
+	 * @param team			equipo al que pertenece el usuario que resolvió la prueba
+	 * @return				lista de logros actualizada
+	 */
 	public static List<Achievement> updateAchievementsTeam(List<Achievement> achievements, StTeam team) {
 		String[] levels;
 		

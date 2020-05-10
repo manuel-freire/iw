@@ -6,72 +6,44 @@
 	<title>Nav fragment - rest intentionally left empty</title>
 </head>
 <body>
-	<nav th:fragment="nav">
+	<nav th:fragment="nav" style="background-color: rgba(255, 255, 255, 0.75);border: 2px solid #aaaaaa;">
 		<a class="logo" href="" th:href="@{/}"></a>
 		<span class="sitename">RPC - Role Playing Class</span>
 
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/{id}/class(id=${session.u.id})}">
-					<button type="submit">Mis clases</button>
-  				</form>	
-  			</div>			
+		<div class="logx" th:if="${session.u} AND ${session.u.hasRole('ADMIN')}">
+			<form th:action="@{/admin/{id}/class(id=${session.u.id})}">
+				<button type="submit">Mis clases</button>
+			</form>	
+
+			<form th:action="@{/admin/{id}/contest(id=${session.u.id})}">
+				<button type="submit">Mis pruebas</button>
+			</form>  
+
+			<form th:action="@{/admin/{id}/rankings(id=${session.u.id})}">
+				<button type="submit">Rankings</button>
+			</form>		
+
+			<form th:action="@{/admin/{id}/play(id=${session.u.id})}">
+				<button type="submit">Jugar</button>
+			</form>		  				
 		</div>
 
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/{id}/contest(id=${session.u.id})}">
-					<button type="submit">Mis pruebas</button>
-  				</form>  
-  			</div>				
-		</div>
+		<div class="logx" th:if="${session.u} AND ${session.u.hasRole('USER')}">
+			<form th:action="@{/user/{id}(id=${session.u.id})}">
+				<button type="submit">Mi perfil</button>
+			</form>	
 
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/{id}/rankings(id=${session.u.id})}">
-					<button type="submit">Rankings</button>
-  				</form>		
-			</div>					
-		</div>
+			<form th:action="@{/user/{id}/team(id=${session.u.id})}">
+				<button type="submit">Mi equipo</button>
+			</form>  
 
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('ADMIN')}">	
-				<form th:action="@{/admin/{id}/play(id=${session.u.id})}">
-					<button type="submit">Jugar</button>
-  				</form>		
-			</div>					
-		</div>
+			<form th:action="@{/user/{id}/rankings/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
+				<button type="submit">Rankings</button>
+			</form>		
 
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('USER')}">	
-				<form th:action="@{/user/{id}(id=${session.u.id})}">
-					<button type="submit">Mi perfil</button>
-  				</form>	
-  			</div>			
-		</div>
-
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('USER')}">	
-				<form th:action="@{/user/{id}/team(id=${session.u.id})}">
-					<button type="submit">Mi equipo</button>
-  				</form>  
-  			</div>				
-		</div>
-
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('USER')}">	
-				<form th:action="@{/user/{id}/rankings/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
-					<button type="submit">Rankings</button>
-  				</form>		
-			</div>					
-		</div>
-
-		<div th:if="${session.u}">			
-			<div th:if="${session.u.hasRole('USER')}">	
-				<form th:action="@{/user/{id}/play/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
-					<button type="submit">Jugar</button>
-  				</form>		
-			</div>					
+			<form th:action="@{/user/{id}/play/{classId}(id=${session.u.id},classId=${session.u.stClass.id})}">
+				<button type="submit">Jugar</button>
+			</form>	
 		</div>
 
 		<div class="logx" th:if="${session.u}">			
@@ -82,7 +54,15 @@
 				<img class="userthumb" th:src="@{/user/{id}/photo(id=${session.u.id})}">
 				<span th:text="${session.u.username}">Pepe</span></a>						
 		</div>
+
+		<form th:unless="${session.u}" style="margin-left: auto" th:action="@{/login}" method="post">
+			<input name="username" id="username" required placeholder="Usuario"/>
+			<input name="password" id="password" required placeholder="Contraseña"/>
+			<button type="submit">Iniciar sesión</button>
+		</form>	
+
 		<div class="logx" th:unless="${session.u}">
+
 			<a th:href="@{/login}" href="/login">login</a>
 			<!--/*
 				Esto es un comentario "thymeleaf" - no se verá en el HTML

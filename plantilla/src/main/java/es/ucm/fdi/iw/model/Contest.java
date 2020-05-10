@@ -49,6 +49,7 @@ public class Contest {
 	private String name;
 	private byte enabled;
 	private byte complete;
+	private byte checked;
 	private User teacher;
 	private StClass stClass;
 	
@@ -87,6 +88,14 @@ public class Contest {
 
 	public void setComplete(byte complete) {
 		this.complete = complete;
+	}
+
+	public byte getChecked() {
+		return checked;
+	}
+
+	public void setChecked(byte checked) {
+		this.checked = checked;
 	}
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)

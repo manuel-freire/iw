@@ -9,8 +9,7 @@ import javax.persistence.ManyToOne;
 
 
 /**
- * A question can be included in several contest. It can be answered with different options. Each option has
- * an associated score.
+ * Each question has several options to be answered
  *
  * @author aitorcay
  */

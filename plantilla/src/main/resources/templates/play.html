@@ -33,8 +33,8 @@
   				<h3 th:unless="${contestList.size()} > 0" th:text="'No existen pruebas disponibles de momento.'"></h3>	
 			</div>
 
-			<div style="flex:1" class="scroll">
-				<form th:if="${contest} AND ${session.u.hasRole('ADMIN')}"  method="POST" 
+			<div th:if="${contest}" style="flex:1" class="scroll">
+				<form th:if="${session.u.hasRole('ADMIN')}"  method="POST" 
 					th:action="@{/admin/{id}/play/{contestId}/results(id=${session.u.id},contestId=${contest.id})}">
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
@@ -60,7 +60,7 @@
 					</div>
 				</form>
 
-				<form th:if="${contest} AND ${stClass} AND ${session.u.hasRole('USER')}"  method="POST" 
+				<form th:if="${stClass} AND ${session.u.hasRole('USER')}"  method="POST" 
 					th:action="@{/user/{id}/play/{classId}/{contestId}/results(id=${session.u.id},classId=${stClass.id},contestId=${contest.id})}">
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
@@ -88,35 +88,39 @@
 			</div>	
 
 			<div th:if="${result} AND ${contest}" style="flex:1" class="scroll">
-				<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
-				<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>
-				<h3 th:if="${result.perfect}" th:text="'ENHORABUENA. PUNTUACIÓN PERFECTA'"></h3>
-				<h3 th:text="${result.passed} ? 'Superada: SI' : 'Superada: NO'"></h3>	
 
-				<table>
-					<tr>
-						<td><h3 style="padding-right:15px" th:text="'Tu respuesta'"></h3></td>
-						<td><h3 style="padding-right:15px" th:text="'Solución'"></h3></td>
-						<td><h3 style="padding-right:15px" th:text="'Corrección'"></h3></td>
-						<td><h3 style="padding-right:15px" th:text="'Puntuación'"></h3></td>
-					</tr>
-					<tr th:each="a, iStatA : ${result.answers}">
-						<td th:text="${a.text}"></td>	
-						<td>
-							<table>
-								<tr th:each="q : ${contest.questions[iStatA.index].answers}" >
-									<td  th:if="${q.score == 1}" th:text="${q.text}"></td>
-								</tr>									
-							</table>
-						</td>
-						<td th:if="${a.score >= 1}">&#9989;</td>
-						<td th:if="${a.score <= 0}">&#10060;</td>
-						<td th:unless="${a.score >= 1} OR ${a.score <= 0}">&#10134;</td>
-						<td th:text="${a.score}"></td>
-					</tr>
-				</table>
+				<div th:if="${contest.complete} OR ${session.u.hasRole('ADMIN')}">
+					<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
+					<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>
+					<h3 th:if="${result.perfect}" th:text="'ENHORABUENA. PUNTUACIÓN PERFECTA'"></h3>
+					<h3 th:text="${result.passed} ? 'Superada: SI' : 'Superada: NO'"></h3>	
 
-				<h3 th:text="${contest.complete} ? 'CLASIFICACIÓN FINAL DISPONIBLE' : 'ESPERANDO CLASIFICACIÓN FINAL...'"></h3>
+					<table>
+						<tr>
+							<td><h3 style="padding-right:15px" th:text="'Tu respuesta'"></h3></td>
+							<td><h3 style="padding-right:15px" th:text="'Solución'"></h3></td>
+							<td><h3 style="padding-right:15px" th:text="'Corrección'"></h3></td>
+							<td><h3 style="padding-right:15px" th:text="'Puntuación'"></h3></td>
+						</tr>
+						<tr th:each="a, iStatA : ${result.answers}">
+							<td th:text="${a.text}"></td>	
+							<td>
+								<table>
+									<tr th:each="q : ${contest.questions[iStatA.index].answers}" >
+										<td  th:if="${q.score == 1}" th:text="${q.text}"></td>
+									</tr>									
+								</table>
+							</td>
+							<td th:if="${a.score >= 1}">&#9989;</td>
+							<td th:if="${a.score <= 0}">&#10060;</td>
+							<td th:unless="${a.score >= 1} OR ${a.score <= 0}">&#10134;</td>
+							<td th:text="${a.score}"></td>
+						</tr>
+					</table>
+
+				</div>
+
+				<h3 style="text-align: left;" th:if="${session.u.hasRole('USER')}" th:text="${contest.complete} ? 'CLASIFICACIÓN FINAL DISPONIBLE' : 'ESPERANDO RESULTADOS Y CLASIFICACIÓN FINAL...'"></h3>
 
 				<form th:if="${session.u.hasRole('ADMIN')}" method="POST" th:action="@{/admin/{id}/play/{contestId}/retry(id=${session.u.id},contestId=${contest.id})}">
 					<button style="margin:5px;" type="submit">Intentar de nuevo</button>

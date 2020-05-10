@@ -16,10 +16,21 @@ import es.ucm.fdi.iw.model.Answer;
 import es.ucm.fdi.iw.model.Contest;
 import es.ucm.fdi.iw.model.Question;
 
+/**
+ * Processes a JSON file and creates a new contest
+ * @author aitorcay
+ */
+
 public class ContestFileReader {
 	
 	private static final Logger log = LogManager.getLogger(ContestFileReader.class);
 	
+	/**
+	 * Procesa la información de un fichero JSON y crea una nueva prueba
+	 * 
+	 * @param jsonContest	contenido del fichero JSON
+	 * @return				prueba creada con la información procesada
+	 */
 	public static Contest readContestFile(String jsonContest) {
 		Contest contest = new Contest();
 		

@@ -14,10 +14,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
 
+/**
+ * Processes a JSON file and creates a new class
+ * @author aitorcay
+ */
+
 public class ClassFileReader {
 	
 	private static final Logger log = LogManager.getLogger(ClassFileReader.class);
 
+	/**
+	 * Procesa la información de un fichero JSON y crea una nueva clase
+	 * 
+	 * @param jsonClass	contenido del fichero JSON
+	 * @return			clase creada con la información procesada
+	 */
 	public static StClass readClassFile(String jsonClass) {
 		StClass stClass = new StClass();
 		User student;

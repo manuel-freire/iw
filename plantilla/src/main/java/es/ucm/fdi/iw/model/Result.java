@@ -17,8 +17,7 @@ import javax.persistence.OneToMany;
 
 
 /**
- * A question can be included in several contest. It can be answered with different options. Each option has
- * an associated score.
+ * Results are associated to a contest and decide if a contest has been passed depending on the score
  *
  * @author aitorcay
  */

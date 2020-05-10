@@ -11,8 +11,7 @@ import javax.persistence.NamedQuery;
 
 
 /**
- * A question can be included in several contest. It can be answered with different options. Each option has
- * an associated score.
+ * Each goal is associated to an achievement
  *
  * @author aitorcay
  */
