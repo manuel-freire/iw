@@ -82,6 +82,8 @@ public class AdminController {
 	@Autowired
 	private Environment env;
 	
+	private static final int TOKEN_LENGTH = 7;
+
 	/**
 	 * Vista por defecto
 	 * 
@@ -106,7 +108,10 @@ public class AdminController {
 	 */
 	@GetMapping("/{id}")
 	public String getUser(@PathVariable long id, Model model, HttpSession session) {
-		User u = entityManager.find(User.class, id);
+		
+		// ANTES User u = entityManager.find(User.class, id);
+		User u = entityManager.find(User.class, ((User)session.getAttribute("u")).getId());
+
 		model.addAttribute("user", u);
 		return "admin";
 	}
@@ -257,6 +262,7 @@ public class AdminController {
 	 * @throws DocumentException
 	 */
 	@GetMapping("/{id}/class/{classId}/createQR")
+	@Transactional
 	public StreamingResponseBody getQrFile(@PathVariable("id") long id, @PathVariable("classId") long classId,
 			Model model, HttpSession session) throws IOException, DocumentException {	
 		
@@ -265,6 +271,11 @@ public class AdminController {
 		if (stClass.getStudents() == null || stClass.getStudents().isEmpty()){
 			log.info("Error al acceder a los datos de los alumnos");
 		} else {
+			log.info("Generando tokens para alumnos");
+			for (User u : stClass.getStudents()) {
+				u.createAndSetRandomToken(TOKEN_LENGTH);
+				u.setPassword(passwordEncoder.encode(u.getToken()));
+			}
 			log.info("Creando fichero QR de la clase");
 			String qrFile = PdfGenerator.generateQrClassFile(stClass.getStudents(), stClass);				
 			uploadToTemp(qrFile);
