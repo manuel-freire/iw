@@ -34,12 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 	    http
 	        .authorizeRequests()
-	            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
+				.antMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
+				.antMatchers("/token/**").permitAll()
 	            // .antMatchers("/clase/enter").permitAll() 		 <-- only when logging in to vote 
 	            .antMatchers("/admin/**").hasRole("ADMIN")		// <-- administration
 	            .anyRequest().authenticated()
 	            .and()
-	        .formLogin()
+			.formLogin()
 	        	.permitAll().successHandler(loginSuccessHandler);// <-- called when login Ok; can redirect
 	}
 	

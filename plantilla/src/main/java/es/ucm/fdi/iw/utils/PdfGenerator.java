@@ -24,9 +24,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ConstantsFromFile;
-import es.ucm.fdi.iw.control.UserController;
 import es.ucm.fdi.iw.model.StClass;
 import es.ucm.fdi.iw.model.User;
 
@@ -50,12 +48,6 @@ public class PdfGenerator {
 	 * @throws IOException
 	 */
 	public static String generateQrClassFile(List<User> users, StClass stClass) throws DocumentException, MalformedURLException, IOException {
-
-		String id, name, img;
-		User u;
-		Image qrCode;
-		int numPages;
-		int cellCount = 0;
 		
 		File directory = new File(ConstantsFromFile.QR_DIR);
 	    if (! directory.exists()){
@@ -68,8 +60,9 @@ public class PdfGenerator {
 		Font font = FontFactory.getFont(FontFactory.COURIER, ConstantsFromFile.QR_FONT_SIZE, BaseColor.BLACK);
 		PdfPTable table;
 		
-		document.open();	
-		
+		document.open();				
+
+		int numPages;
 		if (users.size() % ConstantsFromFile.NUM_ROWS == 0) {
 			numPages = users.size() / ConstantsFromFile.NUM_ROWS;
 		} else {
@@ -78,11 +71,10 @@ public class PdfGenerator {
 
 		for (int i=0; i < numPages; i++) {
 			for (int j=0; j < Math.min(ConstantsFromFile.NUM_ROWS, users.size()-i*ConstantsFromFile.NUM_ROWS); j++) {
-				cellCount = ConstantsFromFile.NUM_ROWS*i+j;
-				u = users.get(cellCount);
-				id = Long.toString(u.getId());
-				name = u.getFirstName() + ",\n" + u.getLastName();
-				img = ConstantsFromFile.QR_DIR + ConstantsFromFile.QR_IMG + u.getUsername() + "." + ConstantsFromFile.PNG;
+				int cellCount = ConstantsFromFile.NUM_ROWS*i+j;
+				User u = users.get(cellCount);
+				String name = u.getFirstName() + ",\n" + u.getLastName();
+				String img = ConstantsFromFile.QR_DIR + ConstantsFromFile.QR_IMG + u.getUsername() + "." + ConstantsFromFile.PNG;
 				
 				//Para cada usuario se incluye: nombre y apellidos, nombre de usuario y código QR de acceso
 				log.info("Creando QR para el usuario {}", cellCount);
@@ -91,8 +83,8 @@ public class PdfGenerator {
 				table.setWidths(new float[] {ConstantsFromFile.NAME_W, ConstantsFromFile.USER_W, ConstantsFromFile.QR_W});
 				table.addCell(new Phrase(name, font));
 				table.addCell(new Phrase(u.getUsername(), font));
-				QrGenerator.generateQrCode(id, u.getUsername());
-				qrCode = Image.getInstance(img);
+				QrGenerator.generateQrCode(u);
+				Image qrCode = Image.getInstance(img);
 				table.addCell(qrCode);
 				table.completeRow();
 				document.add(table);

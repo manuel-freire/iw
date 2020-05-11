@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.EnumMap;
 import java.util.Map;
- 
+
 import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +25,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.constants.ConstantsFromFile;
+import es.ucm.fdi.iw.model.User;
 
 /**
  * Generates a QR code with a link to the profile of a student
@@ -43,9 +44,9 @@ public class QrGenerator {
 	 * @param username	nombre de usario
 	 * @throws UnknownHostException
 	 */
-	public static void generateQrCode(String id, String username) throws UnknownHostException {
-		InetAddress inetAddress = InetAddress.getLocalHost();
-		String url = "http://" + inetAddress.getHostAddress() + ":" +ConstantsFromFile.PORT + "/user/" + id;
+	public static void generateQrCode(User user) throws UnknownHostException {
+		InetAddress inetAddress = InetAddress.getLocalHost();		
+		String url = "http://" + inetAddress.getHostAddress() + ":" +ConstantsFromFile.PORT + "/token/" + user.getToken();
 		int size = ConstantsFromFile.QR_IMG_SIZE;
 		String fileType = ConstantsFromFile.PNG;
 		
@@ -54,7 +55,7 @@ public class QrGenerator {
 	        directory.mkdir();
 	    }
 	    
-	    String QrPath = ConstantsFromFile.QR_DIR + ConstantsFromFile.QR_IMG + username + "." + ConstantsFromFile.PNG;
+	    String QrPath = ConstantsFromFile.QR_DIR + ConstantsFromFile.QR_IMG + user.getUsername() + "." + ConstantsFromFile.PNG;
 		File myFile = new File(QrPath);
 		
 		try {
@@ -95,6 +96,6 @@ public class QrGenerator {
 			e.printStackTrace();
 		}
 		
-		log.info("\n\nYou have successfully created QR Code for user {}", id);
+		log.info("\n\nYou have successfully created QR Code for user {}", user.getId());
 	}
 }
