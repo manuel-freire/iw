@@ -89,6 +89,8 @@
 
 			<div th:if="${result} AND ${contest}" style="flex:1" class="scroll">
 
+				<h3 th:if="${result.submitDate}" th:text="'Fecha de entrega: ' + ${#dates.format(result.submitDate, 'dd-MM-yyyy HH:mm')}"></h3>
+
 				<div th:if="${contest.complete} OR ${session.u.hasRole('ADMIN')}">
 					<h3 th:text="'Puntuación: ' + ${result.score}"></h3>
 					<h3 th:text="'Correctas: ' + ${result.correct} + ' / ' + ${contest.questions.size()}"></h3>

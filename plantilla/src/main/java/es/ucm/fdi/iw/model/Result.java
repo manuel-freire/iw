@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -14,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -58,6 +61,7 @@ public class Result {
 	private double score;
 	private boolean passed;
 	private boolean perfect;
+	private Date submitDate;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -129,6 +133,15 @@ public class Result {
 	public void setPerfect(boolean perfect) {
 		this.perfect = perfect;
 	}	
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getSubmitDate() {
+		return submitDate;
+	}
+
+	public void setSubmitDate(Date submitDate) {
+		this.submitDate = submitDate;
+	}
 	
 	@Override
 	public String toString() {
@@ -144,6 +157,7 @@ public class Result {
 		}	
 		stb.append("Correctas: " + this.correct + "\n");
 		stb.append("Puntuación: " + this.score + "\n");
+		stb.append("Entregado: " + this.submitDate + "\n");
 		
 		for (int i = 0; i < this.answers.size(); i++) {
 			stb.append(Integer.toString(i+1) + ": " +this.answers.get(i).toString());

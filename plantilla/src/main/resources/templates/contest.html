@@ -86,14 +86,17 @@
 				<div align="left" style="display:block">
 
 					<nav th:if="${contest.complete}" style="margin-left: 20px">
-						<h3 th:text="'Estado: TERMINADO'"></h3>
+						<h3 th:if="${contest.startDate} AND ${contest.endDate}"
+							th:text="'Estado: TERMINADO (' + 
+								${#dates.format(contest.startDate, 'dd-MM-yyyy HH:mm')} + ' / ' + ${#dates.format(contest.endDate, 'dd-MM-yyyy HH:mm')} + ')'"></h3>
 
 						<form style="margin:5px" th:action="@{/admin/{id}/contest/{contestId}/ranking(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Ver clasificación</button>
 		  				</form>	
 					</nav>
 					<nav th:unless="${contest.complete}" style="margin-left: 20px">
-						<h3 th:text="${contest.enabled} == 1 ? 'Estado: ACTIVO' : 'Estado: INACTIVO'"></h3>
+						<h3 th:text="${contest.enabled} == 1 ? 'Estado: ACTIVO (' + ${#dates.format(contest.startDate, 'dd-MM-yyyy HH:mm')} + ')'
+							: 'Estado: INACTIVO'"></h3>
 
 						<form method="POST" th:action="@{/admin/{id}/contest/{contestId}/toggleContest(id=${session.u.id},contestId=${contest.id})}">
 							<button type="submit">Activar/ desactivar</button>

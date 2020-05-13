@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import es.ucm.fdi.iw.model.Achievement;
@@ -43,6 +44,7 @@ public class AutoCorrector {
 		result.setContest(contest);
 		result.setUser(user);
 		result.setAnswers(new ArrayList<>());
+		result.setSubmitDate(new Date());
 		
 		for (int i = 0; i < answerList.size(); i++) {
 			index = Integer.valueOf(answerList.get(i));

@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -13,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -50,6 +53,8 @@ public class Contest {
 	private byte enabled;
 	private byte complete;
 	private byte checked;
+	private Date startDate;
+	private Date endDate;
 	private User teacher;
 	private StClass stClass;
 	
@@ -89,13 +94,31 @@ public class Contest {
 	public void setComplete(byte complete) {
 		this.complete = complete;
 	}
-
+	
 	public byte getChecked() {
 		return checked;
 	}
 
 	public void setChecked(byte checked) {
 		this.checked = checked;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)

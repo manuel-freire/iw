@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -682,9 +683,13 @@ public class AdminController {
 			contest.setEnabled((byte)0); 
 		} else {
 			contest.setEnabled((byte)1);
+			if (contest.getStartDate() == null) {
+				contest.setStartDate(new Date());
+			}
 		}
 		
 		model.addAttribute("contest", contest);
+		model.addAttribute("startDate", contest.getStartDate());
 		
 		return selectedContest(id, contestId, model, session);
 	}	
@@ -719,6 +724,9 @@ public class AdminController {
 		
 		Contest contest = entityManager.find(Contest.class, contestId);
 		contest.setComplete((byte)1);		
+		if (contest.getEndDate() == null) {
+			contest.setEndDate(new Date());
+		}
 		model.addAttribute("contest", contest);
 		
 		return contestRanking(id, contestId, model, session);
@@ -1034,55 +1042,63 @@ public class AdminController {
 		StTeam team;
 		int pos = 1;
 		double score;
-		double max = results.get(0).getScore();
-		//En caso de que varios estudiantes hayan logrado la misma puntuación compartirán la posición de la clasificación
-		for (int i=0; i < results.size(); i++) {
-			score = results.get(i).getScore();
+		double max;
+		if (results != null && !results.isEmpty()) {
+			max = results.get(0).getScore();
+			//En caso de que varios estudiantes hayan logrado la misma puntuación compartirán la posición de la clasificación
+			for (int i=0; i < results.size(); i++) {
+				score = results.get(i).getScore();
+				
+				if ( score < max) {
+					pos++; max = score;
+					positionUser.add(pos);
+				} else {
+					positionUser.add(pos);
+				}
+				
+				team = results.get(i).getUser().getTeam();
+				if (sumScores.keySet().contains(team))
+					sumScores.put(team, sumScores.get(team) + score);
+				else 
+					sumScores.put(team, score);
+			}
+	
+			model.addAttribute("positionUser", positionUser);
+			if (contest.getChecked() == 0) {
+				updateAchievementsUser(results, positionUser);
+			}	
+		}
 			
-			if ( score < max) {
-				pos++; max = score;
-				positionUser.add(pos);
-			} else {
-				positionUser.add(pos);
+		if (sumScores != null && !sumScores.isEmpty()) {
+			LinkedHashMap<StTeam, Double> sortedTeams = new LinkedHashMap<>();
+			sumScores.entrySet()
+		    .stream()
+		    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
+		    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
+			
+			//En caso de que varios equipos hayan logrado la misma puntuación compartirán la posición de la clasificación
+			List<Integer> positionTeam = new ArrayList<>();
+			pos = 1;
+			max = (double) sortedTeams.values().toArray()[0];
+			for (int k=0; k < sortedTeams.values().size(); k++) {
+				score = (double) sortedTeams.values().toArray()[k];
+				if ( score < max) {
+					pos++; max = score;
+					positionTeam.add(pos);
+				} else {
+					positionTeam.add(pos);
+				}
 			}
 			
-			team = results.get(i).getUser().getTeam();
-			sumScores.put(team, sumScores.get(team) + score);
-		}
-
-		model.addAttribute("positionUser", positionUser);
-		if (contest.getChecked() == 0) {
-			updateAchievementsUser(results, positionUser);
-		}		
-		
-		LinkedHashMap<StTeam, Double> sortedTeams = new LinkedHashMap<>();
-		sumScores.entrySet()
-	    .stream()
-	    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
-	    .forEachOrdered(x -> sortedTeams.put(x.getKey(), x.getValue()));
-		
-		//En caso de que varios equipos hayan logrado la misma puntuación compartirán la posición de la clasificación
-		List<Integer> positionTeam = new ArrayList<>();
-		pos = 1;
-		max = (double) sortedTeams.values().toArray()[0];
-		for (int k=0; k < sortedTeams.values().size(); k++) {
-			score = (double) sortedTeams.values().toArray()[k];
-			if ( score < max) {
-				pos++; max = score;
-				positionTeam.add(pos);
-			} else {
-				positionTeam.add(pos);
+	        if (contest.getChecked() == 0) {
+				contest.setChecked((byte) 1);
+				updateAchievementsTeam((List<StTeam>)(Object)Arrays.asList(sortedTeams.keySet().toArray()), positionTeam);
 			}
-		}
-        
-		model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
-		model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
-		model.addAttribute("positionTeam", positionTeam);		
-
-		if (contest.getChecked() == 0) {
-			contest.setChecked((byte) 1);
-			updateAchievementsTeam((List<StTeam>)(Object)Arrays.asList(sortedTeams.keySet().toArray()), positionTeam);
-		}
+	        
+			model.addAttribute("rankingTeam", Arrays.asList(sortedTeams.keySet().toArray()));
+			model.addAttribute("scoreTeam", Arrays.asList(sortedTeams.values().toArray()));
+			model.addAttribute("positionTeam", positionTeam);		
+		}			
 	}
 	
 	/**

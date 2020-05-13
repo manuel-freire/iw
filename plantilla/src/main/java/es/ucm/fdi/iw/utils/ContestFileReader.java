@@ -39,6 +39,7 @@ public class ContestFileReader {
 			contest.setName(jContest.getString("nombreConcurso"));
 			contest.setEnabled((byte) 0);
 			contest.setComplete((byte) 0);
+			contest.setChecked((byte)0);
 			
 			JSONArray jQuestionsList = jContest.getJSONArray("preguntas");
 			JSONObject jQuestion;
