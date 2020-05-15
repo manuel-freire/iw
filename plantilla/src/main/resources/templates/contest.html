@@ -66,10 +66,11 @@
   				</form>					
 			</div>
 
-			<div th:if=${contest} style="flex:0 1 auto;text-align:center;" class="scroll">
+			<div th:if=${contest} style="flex:1 auto;text-align:center;" class="scroll">
 				<h2 style="text-align:center;" th:text="${contest.name}"></h2>
 
-				<div thi:if="${contest.questions}" th:each="q: ${contest.questions}" style="background-color: rgba(255, 255, 255, 0.75);padding:10px">
+				<div thi:if="${contest.questions}" th:each="q: ${contest.questions}" 
+					style="background-color: rgba(255, 255, 255, 0.75);padding:10px;text-align:left">
 					<p th:text="${q.text}"></p>
 					<table style="margin:10px;" align="center" th:if="${q.answers}">
 						<tr th:each="a: ${q.answers}" th:if="${a.text} != 'Sin responder'">
@@ -82,7 +83,7 @@
 
 			</div>	
 
-			<div th:if=${contest} style="display:flex;flex-direction:column;flex:1;text-align:center;padding:0px" class="scroll" >	
+			<div th:if=${contest} style="display:flex;flex-direction:column;flex:0 1 auto;text-align:center;padding:0px" class="scroll" >	
 				<div align="left" style="display:block">
 
 					<nav th:if="${contest.complete}" style="margin-left: 20px">
@@ -170,7 +171,7 @@
 				chartData = [];
 				chartData.push(["Respuesta", "Estudiantes"]);
 				questionStats = statList[i].split("|");
-				answerStats = questionStats[1].split(",");
+				answerStats = questionStats[1].split(";");
 
 				for(j=0; j < answerStats.length; j++) {
 					answer = answerStats[j].split("-->");

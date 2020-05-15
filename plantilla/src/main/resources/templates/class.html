@@ -39,13 +39,13 @@
 
 				<h3 style="text-align:center;" th:text="${stClass.name}">Clase de prueba</h3>
 	
-				<div th:if="${users}"style="text-align:center;" ondrop="drop(event, this)" ondragover="allowDrop(event)" class="scroll">
+				<div th:if="${users}" style="padding:25px;text-align:center;" ondrop="drop(event, this)" ondragover="allowDrop(event)" class="scroll">
 					<div style="margin: 5px" th:each="u: ${users}" class="droptarget" ondragstart="drag(event)" draggable="true" th:id="${u.id}" 
-						th:text="${u.username + ' - ' + u.firstName + ' ' + u.lastName}"></div>
+						th:text="${u.firstName + ' ' + u.lastName}"></div>
 				</div>	
 
 				<div th:if="${students}" class="scroll">	
-					<p th:each="s: ${students}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@
+					<p style="text-align: left;" th:each="s: ${students}" th:text="'- ' + ${s.firstName + ' ' + s.lastName}">Alumn@
 					</p>						
 				</div>
 
@@ -66,7 +66,7 @@
 
 					<div th:each="t: ${teams}">
 						<h3 style="text-align:center;" th:text="${t.teamName}">Equipo X</h3>
-						<p th:each="s: ${t.members}" th:text="'- ' + ${s.username + ' - ' + s.firstName + ' ' + s.lastName}">Alumn@</p>			
+						<p style="text-align: left;" th:each="s: ${t.members}" th:text="'- ' + ${s.username + ': ' + s.firstName + ' ' + s.lastName}">Alumn@</p>			
 					</div>
 				</div>
 
@@ -89,7 +89,7 @@
 
 				<div style="text-align:center;margin:10px">
 					<form th:if="${users} AND ${teams == null}" method="POST" class="smallform" 
-							th:action="@{/admin/{id}/class/{classId}/createTeams/(id=${session.u.id},classId=${stClass.id})}">
+							th:action="@{/admin/{id}/class/{classId}/createTeams(id=${session.u.id},classId=${stClass.id})}">
 						<input type="hidden" name="teamComp" id="teamComp"/>
 						<input type="hidden" name="numTeams" id="numTeams"/>
 						<button type="submit" onclick="setTeamsInfo()">Guardar equipos</button>

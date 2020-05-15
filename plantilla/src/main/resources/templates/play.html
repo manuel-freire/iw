@@ -4,6 +4,16 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><th:block th:replace="fragments/head :: header"/>
 	<title>RPC</title>
+	<style>
+		table, tr, td {
+			background-color: rgba(255, 255, 255, 0.75);
+			border-collapse: collapse;
+			padding: 7px;
+		}
+		tr {
+			border: 1px solid #aaaaaa;
+		}
+	</style>
 </head>
 <body>
 	<nav th:replace="fragments/nav.html :: nav">
@@ -98,18 +108,18 @@
 					<h3 th:text="${result.passed} ? 'Superada: SI' : 'Superada: NO'"></h3>	
 
 					<table>
-						<tr>
+						<tr style="text-align: left;">
 							<td><h3 style="padding-right:15px" th:text="'Tu respuesta'"></h3></td>
 							<td><h3 style="padding-right:15px" th:text="'Solución'"></h3></td>
 							<td><h3 style="padding-right:15px" th:text="'Corrección'"></h3></td>
 							<td><h3 style="padding-right:15px" th:text="'Puntuación'"></h3></td>
 						</tr>
-						<tr th:each="a, iStatA : ${result.answers}">
+						<tr style="text-align: left;"  th:each="a, iStatA : ${result.answers}">
 							<td th:text="${a.text}"></td>	
 							<td>
-								<table>
-									<tr th:each="q : ${contest.questions[iStatA.index].answers}" >
-										<td  th:if="${q.score == 1}" th:text="${q.text}"></td>
+								<table style="border:none;">
+									<tr style="border:none;" th:each="q : ${contest.questions[iStatA.index].answers}" >
+										<td style="border:none;" th:if="${q.score == 1}" th:text="${q.text}"></td>
 									</tr>									
 								</table>
 							</td>

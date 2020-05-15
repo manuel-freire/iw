@@ -5,52 +5,52 @@
 
 --Creación de un profesor y alumnos de prueba
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
-	1, 1, 'a', 
+	1, 1, 'David Tercero', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'ADMIN',
-	'Profesor', 'Fesor', 0, 0, 0, 0, 0
+	'David', 'Tercero Arcos', 0, 0, 0, 0, 0
 );
 
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	2, 1, 'ST.00A', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'USER',
-	'Alumno', '00A', 1050, 5, 1, 1, 0
+	'José', 'Abril Riesco', 1050, 5, 1, 1, 0
 );
 
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	3, 1, 'ST.00B', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'USER',
-	'Alumno', '00B', 1035, 3, 1, 0, 0
+	'Julio', 'Limón Macia', 1035, 3, 1, 0, 0
 );
 
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	4, 1, 'ST.00C', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'USER',
-	'Alumna', '00C', 1030, 2, 1, 0, 0
+	'Silvia', 'Rojas Vicario', 1030, 2, 1, 0, 0
 );
 
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	5, 1, 'ST.00D', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'USER',
-	'Alumna', '00D', 1043, 4, 1, 0, 0
+	'Alicia', 'Valls Arce', 1043, 4, 1, 0, 0
 );
  
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	6, 1, 'ST.00E', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'USER',
-	'Alumna', '00E', 1013, 1, 0, 0, 0
+	'Ana', 'Merino Olmo', 1013, 1, 0, 0, 0
 );
  
 INSERT INTO user(id,enabled,username,password,token,roles,first_name,last_name,elo,correct,passed,perfect,top) VALUES (
 	7, 1, 'ST.00F', 
 	'{bcrypt}$2a$10$xLFtBIXGtYvAbRqM95JhcOaG23fHRpDoZIJrsF2cCff9xEHTTdK1u', 'aa',
 	'USER',
-	'Alumno', '00F', 1000, 0, 0, 0, 0
+	'Javier', 'Botella Blanco', 1000, 0, 0, 0, 0
 );
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -53,7 +53,7 @@
 
 				<h3 style="text-align:center;margin-bottom:15px">Logros</h3>
 
-				<div th:if="${achievements}" style="padding:10px" th:each="a: ${achievements}">
+				<div th:if="${achievements}" style="background-color: rgba(255, 255, 255, 0.75);padding:10px" th:each="a: ${achievements}">
 					<span style="display: block;" th:text="'Objetivo: ' + ${a.currentObjective()}">Objetivo</span>
 					<span style="display: block;" th:text="'Nivel: ' + ${a.level}">Nivel</span>
 					<span style="display: block;" th:text="'Progreso: ' + ${a.progress} + '/' + ${a.currentLevel()}">Progreso</span>
