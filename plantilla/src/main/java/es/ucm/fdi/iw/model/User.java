@@ -51,7 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 			+ "AND st.id = :classId"),
 	@NamedQuery(name="User.userInClass",
 	query="SELECT u FROM User u JOIN u.stClass st "
-			+ "WHERE u.username = :username "
+			+ "WHERE u.firstName = :firstName "
+			+ "AND u.lastName = :lastName "
 			+ "AND st.id = :classId "
 			+ "AND u.enabled = 1 "),
 	@NamedQuery(name="User.byTeam",

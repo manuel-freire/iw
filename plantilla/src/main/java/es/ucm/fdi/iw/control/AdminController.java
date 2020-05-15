@@ -550,7 +550,7 @@ public class AdminController {
 			User student;
 			
 			String[] studentInfo;
-			String username;
+			String[] userInfo;
 			int teamIndex;
 			
 			//Creación de los equipos con los valores por defecto
@@ -572,11 +572,12 @@ public class AdminController {
 			//Asignación de los alumnos a los equipos
 			for (int j = 0; j < teamComp.size(); j++) {
 				studentInfo = teamComp.get(j).split(ConstantsFromFile.SEPARATOR);
-				username = studentInfo[0].split(" - ")[0];
+				userInfo = studentInfo[0].split(" ");
 				teamIndex = Integer.valueOf(studentInfo[1]);
 				student = entityManager.createNamedQuery("User.userInClass", User.class)
-	                    .setParameter("username", username)
-	                    .setParameter("classId", stClass.getId())
+	                    .setParameter("firstName", userInfo[0])
+	                    .setParameter("lastName", userInfo[1] + " " + userInfo[2])
+	                    .setParameter("classId", classId)
 	                    .getSingleResult();
 				if (student != null) {
 					team = teams.get(teamIndex);
@@ -1009,7 +1010,7 @@ public class AdminController {
 				count = (Long)entityManager.createNamedQuery("Result.numAnswers")
 				.setParameter("answerId", a.getId())
 				.setParameter("contestId", contest.getId()).getSingleResult();
-				sb.append(a.getText() + "-->" + count + ",");
+				sb.append(a.getText() + "-->" + count + ";");
 			}
 			a = q.getAnswers().get(q.getAnswers().size()-1);
 			count = (Long)entityManager.createNamedQuery("Result.numAnswers")

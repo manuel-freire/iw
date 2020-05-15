@@ -53,6 +53,7 @@ public class ClassFileReader {
 				student.setLastName(jStudent.getString("apellidos"));
 				student.setUsername("ST-" + String.format("%03d" , i+1));
 				student.setPassword(String.format("%03d" , i+1));
+				student.setToken(String.format("%03d" , i+1));
 				student.setElo(1000);
 				student.setCorrect(0);
 				student.setPerfect(0);
