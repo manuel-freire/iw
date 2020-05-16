@@ -23,7 +23,7 @@
 
 			<h1 style="margin-left:25px;margin-right:25px;" th:text="${team.teamName}"></h1>
 
-			<img height="72" width="72"  th:src="@{/user/team/{teamId}/photo(teamId=${team.id})}">
+			<img height="50" width="50"  th:src="@{/user/{id}/team/{teamId}/photo(id=${session.u.id},teamId=${team.id})}">
 
 			<form th:action="@{/user/{id}/team/{teamId}/photo(id=${user.id},teamId=${team.id})}" method="POST" enctype="multipart/form-data">
 				Nueva foto <input type="file" name="photo"/>
@@ -39,7 +39,7 @@
 				<h3 style="text-align:center;margin-bottom:15px">Miembros del equipo</h3>
 				<table th:if="${members}" class="adminTable">
 					<tr th:each="m, iStatM : ${members}">
-						<td><img height="64" width="64" th:src="@{/user/{id}/photo(id=${m.id})}"></td>
+						<td><img height="36" width="36" th:src="@{/user/{id}/photo(id=${m.id})}"></td>
 						<td th:text="${iStatM.index + 1} + '. ' + ${m.username} + ' - '  +${m.elo}" + ></td>
 					</tr>
 				</table>

@@ -53,9 +53,12 @@
 				<div style="display: inline-block">
 					<table>
 						<tr th:each="r, iStatR : ${results}">
-							<td><img height="64" width="64" th:src="@{/user/{id}/photo(id=${r.user.getId()})}"></td>
+							<td><img height="50" width="50" th:src="@{/user/{id}/team/{teamId}/photo(id=${session.u.id},teamId=${r.user.team.id})}"></td>
+							<td><img height="50" width="50" th:src="@{/user/{id}/photo(id=${r.user.getId()})}"></td>
 							<td th:text="${positionUser[iStatR.index]}"></td>
-							<td th:text="${r.user.getUsername()}"></td>
+							<td th:text="${r.user.username}"></td>
+							<td> - </td>
+							<td th:text="${r.user.firstName} + ${r.user.lastName}"></td>
 							<td> - </td>
 							<td th:text="${r.score}"></td>
 						</tr>
@@ -71,7 +74,7 @@
 				<div style="display: inline-block">
 					<table>
 						<tr th:each="rt, iStatR : ${rankingTeam}">
-							<td><img height="64" width="64"  th:src="@{/user/team/{teamId}/photo(teamId=${rt.id})}"></td>
+							<td><img height="50" width="50"  th:src="@{/user/{id}/team/{teamId}/photo(id=${session.u.id},teamId=${rt.id})}"></td>
 							<td th:text="${positionTeam[iStatR.index]}"></td>
 							<td th:text="${rt.teamName}"></td>
 							<td> - </td>

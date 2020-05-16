@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +32,6 @@ public class AdminRankingController {
 	
 	@Autowired 
 	private EntityManager entityManager;
-	
-	@Autowired
-	private Environment env;
 	
 	/**
 	 * Vista con los rankings asociados a cada clase creada por un profesor/a

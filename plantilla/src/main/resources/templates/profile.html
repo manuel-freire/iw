@@ -19,7 +19,7 @@
 
 			<h1 style="padding-left:25px;margin-right:25px;" th:text="${'Bienvenid@ ' + user.username}"></h1>
 
-			<img height="72" width="72" th:src="@{/user/{id}/photo(id=${user.id})}">
+			<img height="50" width="50" th:src="@{/user/{id}/photo(id=${user.id})}">
 
 			<form th:action="@{/user/{id}/photo(id=${user.id})}" method="POST" enctype="multipart/form-data">
 				Nueva foto <input type="file" name="photo"/>

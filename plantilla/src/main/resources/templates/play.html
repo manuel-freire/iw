@@ -40,7 +40,7 @@
 						th:action="@{/user/{id}/play/{classId}/{contestId}(id=${session.u.id},classId=${stClass.id},contestId=${c.id})}">
 					<button style="margin:5px;" type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
   				</form>	
-  				<h3 th:unless="${contestList.size()} > 0" th:text="'No existen pruebas disponibles de momento.'"></h3>	
+  				<h3 style="text-align: left;" th:unless="${contestList.size()} > 0" th:text="'No existen pruebas disponibles de momento.'"></h3>	
 			</div>
 
 			<div th:if="${contest}" style="flex:0.35 1 0;" class="scroll">
@@ -134,7 +134,7 @@
 
 				<h3 style="text-align: left;" th:if="${session.u.hasRole('USER')}" th:text="${contest.complete} ? 'CLASIFICACIÓN FINAL DISPONIBLE' : 'ESPERANDO RESULTADOS Y CLASIFICACIÓN FINAL...'"></h3>
 
-				<form th:if="${session.u.hasRole('USER')} AND ${stClass}" th:action="@{/user/{id}/rankings/{classId}/{contestId}
+				<form th:if="${session.u.hasRole('USER')} AND ${stClass} AND ${contest.complete}" th:action="@{/user/{id}/rankings/{classId}/{contestId}
 						(id=${session.u.id},classId=${stClass.id},contestId=${contest.id})}">
 					<button type="submit">Ver clasificación</button>
   				</form>	

@@ -13,17 +13,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Achievement;
+import es.ucm.fdi.iw.model.StTeam;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 
@@ -42,22 +40,19 @@ import es.ucm.fdi.iw.model.User.Role;
  * @author aitorcay
  */
 @Controller()
-@RequestMapping("user/{id}")
-public class UserController {
+@RequestMapping("user/{id}/team")
+public class UserTeamController {
 	
-	private static final Logger log = LogManager.getLogger(UserController.class);
+	private static final Logger log = LogManager.getLogger(UserTeamController.class);
 	
 	@Autowired 
 	private EntityManager entityManager;
 	
 	@Autowired
 	private LocalData localData;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
 	/**
-	 * Vista del perfil del estudiante
+	 * Vista del equipo al que pertenece el estudiante
 	 * 
 	 * @param id		id del usuario loggeado
 	 * @param model		modelo que contendrá la información
@@ -65,68 +60,37 @@ public class UserController {
 	 * @return			vista a mostrar
 	 */
 	@GetMapping("")
-	public String getUser(@PathVariable long id, Model model, HttpSession session) {
+	public String team(@PathVariable long id, Model model, HttpSession session) {
 		User u = entityManager.find(User.class, id);
 		model.addAttribute("user", u);
 		
-		//Lista de logros asociados a un estudiante
-		List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byStudent", Achievement.class)
-				.setParameter("userId", u.getId()).getResultList();
+		//Equipo al que pertenece el estudiante
+		StTeam team = entityManager.find(StTeam.class, u.getTeam().getId());
+		model.addAttribute("team", team);
+		//Miembros del equipo
+		List<User> members = entityManager.createNamedQuery("User.byTeam", User.class)
+				.setParameter("teamId", u.getTeam().getId()).getResultList();
+		model.addAttribute("members", members);
+		//Lista de logros asociados al equipo
+		List<Achievement> achievements = entityManager.createNamedQuery("Achievement.byTeam", Achievement.class)
+				.setParameter("teamId", u.getTeam().getId()).getResultList();
 		model.addAttribute("achievements", achievements);
 		
-		return "profile";
+		return "team";
 	}
-
-	/**
-	 * Actualiza la información de un usuario
-	 * 
-	 * @param response	para gestión de las peticiones HTTP
-	 * @param id		id del usuario loggeado
-	 * @param edited	usuario con la información actualizada
-	 * @param pass2		confirmación de la contraseña
-	 * @param model		modelo que contendrá la información
-	 * @param session	sesión asociada al usuario
-	 * @return			vista a mostrar
-	 * @throws IOException
-	 */
-	@PostMapping("")
-	@Transactional
-	public String postUser(
-			HttpServletResponse response,
-			@PathVariable long id, 
-			@ModelAttribute User edited, 
-			@RequestParam(required=false) String pass2,
-			Model model, HttpSession session) throws IOException {
-		User target = entityManager.find(User.class, id);
-		model.addAttribute("user", target);
-		
-		//Comprobación de permisos
-		User requester = (User)session.getAttribute("u");
-		if (requester.getId() != target.getId() &&
-				! requester.hasRole(Role.ADMIN)) {			
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-					"No eres administrador, y éste no es tu perfil");
-		}
-		
-		if (edited.getPassword() != null && edited.getPassword().equals(pass2)) {
-			// save encoded version of password
-			target.setPassword(passwordEncoder.encode(edited.getPassword()));
-		}		
-		target.setUsername(edited.getUsername());
-		return "profile";
-	}	
 	
 	/**
-	 * Obtiene la foto de perfil de un usuario
+	 * Obtiene la foto de perfil de un equipo
 	 * 
-	 * @param id	id del usuario loggeado
-	 * @param model	modelo que contendrá la información
-	 * @return		foto de perfil
+	 * @param teamId	id	id del usuario loggeado
+	 * @param model		modelo que contendrá la información
+	 * @return			foto de perfil
 	 * @throws IOException
 	 */
-	@GetMapping(value="/photo")
-	public StreamingResponseBody getPhoto(@PathVariable long id, Model model) throws IOException {		
-		File f = localData.getFile("user", ""+id);
+	@GetMapping(value="/{teamId}/photo")
+	public StreamingResponseBody getTeamPhoto(@PathVariable("teamId") String teamId,
+			Model model) throws IOException {		
+		File f = localData.getFile("team", ""+teamId);
 		InputStream in;
 		if (f.exists()) {
 			in = new BufferedInputStream(new FileInputStream(f));
@@ -143,23 +107,28 @@ public class UserController {
 	}
 	
 	/**
-	 * Actualiza la foto de perfil de un usuario
+	 * Actualiza la foto de perfil de un equipo
 	 * 
 	 * @param response	para gestión de las peticiones HTTP
 	 * @param photo		nueva foto
 	 * @param id		id del usuario loggeado
+	 * @param teamId	id del equipo
 	 * @param model		modelo que contendrá la información
 	 * @param session	sesión asociada al usuario
 	 * @return			vista a mostrar
 	 * @throws IOException
 	 */
-	@PostMapping("/photo")
-	public String postPhoto(
+	@PostMapping("/{teamId}/photo")
+	public String postTeamPhoto(
 			HttpServletResponse response,
 			@RequestParam("photo") MultipartFile photo,
-			@PathVariable("id") String id, Model model, HttpSession session) throws IOException {
+			@PathVariable("id") String id, @PathVariable("teamId") String teamId, 
+			Model model, HttpSession session) throws IOException {
 		User target = entityManager.find(User.class, Long.parseLong(id));
 		model.addAttribute("user", target);
+		
+		StTeam team = entityManager.find(StTeam.class, Long.parseLong(teamId));
+		model.addAttribute("team", team);
 		
 		// check permissions
 		User requester = (User)session.getAttribute("u");
@@ -167,11 +136,11 @@ public class UserController {
 				! requester.hasRole(Role.ADMIN)) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
 					"No eres administrador, y éste no es tu perfil");
-			return "profile";
+			return "team";
 		}
 		
-		log.info("Updating photo for user {}", id);
-		File f = localData.getFile("user", id);
+		log.info("Updating photo for team {}", teamId);
+		File f = localData.getFile("team", teamId);
 		if (photo.isEmpty()) {
 			log.info("failed to upload photo: emtpy file?");
 		} else {
@@ -180,10 +149,10 @@ public class UserController {
 				byte[] bytes = photo.getBytes();
 				stream.write(bytes);
 			} catch (Exception e) {
-				log.warn("Error uploading " + id + " ", e);
+				log.warn("Error uploading " + teamId + " ", e);
 			}
 			log.info("Successfully uploaded photo for {} into {}!", id, f.getAbsolutePath());
 		}
-		return "profile";
-	}	
+		return "team";
+	}
 }
