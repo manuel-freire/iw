@@ -43,7 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 	query="SELECT u FROM User u JOIN u.stClass st "
 			+ "WHERE u.roles = 'USER' "
 			+ "AND u.enabled = 1 "
-			+ "AND st.id = :classId"),
+			+ "AND st.id = :classId "
+			+ "ORDER BY u.lastName ASC"),
 	@NamedQuery(name="User.numStudents",
 	query="SELECT COUNT(u) FROM User u JOIN u.stClass st "
 			+ "WHERE u.roles = 'USER' "

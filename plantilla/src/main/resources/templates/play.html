@@ -31,7 +31,7 @@
 
 		<div class="container">
 
-			<div style="flex:0 1 auto" class="scroll">	
+			<div style="flex:0.15 1 0;" class="scroll">	
 				<form th:if="${contestList} AND ${session.u.hasRole('ADMIN')}" th:each="c: ${contestList}" 
 						th:action="@{/admin/{id}/play/{contestId}(id=${session.u.id},contestId=${c.id})}">
 					<button style="margin:5px;" type="submit" th:text="${c.stClass.name} + ' - ' + ${c.name}">Mis clases</button>
@@ -43,17 +43,17 @@
   				<h3 th:unless="${contestList.size()} > 0" th:text="'No existen pruebas disponibles de momento.'"></h3>	
 			</div>
 
-			<div th:if="${contest}" style="flex:1" class="scroll">
+			<div th:if="${contest}" style="flex:0.35 1 0;" class="scroll">
 				<form th:if="${session.u.hasRole('ADMIN')}"  method="POST" 
 					th:action="@{/admin/{id}/play/{contestId}/results(id=${session.u.id},contestId=${contest.id})}">
 					<div>
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
 
 						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer" style="background-color: rgba(255, 255, 255, 0.75);padding:7px"> 
-							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
+							<p style="text-align:left;" th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
 							<table style="margin:10px;" th:if="${q.answers}">
 								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
-									<td th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
+									<td style="text-align:left;" th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
 								</tr>
 							</table>
 							<div th:unless="${result} OR ${contest.complete == 1}">
@@ -76,10 +76,10 @@
 						<h3 style="text-align:center;" th:text="${contest.name}"></h3>
 
 						<div th:each="q, iStatQ : ${contest.questions}" class="questionContainer" style="background-color: rgba(255, 255, 255, 0.75);padding:7px">
-							<p th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
+							<p style="text-align:left;" th:text="${iStatQ.index + 1} + '  -  ' + ${q.text}"></p>
 							<table style="margin:10px;" th:if="${q.answers}">
 								<tr th:each="a, iStatA : ${q.answers}" th:if="${a.text} != 'Sin responder'">
-									<td th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
+									<td style="text-align:left;" th:text="${iStatA.index} + '  -  ' + ${a.text}"></td>
 								</tr>
 							</table>
 							<div th:unless="${result} OR ${contest.complete == 1}">
@@ -97,7 +97,7 @@
 				</form>
 			</div>	
 
-			<div th:if="${result} AND ${contest}" style="flex:1" class="scroll">
+			<div th:if="${result} AND ${contest}" style="flex:0.5 1 0;" class="scroll">
 
 				<h3 th:if="${result.submitDate}" th:text="'Fecha de entrega: ' + ${#dates.format(result.submitDate, 'dd-MM-yyyy HH:mm')}"></h3>
 
@@ -133,6 +133,11 @@
 				</div>
 
 				<h3 style="text-align: left;" th:if="${session.u.hasRole('USER')}" th:text="${contest.complete} ? 'CLASIFICACIÓN FINAL DISPONIBLE' : 'ESPERANDO RESULTADOS Y CLASIFICACIÓN FINAL...'"></h3>
+
+				<form th:if="${session.u.hasRole('USER')} AND ${stClass}" th:action="@{/user/{id}/rankings/{classId}/{contestId}
+						(id=${session.u.id},classId=${stClass.id},contestId=${contest.id})}">
+					<button type="submit">Ver clasificación</button>
+  				</form>	
 
 				<form th:if="${session.u.hasRole('ADMIN')}" method="POST" th:action="@{/admin/{id}/play/{contestId}/retry(id=${session.u.id},contestId=${contest.id})}">
 					<button style="margin:5px;" type="submit">Intentar de nuevo</button>
