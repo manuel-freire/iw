@@ -72,7 +72,7 @@ public class Achievement {
 		this.level = level;
 	}	
 	
-	@OneToOne(targetEntity=Goal.class)
+	@ManyToOne(targetEntity=Goal.class)
 	public Goal getGoal() {
 		return goal;
 	}
