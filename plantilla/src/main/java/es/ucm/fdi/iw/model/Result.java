@@ -3,18 +3,15 @@ package es.ucm.fdi.iw.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -52,19 +49,27 @@ import javax.persistence.TemporalType;
 
 public class Result {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+
+	@ManyToOne
 	private User user;
+	
+	@ManyToOne
 	private Contest contest;
+
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Answer> answers;
 	
 	private int correct;
 	private double score;
 	private boolean passed;
 	private boolean perfect;
-	private Date submitDate;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date submitDate;	
+
 	public long getId() {
 		return id;
 	}
@@ -72,9 +77,7 @@ public class Result {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-	@ManyToOne(targetEntity = User.class)
-	@JoinColumn(name = "resultList")
+		
 	public User getUser() {
 		return user;
 	}
@@ -83,8 +86,6 @@ public class Result {
 		this.user = user;
 	}
 
-	@ManyToOne(targetEntity = Contest.class)
-	@JoinColumn(name = "results")
 	public Contest getContest() {
 		return contest;
 	}
@@ -93,7 +94,6 @@ public class Result {
 		this.contest = contest;
 	}
 
-	@ManyToMany(targetEntity = Answer.class, fetch = FetchType.EAGER)
 	public List<Answer> getAnswers() {
 		return answers;
 	}
@@ -134,7 +134,6 @@ public class Result {
 		this.perfect = perfect;
 	}	
 
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getSubmitDate() {
 		return submitDate;
 	}

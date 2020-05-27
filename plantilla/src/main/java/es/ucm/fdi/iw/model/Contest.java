@@ -48,21 +48,35 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 public class Contest {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String name;
+
 	private byte enabled;
 	private byte complete;
 	private byte checked;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date startDate;
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date endDate;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	private User teacher;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	private StClass stClass;
 	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany
+	@JoinColumn(name = "contest_id")
 	private List<Question> questions = new ArrayList<>();
-	private List<Result> results = new ArrayList<>();
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@OneToMany
+	@JoinColumn(name = "contest_id")
+	private List<Result> results = new ArrayList<>();
+
 	public long getId() {
 		return id;
 	}
@@ -103,7 +117,6 @@ public class Contest {
 		this.checked = checked;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -112,7 +125,6 @@ public class Contest {
 		this.startDate = startDate;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -121,8 +133,6 @@ public class Contest {
 		this.endDate = endDate;
 	}
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "contestList")
 	public User getTeacher() {
 		return teacher;
 	}
@@ -131,8 +141,6 @@ public class Contest {
 		this.teacher = teacher;
 	}
 	
-	@ManyToOne(targetEntity = StClass.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "classContest")
 	public StClass getStClass() {
 		return stClass;
 	}
@@ -141,9 +149,6 @@ public class Contest {
 		this.stClass = stClass;
 	}
 
-	@OneToMany(targetEntity = Question.class)
-	@JoinColumn(name = "questionList")
-	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Question> getQuestions() {
 		return questions;
 	}
@@ -152,8 +157,6 @@ public class Contest {
 		this.questions = questions;
 	}
 	
-	@OneToMany(targetEntity = Result.class)
-	@JoinColumn(name = "contest")
 	public List<Result> getResults() {
 		return results;
 	}

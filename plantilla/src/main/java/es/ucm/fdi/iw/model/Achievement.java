@@ -4,12 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 
 /**
@@ -38,16 +35,20 @@ import javax.persistence.OneToOne;
 
 public class Achievement {
 	
-	private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	private long id;
 	private int progress;
 	private int level;
+
+	@ManyToOne
 	private Goal goal;
 	
+	@ManyToOne
 	private User student;
+
+	@ManyToOne
 	private StTeam team;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -72,7 +73,6 @@ public class Achievement {
 		this.level = level;
 	}	
 	
-	@ManyToOne(targetEntity=Goal.class)
 	public Goal getGoal() {
 		return goal;
 	}
@@ -81,8 +81,6 @@ public class Achievement {
 		this.goal = goal;
 	}
 	
-	@ManyToOne(targetEntity = User.class)
-	@JoinColumn(name = "achievementUser")
 	public User getStudent() {
 		return student;
 	}
@@ -91,8 +89,7 @@ public class Achievement {
 		this.student = student;
 	}
 
-	@ManyToOne(targetEntity = StTeam.class)
-	@JoinColumn(name = "achievementTeam")
+
 	public StTeam getTeam() {
 		return team;
 	}

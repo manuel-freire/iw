@@ -4,9 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 
 /**
  * Each question has several options to be answered
@@ -15,21 +13,17 @@ import javax.persistence.ManyToOne;
  */
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name="Question.byContest",
-//	query="SELECT q FROM Question q "
-//			+ "WHERE q.contest = :contestId")
-//})
-
 public class Answer {
-	
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String text;
 	private double score;
+
+	@ManyToOne(targetEntity = Question.class)
 	private Question question;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -54,8 +48,6 @@ public class Answer {
 		this.score = score;
 	}
 	
-	@ManyToOne(targetEntity = Question.class)
-	@JoinColumn(name = "answers")
 	public Question getQuestion() {
 		return question;
 	}

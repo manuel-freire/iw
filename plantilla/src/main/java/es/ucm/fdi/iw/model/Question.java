@@ -2,15 +2,12 @@ package es.ucm.fdi.iw.model;
 
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.LazyCollection;
@@ -25,21 +22,21 @@ import org.hibernate.annotations.LazyCollectionOption;
  */
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name="Question.byContest",
-//	query="SELECT q FROM Question q "
-//			+ "WHERE q.contest = :contestId")
-//})
-
 public class Question {
-	
-	private long id;
-	private String text;
-	private List<Answer> answers;
-	private Contest contest;
-	
+		
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+	private String text;
+
+	@OneToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "question_id")
+	private List<Answer> answers;
+	
+	@ManyToOne
+	private Contest contest;
+	
 	public long getId() {
 		return id;
 	}
@@ -56,9 +53,7 @@ public class Question {
 		this.text = text;
 	}
 
-	@OneToMany(targetEntity = Answer.class)
-	@JoinColumn(name = "answerList")
-	@LazyCollection(LazyCollectionOption.FALSE)
+
 	public List<Answer> getAnswers() {
 		return answers;
 	}
@@ -67,8 +62,6 @@ public class Question {
 		this.answers = answers;
 	}
 	
-	@ManyToOne(targetEntity = Contest.class)
-	@JoinColumn(name = "questions")
 	public Contest getContest() {
 		return contest;
 	}

@@ -16,8 +16,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * A user; can be a Student or a Teacher
  *
@@ -79,8 +77,13 @@ public class User {
 	}
 	
 	// do not change these fields
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private long id;
 	private String username;
+
+	@Column(nullable = false)
 	private String password;
 
 	private String token; // used to login via qr code
@@ -99,13 +102,25 @@ public class User {
 	private int perfect;	
 	private int top;	
 	
+	@ManyToOne
 	private StTeam team;
+
+	@ManyToOne
 	private StClass stClass;
 	// admin fields
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "teacher_id")
 	private List<StClass> stClassList;
+	@OneToMany
+	@JoinColumn(name = "teacher_id")
 	private List<Contest> contestList;
 	// user fields
+	@OneToMany
+	@JoinColumn(name = "user_id")
 	private List<Result> resultList;
+	@OneToMany(targetEntity = Achievement.class)
+	@JoinColumn(name = "student_id")
 	private List<Achievement> achievementUser;
 
 	/**
@@ -118,8 +133,6 @@ public class User {
 		return Arrays.stream(roles.split(",")).anyMatch(r -> r.equals(roleName));
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -136,7 +149,6 @@ public class User {
 		this.username = username;
 	}
 
-	@Column(nullable = false)
 	public String getPassword() {
 		return password;
 	}
@@ -241,8 +253,6 @@ public class User {
 		this.top = top;
 	}
 
-	@ManyToOne(targetEntity = StTeam.class)
-	@JoinColumn(name = "members")
 	public StTeam getTeam() {
 		return team;
 	}
@@ -251,8 +261,6 @@ public class User {
 		this.team = team;
 	}
 
-	@ManyToOne(targetEntity = StClass.class)
-	@JoinColumn(name = "students")
 	public StClass getStClass() {
 		return stClass;
 	}
@@ -261,8 +269,7 @@ public class User {
 		this.stClass = stClass;
 	}
 
-	@OneToMany(targetEntity = StClass.class, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "teacher")
+
 	public List<StClass> getStClassList() {
 		return stClassList;
 	}
@@ -271,8 +278,7 @@ public class User {
 		this.stClassList = stClassList;
 	}
 
-	@OneToMany(targetEntity = Contest.class)
-	@JoinColumn(name = "teacher")
+
 	public List<Contest> getContests() {
 		return contestList;
 	}
@@ -281,8 +287,7 @@ public class User {
 		this.contestList = contests;
 	}
 
-	@OneToMany(targetEntity = Result.class)
-	@JoinColumn(name = "user")
+
 	public List<Result> getResultList() {
 		return resultList;
 	}
@@ -291,8 +296,7 @@ public class User {
 		this.resultList = resultList;
 	}
 
-	@OneToMany(targetEntity = Achievement.class)
-	@JoinColumn(name = "student")
+
 	public List<Achievement> getAchievementUser() {
 		return achievementUser;
 	}

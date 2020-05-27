@@ -9,11 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
 
 /**
@@ -34,19 +34,28 @@ import javax.persistence.OneToMany;
 	query="SELECT tl FROM StClass st JOIN st.classContest c JOIN st.teamList tl "
 			+ "WHERE c.id = :contestId")
 })
-
 public class StClass {
 
-	private long id;
-	private String name;
-	private User teacher;
-
-	private List<User> students = new ArrayList<>();
-	private List<StTeam> teamList = new ArrayList<>();
-	private List<Contest> classContest = new ArrayList<>();
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+	private String name;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	private User teacher;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "st_class_id")
+	private List<User> students = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "st_class_id")
+	private List<StTeam> teamList = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "st_class_id")
+	private List<Contest> classContest = new ArrayList<>();
+	
 	public long getId() {
 		return id;
 	}
@@ -63,8 +72,6 @@ public class StClass {
 		this.name = name;
 	}	
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "stClassList")
 	public User getTeacher() {
 		return teacher;
 	}
@@ -73,8 +80,6 @@ public class StClass {
 		this.teacher = teacher;
 	}
 	
-	@OneToMany(targetEntity = User.class, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	@JoinColumn(name = "stClass")
 	public List<User> getStudents() {
 		return students;
 	}
@@ -83,8 +88,6 @@ public class StClass {
 		this.students = students;
 	}
 
-	@OneToMany(targetEntity = StTeam.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "stClass")
 	public List<StTeam> getTeamList() {
 		return teamList;
 	}
@@ -93,8 +96,6 @@ public class StClass {
 		this.teamList = teamList;
 	}
 	
-	@OneToMany(targetEntity = Contest.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "stClass")
 	public List<Contest> getClassContest() {
 		return classContest;
 	}

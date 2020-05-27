@@ -34,8 +34,12 @@ import javax.persistence.OneToMany;
 
 public class StTeam {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String teamName;
+
+	@ManyToOne
 	private StClass stClass;
 	
 	private int elo;
@@ -44,11 +48,14 @@ public class StTeam {
 	private int silver;
 	private int bronze;
 
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "team_id")
 	private List<User> members = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "team_id")
 	private List<Achievement> achievementTeam;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -65,8 +72,7 @@ public class StTeam {
 		this.teamName = teamName;
 	}
 
-	@ManyToOne(targetEntity = StClass.class)
-	@JoinColumn(name = "teamList")
+
 	public StClass getStClass() {
 		return stClass;
 	}
@@ -115,8 +121,6 @@ public class StTeam {
 		this.bronze = bronze;
 	}
 
-	@OneToMany(targetEntity = User.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "team")
 	public List<User> getMembers() {
 		return members;
 	}
@@ -125,8 +129,7 @@ public class StTeam {
 		this.members = members;
 	}	
 	
-	@OneToMany(targetEntity = Achievement.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "team")
+
 	public List<Achievement> getAchievementTeam() {
 		return achievementTeam;
 	}
