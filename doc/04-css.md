@@ -1,6 +1,6 @@
 % Introducción a css
 % (manuel.freire@fdi.ucm.es)
-% 2020.02.03
+% 2020.02.22
 
 ## Objetivo
 

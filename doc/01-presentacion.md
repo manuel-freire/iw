@@ -1,6 +1,6 @@
 % Presentación de la asignatura
 % (manuel.freire@fdi.ucm.es)
-% 2020.01.27
+% 2021.02.15
 
 ## Objetivo
 
@@ -12,9 +12,10 @@
 - manuel.freire@fdi.ucm.es
 - despacho 325
 - tutorías 
-    + martes de 10 a 11h, y de 16 a 17h
-    + *envía un email antes para confirmar*
+    + lunes de 11 a 12h, y de 17 a 18h
+    + *envía un email antes para confirmar, con \[IW] en el subject*
     + en general, flexible en fechas y horas
+- tutorías grupales vía *google meet* a demanda
 
 # Contactando con el profesor
 
@@ -88,7 +89,7 @@ Security.
 10. tutorías en laboratorio; **Entrega** del 2º prototipo (con BD)
 11. y posteriores: tutorías en laboratorio, con **Entrega final** el último día
 
-- examen de mayo: individual, *correcciones de la entrega final*
+- examen de junio: individual, *correcciones de la entrega final*
 - 1 semana después: **entrega versión revisada** \
 
     (con mejoras solicitadas en el examen)
@@ -97,16 +98,17 @@ Security.
 # Transcurso típico de 1 semana
 
 ## Hasta la semana 9: teoría y proyecto
+
 + El **lunes**, introducimos temas nuevos de teoría
     - varios bloques de teoría
     - pausa tras cada bloque para plantear preguntas de autoevaluación
 + El **martes**, hacemos un ejercicio corto sobre lo del lunes, y avanzamos proyecto
 
 ## A partir de la semana 10: sólo proyecto
-+ Todas las clases en laboratorio. Ya no usaremos el aula de teoría.
-+ Tutorías por grupo en laboratorio para avanzar en proyectos
-+ Nuevos temas sólo "a demanda"
 
++ Todas las clases son prácticas, para avanzar el proyecto.
++ Tutorías grupales para avanzar en proyectos
++ Nuevos temas sólo "a demanda"
 
 # Comparación con Aplicaciones Web
 
@@ -154,7 +156,7 @@ IW
     
 # Backend
 
-+ Modelo Java con JPA, HSQLDB
++ Modelo Java con JPA, H2
     - Mapeo objeto-relación automágico
     - En general, mucho más cómodo que MySQL
 + Vista: Thymeleaf
@@ -183,7 +185,7 @@ más complejas y ricas que las de AW *y se espera que las hagais*)
 
 # Entregas
 
-* .zip por Campus Virtual, y, opcionalmente, enlace a commit en github / bitbucket / equivalente. 
+* .zip por Campus Virtual, y enlace a commit en github / bitbucket / equivalente. 
 * contenido especificado en tarea de entrega, proyecto plantilla
 * prototipos 1 y 2 no cuentan para nota (pero son obligatorios)
 * entrega final:
@@ -193,12 +195,17 @@ más complejas y ricas que las de AW *y se espera que las hagais*)
 
 # Java vs otros lenguajes
 
-![www.tiobe.com/tiobe-index/, Enero 2019](img/tiobe-2019-01.png "www.tiobe.com/tiobe-index/"){ width=100% }
+![www.tiobe.com/tiobe-index/, enero 2019](img/tiobe-2019-01.png "www.tiobe.com/tiobe-index/"){ width=100% }
 
  - - -
 
 
-![www.tiobe.com/tiobe-index/, Enero 2020](img/tiobe-2020-01.png "www.tiobe.com/tiobe-index/"){ width=100% }
+![www.tiobe.com/tiobe-index/, enero 2020](img/tiobe-2020-01.png "www.tiobe.com/tiobe-index/"){ width=100% }
+
+ - - - 
+
+![www.tiobe.com/tiobe-index/, febrero 2021](img/tiobe-2021-02.png "www.tiobe.com/tiobe-index/"){ width=100% }
+
 
 # Comparando lenguajes de programación
 
@@ -240,11 +247,23 @@ Lenguaje *X* mejor que *Y*...
 - firefighterspace: gestión online para **bomberos**, con distintos roles, gestión de inventario, horarios, guardias, etcétera.
 - m3: tus **archivos en la nube**, siempre bien clasificados y fáciles de compartir con tus amigos; además de incluir un reproductor incorporado para verlos o escucharlos.
 
+# Algunos proyectos viejos ('19-20)
+
+- almagym: gestión integral de un **gimnasio**, permitiendo apuntarse a actividades, compartir fotos, gestionar espacios y material, etcétera.
+- influencing: portal para que empresas contacten con **influencers** para sus campañas de publicidad, con mecanismos para negociar contratos y hacer su seguimiento.
+- matchgo: un portal para montar y gestionar **actividades** en grupo: apúntate a actividades que se están montando, o monta tú las tuyas.
+- physionet: gestiona tu gabinete de **fisioterapia** online, con puntos de entrada tanto para los especialistas como para los usuarios del servicio.
+- ucmh: seguimiento de **salud mental** online para personal y alumnos de la UCM
+- multigym: alquila o reserva **espacios deportivos** online acorde con tus necesidades y posibilidades
+
 # Un buen proyecto
 
 - **no existe** ya (más foros no, gracias)
-- hace uso de las tecnologías vistas en clase
-- no es ni muy simple ni muy complejo \
+- hace uso de las **tecnologías vistas en clase**
+    
+    + WebSockets permiten notificaciones en tiempo real - ¡úsalos!
+
+- no es **ni muy simple ni muy complejo** \
 
     orientativo: unas 6 vistas / tablas en la BD (login / usuario inclusive)
 - es **útil** para alguien

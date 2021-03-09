@@ -1,6 +1,6 @@
 % Introducción a las tecnologías web
 % (manuel.freire@fdi.ucm.es)
-% 2020.01.28
+% 2020.02.16
 
 ## Objetivo y contenido
 
@@ -237,7 +237,7 @@ Datos de la wikipedia en enero de 2020. En general, el estado de la seguridad po
 
 ## Coste de TCP + TLS
 
-![https://hpbn.co/transport-layer-security-tls/#tls-handshake-protocol](img/cost-of-tls-oreilly.png "retardo en establecer una conexión segura, según libro de O'Reilly"){ height=60% }
+![https://hpbn.co/transport-layer-security-tls/#tls-handshake-protocol](img/cost-of-tls-oreilly.png "retardo en establecer una conexión segura, según libro de O'Reilly"){ height=40% }
 
 - Pero hay optimizaciones para empezar a enviar datos después de la 1ª vuelta de TLS, eliminando el retardo de la 2ª vuelta. 
 - Buena fuente (usada para ilustración anterior): [Networking 101](https://hpbn.co/transport-layer-security-tls/)
