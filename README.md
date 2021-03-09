@@ -4,10 +4,10 @@ Material para la asignatura de Ingeniería Web, edición 2020-21, de la Facultad
 
 Puedes consultar también plantillas de años pasados:
 
-    - En el [2019-20](https://github.com/manuel-freire/iw/tree/version-del-curso-2019-20), usábamos HyperSQL en lugar de H2. Las clases de modelo eran más verbosas, porque las anotaciones de entidad estaban en los métodos (y no en los atributos), y no usábamos Lombok.
-    - En el [2018-19](https://github.com/manuel-freire/iw1819), los websockets no eran obligatorios, y no usaban todavía STOMP
-    - Cursos [2016-17 y 2017-18](https://github.com/manuel-freire/iw-1718)
-    - Curso [2015-16](https://github.com/manuel-freire/iw-1516), utilizanod por primera vez Spring Boot
+   - En el [2019-20](https://github.com/manuel-freire/iw/tree/version-del-curso-2019-20), usábamos HyperSQL en lugar de H2. Las clases de modelo eran más verbosas, porque las anotaciones de entidad estaban en los métodos (y no en los atributos), y no usábamos Lombok.
+   - En el [2018-19](https://github.com/manuel-freire/iw1819), los websockets no eran obligatorios, y no usaban todavía STOMP
+   - Cursos [2016-17 y 2017-18](https://github.com/manuel-freire/iw-1718)
+   - Curso [2015-16](https://github.com/manuel-freire/iw-1516), utilizanod por primera vez Spring Boot
 
 ## Contenido
 
