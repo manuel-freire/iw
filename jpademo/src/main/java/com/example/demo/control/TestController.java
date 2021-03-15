@@ -177,7 +177,7 @@ public class TestController {
 	private Object newObjectByName(String className) {
 		try {
 			Class<?> clazz = getClass().getClassLoader().loadClass(className);
-			return clazz.newInstance();
+			return clazz.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			log.warn("Error instantiating object of class " + className, e);
 			return null;

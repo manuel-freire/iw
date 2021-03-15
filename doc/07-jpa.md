@@ -1,6 +1,6 @@
 % JPA
 % (manuel.freire@fdi.ucm.es)
-% 2019.02.24
+% 2020.03.15
 
 ## Objetivo
 
@@ -11,24 +11,26 @@
 \small
 
 ~~~{.properties}
+
 spring.profiles.active: default
 
-spring.datasource.username: sa
-spring.datasource.password:
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.platform=h2
 
-spring.jpa.properties.hibernate.dialect: \
-      org.hibernate.dialect.HSQLDialect
-spring.jpa.database: HSQL
+# url for DB; use file:/path/to/file to avoid empty initial DB
+spring.datasource.url=jdbc:h2:mem:testdb
+
+# enable web h2 console
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
+
 spring.jpa.show-sql: true
-spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor: \
-      org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
 
-logging.level.root: INFO
-logging.level.org.hibernate: ERROR
-logging.level.org.springframework.web: DEBUG
+# allow multi-line import.sql statements, from https://stackoverflow.com/a/15090964/15472
+spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
 
-spring.thymeleaf.cache: false
-es.ucm.fdi.base-path: /tmp/iw
 ~~~ 
 
 \normal
@@ -55,13 +57,15 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
 
 - Requieren 
     + @Entity en la clase
-    + @Id en un getter (recomiendo que sea "long" y use @GeneratedValue)
+    + @Id en un atributo a usar como clave (recomiendo que sea "long" y use @GeneratedValue)
     + constructor de clase público vacío (o no hay constructores, o hay uno vacío)
-    + getters y setters para todo; *ponemos anotaciones JPA en los getters*
+    + getters y setters para todo
+        - hasta este curso, *anotaciones JPA en los getters*
+        - desde este año, *anotaciones JPA en atributos*, y Lombok `@Data` genera getters y setters
 
 - - -
 
-## Entity 
+## Entity anotando getter
 
 Marca una clase como persistible, y crea las tablas correspondientes
 
@@ -93,39 +97,74 @@ public class Book {
 }
 ~~~~
 
+## Entity anotando atributo
+
+Marca una clase como persistible, y crea las tablas correspondientes
+
+\small
+
+~~~~ {.java}
+@Entity
+public class Book {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
+  private String title;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+}
+~~~~
+
+## Entity usando Lombok para generar getters y setters
+
+Marca una clase como persistible, y crea las tablas correspondientes
+
+\small
+
+~~~~ {.java}
+@Entity
+@Data      // <-- requiere import lombok.Data;
+public class Book {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
+  private String title;
+}
+~~~~
+
 ## Más anotaciones 
 
 "Un libro tiene un dueño, y un dueño puede tener muchos libros"
 
 ~~~~ {.java}
     // en Book
+    @ManyToOne
     private User owner;
-
-    @ManyToOne(targetEntity=User.class)
-    public User getOwner() {
-      return owner;
-    }
-
-    public void setOwner(User owner) {
-      this.owner = owner;
-    }
 ~~~~
 
 - - - 
 
 ~~~~ {.java}
     // en User
-    private List<Book> ownedBooks;
-  
-    @OneToMany(targetEntity=Book.class)
+    @OneToMany
     @JoinColumn(name="owner_id") // <-- evita crear User_Book
-    public List<Book> getOwnedBooks() {
-      return ownedBooks;
-    }
-
-    public void setOwnedBooks(List<Book> ownedBooks) {
-      this.ownedBooks = ownedBooks;
-    }
+    private List<Book> ownedBooks;
 ~~~~
 
 - - - 
@@ -394,32 +433,17 @@ Ya la estás usando
 
 ~~~~ {.properties}
     # esto lo tienes en tu application-default.properties
-    jdbc:hsqldb:mem:iw;create=true
+    jdbc:h2:mem:iw;create=true
 ~~~~ 
 
 ## Cómo usar una BD "en disco"
 
 ~~~~ {.properties}
     # esto lo tienes en tu application-externaldb.properties
-    jdbc:hsqldb:file:/tmp/iw;create=true
+    jdbc:h2:file:/tmp/iw;create=true
 ~~~~ 
 
 Y el fichero con la BD se guarda en `/tmp/iw`
-
-- - -
-
-puedes abrirlo (*una vez cerrado el servidor web*) 
-usando el cliente Swing que viene dentro de HSQLDB
-
-~~~~ {.sh}
-    java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.5.0/hsqldb-2.5.0.jar \
-        org.hsqldb.util.DatabaseManagerSwing
-~~~~ 
-
-(nota: el `\` es por legibilidad - mejor si todo en la misma línea)
-
-El mismo cliente GUI se puede lanzar desde STS, buscando en "dependencias Maven" 
-el paquete `hsqldb-2.5.0.jar`, y con click derecho, ejecutando "Run As > Java Application"
 
 ## Cómo usar una BD con servidor independiente
 
@@ -436,40 +460,17 @@ Pero antes, lanza el servidor, usando
         org.hsqldb.server.Server
 ~~~~ 
 
-- - -
+ver http://www.h2database.com/html/tutorial.html#using_server
 
-Para usar BD externa en lugar de BD embebida en memoria, tienes que cambiar 
-el perfil activo:
+## Instrucciones útiles en H2
 
+- ```SCRIPT TO '/tmp/fichero'``` - guarda en ```/tmp/fichero``` un dump completo de la BD, ideal para tu ```import.sql```
 
-src/main/resources/application.properties:
-
-~~~~ {.properties}
-    spring.profiles.active: default
-~~~~ 
-
-
-src/main/resources/application.properties:
-
-~~~~ {.properties}
-    spring.profiles.active: externaldb
-~~~~ 
-
-- - -
-
-Puedes usar el mismo cliente Swing para inspeccionar tu BD. 
-Ten en cuenta que, por defecto, no estás usando contraseña, 
-y cualquiera puede tocarte la BD si sabe tu IP...
-
-## Instrucciones útiles en HSQLDB
-
-- ```SHUTDOWN``` - apaga un servidor de forma elegante
-- ```SCRIPT /tmp/fichero``` - guarda en ```/tmp/fichero``` un dump completo de la BD, ideal para tu ```import.sql```
+(ver https://stackoverflow.com/a/3259166/15472)
 
 ## Más información
 
-- [El manual de usuario de HSQLDB](http://www.hsqldb.org/doc/guide/index.html)
-- [El manual de las herramientas incluídas](http://www.hsqldb.org/doc/util-guide/index.html)
+- [El manual de usuario de H2](http://www.h2database.com/html/tutorial.html#using_server)
 
 ## En el mundo real
 

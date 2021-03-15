@@ -13,8 +13,14 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.Data;
+
 @Entity
+@Data
 public class Car {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String company;
 	
@@ -22,52 +28,14 @@ public class Car {
 	@Size(max=10)
 	private String model;
 	
+	@ManyToMany 
 	private List<Driver> drivers = new ArrayList<>();
-	private List<Wheel> wheels = new ArrayList<>();
-
-	// -- generated; don't forget to annotate getters for id and relationships
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	
-	public String getCompany() {
-		return company;
-	}
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	public String getModel() {
-		return model;
-	}
-	public void setModel(String model) {
-		this.model = model;
-	}
-	@ManyToMany(targetEntity=Driver.class)	
-	public List<Driver> getDrivers() {
-		return drivers;
-	}
-	public void setDrivers(List<Driver> drivers) {
-		this.drivers = drivers;
-	}
-	@OneToMany(targetEntity=Wheel.class)
+	@OneToMany
 	@JoinColumn(name="car_id")
-	public List<Wheel> getWheels() {
-		return wheels;
-	}
-	public void setWheels(List<Wheel> wheels) {
-		this.wheels = wheels;
-	}
+	private List<Wheel> wheels = new ArrayList<>();
 
 	@Override
 	public String toString() {
 		return "Car #" + id;
-	}
-	
+	}	
 }
