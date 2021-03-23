@@ -1,10 +1,12 @@
 package es.ucm.fdi.iw;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
+	@Autowired
+	private Environment env;
+
+	/**
+	 * General overrides for security.
+	 * 
+	 * Adding paths to the ignoring() part allows fully-unsecured access to those paths
+	 */
+	@Override
+    public void configure(WebSecurity web) throws Exception {
+		String debugProperty = env.getProperty("es.ucm.fdi.debug");
+		if (debugProperty != null && Boolean.parseBoolean(debugProperty.toLowerCase())) {
+			// allows access to h2 console if, and only if, 
+			//   application.properties says that es.ucm.fdi.debug = true
+			web.ignoring().antMatchers("/h2/**");
+		}
+    }
+
 	/**
 	 * Main security configuration.
 	 * 
@@ -35,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	    http
 	        .authorizeRequests()
 	            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
-	            .antMatchers("/admin/**").hasRole("ADMIN")		 // <-- administration
+	            .antMatchers("/admin/**").hasRole("ADMIN")		  // <-- administration
 	            .anyRequest().authenticated()
 	            .and()
 			.formLogin()

@@ -18,11 +18,17 @@
 	<h1 th:text="#{admin.welcome}">Ojo solo admines</h1>			
 	
 	<h4>Configuración</h4>
+	
 	<ul>
-	<li>Directorio local para archivos de usuario: <span th:text="${basePath}">tal</span>
-	<li>Perfiles activos: <span th:each="a: ${activeProfiles}" th:text="${a}">tal</span>
+		<li>Directorio local para archivos de usuario: <span th:text="${basePath}">tal</span>
+		<li>Perfiles activos: <span th:each="a: ${activeProfiles}" th:text="${a}">tal</span>
+		<li>Consola h2: 
+			<a th:href="@{/h2}" th:if="${debug} == 'true'">habilitada</a>
+			<span th:unless="${debug} == 'true'">no habilitada</span>
+		</li>
 	</ul>
-		<h4>Usuarios (👤)</h4>
+		
+	<h4>Usuarios (👤)</h4>
 	
 	<table class="adminTable">
 	<tr><th>Nombre & Enlace<th>Deshabilitar (🔒) ó Habilitar (🔓)

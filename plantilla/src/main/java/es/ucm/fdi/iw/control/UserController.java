@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -60,9 +62,6 @@ public class UserController {
 	
 	@Autowired
 	private LocalData localData;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
@@ -85,6 +84,11 @@ public class UserController {
 		return "user";
 	}	
 	
+	@ResponseStatus(
+		value=HttpStatus.FORBIDDEN, 
+		reason="No eres administrador, y éste no es tu perfil")  // 403
+	public static class NoEsTuPerfilException extends RuntimeException {}
+
 	@PostMapping("/{id}")
 	@Transactional
 	public String postUser(
@@ -98,14 +102,13 @@ public class UserController {
 		
 		User requester = (User)session.getAttribute("u");
 		if (requester.getId() != target.getId() &&
-				! requester.hasRole(Role.ADMIN)) {			
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, 
-					"No eres administrador, y éste no es tu perfil");
+				! requester.hasRole(Role.ADMIN)) {
+			throw new NoEsTuPerfilException();
 		}
 		
 		if (edited.getPassword() != null && edited.getPassword().equals(pass2)) {
 			// save encoded version of password
-			target.setPassword(passwordEncoder.encode(edited.getPassword()));
+			target.setPassword(target.encodePassword(edited.getPassword()));
 		}		
 		target.setUsername(edited.getUsername());
 		return "user";

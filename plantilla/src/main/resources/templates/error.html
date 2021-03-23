@@ -13,8 +13,8 @@
 	<div class="container">
 	<div class="main">
 		
-	<h4>Error <span th:text="${status}"></span></h4>
-	
+	<h4>Error <span th:text="${status}"></span></h4>	
+
 	<div th:unless="${application.debug}">
 		<img th:src="|https://http.cat/${status}|" alt="gato ilustrando problema"/>
 		<p>Los administradores están informados. Puedes volver a intentar hacer

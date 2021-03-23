@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.control;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.ucm.fdi.iw.model.Message;
+import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 
 /**
@@ -34,18 +36,20 @@ public class MessageController {
 		
 	@GetMapping("/")
 	public String getMessages(Model model, HttpSession session) {
+		model.addAttribute("users", entityManager.createQuery(
+			"SELECT u FROM User u").getResultList());
 		return "messages";
 	}
 
 	@GetMapping(path = "/received", produces = "application/json")
 	@Transactional // para no recibir resultados inconsistentes
-	@ResponseBody // para indicar que no devuelve vista, sino un objeto (jsonizado)
+	@ResponseBody  // para indicar que no devuelve vista, sino un objeto (jsonizado)
 	public List<Message.Transfer> retrieveMessages(HttpSession session) {
 		long userId = ((User)session.getAttribute("u")).getId();		
 		User u = entityManager.find(User.class, userId);
 		log.info("Generating message list for user {} ({} messages)", 
 				u.getUsername(), u.getReceived().size());
-		return Message.asTransferObjects(u.getReceived());
+		return  u.getReceived().stream().map(Transferable::toTransfer).collect(Collectors.toList());
 	}	
 	
 	@GetMapping(path = "/unread", produces = "application/json")

@@ -42,6 +42,7 @@ public class AdminController {
 	public String index(Model model) {
 		model.addAttribute("activeProfiles", env.getActiveProfiles());
 		model.addAttribute("basePath", env.getProperty("es.ucm.fdi.base-path"));
+		model.addAttribute("debug", env.getProperty("es.ucm.fdi.debug"));
 
 		model.addAttribute("users", entityManager.createQuery(
 				"SELECT u FROM User u").getResultList());
@@ -54,7 +55,7 @@ public class AdminController {
 	public String delUser(Model model,	@RequestParam long id) {
 		User target = entityManager.find(User.class, id);
 		if (target.getEnabled() == 1) {
-			// disable
+			// remove profile photo
 			File f = localData.getFile("user", ""+id);
 			if (f.exists()) {
 				f.delete();
