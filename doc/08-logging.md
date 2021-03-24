@@ -1,6 +1,6 @@
 % Logging
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.02
+% 2020.03.22
 
 ## Objetivo
 
@@ -202,6 +202,7 @@ Más detalles en la [api de log4j 2](https://logging.apache.org/log4j/2.x/manual
 \tiny
 
 ~~~{.txt}
+
 [INFO] +- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.3.RELEASE:compile
 [INFO] +- org.springframework.boot:spring-boot-starter-thymeleaf:jar:2.1.3.RELEASE:compile
 [INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.1.3.RELEASE:compile
@@ -214,6 +215,7 @@ Más detalles en la [api de log4j 2](https://logging.apache.org/log4j/2.x/manual
 [INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.11.2:compile
 [INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.25:compile
 ...
+
 ~~~
 
 \large 
