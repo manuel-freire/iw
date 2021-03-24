@@ -93,6 +93,27 @@ public class TestController {
 		return "car";
 	}
 	
+	@GetMapping("/conduce1")
+	@Transactional
+	public String conduce1(@RequestParam long idConductor, @RequestParam long idCoche, Model m) {
+		log.info("Now, {} drives {}",  idConductor, idCoche);
+		Car car = entityManager.find(Car.class, idCoche);
+		com.example.demo.model.Driver driver =  entityManager.find(com.example.demo.model.Driver.class, idConductor);
+		car.getDrivers().add(driver);
+		return dump(m);
+	}
+	
+	@GetMapping("/conduce2")
+	@Transactional
+	public String conduce2(@RequestParam long idConductor, @RequestParam long idCoche, Model m) {
+		log.info("Now, {} drives {}",  idConductor, idCoche);
+		Car car = entityManager.find(Car.class, idCoche);
+		com.example.demo.model.Driver driver =  entityManager.find(com.example.demo.model.Driver.class, idConductor);
+		driver.getRides().add(car);
+		return dump(m);
+	}
+	
+
 	/**
 	 * Añade, modifica o elimina un nuevo objeto del tipo especificado con los campos especificados.
 	 * 

@@ -19,7 +19,7 @@ public class Driver {
 	private long id;
 	private String name;
 	
-	@ManyToMany(mappedBy="drivers")
+	@ManyToMany
 	private List<Car> rides = new ArrayList<Car>();
 	
 	// -- generated; don't forget to annotate getters for id and relationships

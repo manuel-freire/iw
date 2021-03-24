@@ -66,6 +66,34 @@ public class UserController {
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	/**
+	 * Tests a raw (non-encoded) password against the stored one.
+	 * @param rawPassword to test against
+ 	 * @param encodedPassword as stored in a user, or returned y @see{encodePassword}
+	 * @return true if encoding rawPassword with correct salt (from old password)
+	 * matches old password. That is, true iff the password is correct  
+	 */
+	public boolean passwordMatches(String rawPassword, String encodedPassword) {
+		return passwordEncoder.matches(rawPassword, encodedPassword);
+	}
+
+	/**
+	 * Encodes a password, so that it can be saved for future checking. Notice
+	 * that encoding the same password multiple times will yield different
+	 * encodings, since encodings contain a randomly-generated salt.
+	 * @param rawPassword to encode
+	 * @return the encoded password (typically a 60-character string)
+	 * for example, a possible encoding of "test" is 
+	 * {bcrypt}$2y$12$XCKz0zjXAP6hsFyVc8MucOzx6ER6IsC1qo5zQbclxhddR1t6SfrHm
+	 */
+	public String encodePassword(String rawPassword) {
+		return passwordEncoder.encode(rawPassword);
+	}	
+
 	@GetMapping("/{id}")
 	public String getUser(@PathVariable long id, Model model, HttpSession session) 			
 			throws JsonProcessingException {		
@@ -108,9 +136,15 @@ public class UserController {
 		
 		if (edited.getPassword() != null && edited.getPassword().equals(pass2)) {
 			// save encoded version of password
-			target.setPassword(target.encodePassword(edited.getPassword()));
+			target.setPassword(encodePassword(edited.getPassword()));
 		}		
 		target.setUsername(edited.getUsername());
+		target.setFirstName(edited.getFirstName());
+		target.setLastName(edited.getLastName());
+
+		// update user session so that changes are persisted in the session, too
+		session.setAttribute("u", target);
+
 		return "user";
 	}	
 	

@@ -28,7 +28,7 @@ public class Car {
 	@Size(max=10)
 	private String model;
 	
-	@ManyToMany 
+	@ManyToMany(mappedBy="rides")
 	private List<Driver> drivers = new ArrayList<>();
 	@OneToMany
 	@JoinColumn(name="car_id")

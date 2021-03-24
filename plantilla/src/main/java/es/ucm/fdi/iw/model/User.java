@@ -63,17 +63,6 @@ public class User implements Transferable<User.Transfer> {
 	
 	// do not change these fields
 
-	/** 
-	 * not a DB column, but very useful to handle passwords; 
-	 * see passwordMatches & encodePassword 
-	 * All those annotations prevent persistence and Lombok-generated getters & setters
-	 */
-	@Autowired
-	@Transient
-	@Getter(value = AccessLevel.NONE)
-	@Setter(value = AccessLevel.NONE)
-	private PasswordEncoder passwordEncoder;
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -110,29 +99,6 @@ public class User implements Transferable<User.Transfer> {
 		return Arrays.stream(roles.split(","))
 				.anyMatch(r -> r.equals(roleName));
 	}
-	
-	/**
-	 * Tests a raw (non-encoded) password against the stored one.
-	 * @param rawPassword to test against
-	 * @return true if encoding rawPassword with correct salt (from old password)
-	 * matches old password. That is, true iff the password is correct  
-	 */
-	public boolean passwordMatches(String rawPassword) {
-		return passwordEncoder.matches(rawPassword, this.password);
-	}
-
-	/**
-	 * Encodes a password, so that it can be saved for future checking. Notice
-	 * that encoding the same password multiple times will yield different
-	 * encodings, since encodings contain a randomly-generated salt.
-	 * @param rawPassword to encode
-	 * @return the encoded password (typically a 60-character string)
-	 * for example, a possible encoding of "test" is 
-	 * {bcrypt}$2y$12$XCKz0zjXAP6hsFyVc8MucOzx6ER6IsC1qo5zQbclxhddR1t6SfrHm
-	 */
-	public String encodePassword(String rawPassword) {
-		return passwordEncoder.encode(rawPassword);
-	}	
 
     @Getter
     @AllArgsConstructor
@@ -146,5 +112,10 @@ public class User implements Transferable<User.Transfer> {
 	@Override
     public Transfer toTransfer() {
 		return new Transfer(id,	username, received.size(), sent.size());
-    }
+	}
+	
+	@Override
+	public String toString() {
+		return toTransfer().toString();
+	}
 }
