@@ -1,29 +1,27 @@
 Feature: csrf and sign-in end point
 
 Background:
-* url baseUrl
-* def util = Java.type('karate.KarateTests')
+    * url baseUrl
+    * def util = Java.type('karate.KarateTests')
 
-Given path 'login'
-When method get
-Then status 200
-* string response = response    
-* def csrf = util.selectAttribute(response, "input[name=_csrf]", "value");
-* print csrf
+Scenario: get login page, capture csrf, send login
+    * path 'login'
+    * method get
+    * status 200
+    * print response
+    * print responseCookies
+    # ... name="_csrf" value="0a7c65e8-4e8e-452f-ad44-40b995bb91d6" => 0a7c65e8-4e8e-452f-ad44-40b995bb91d6"
+    * def csrf = karate.extract(response, '"_csrf" value="([^"]*)"', 1) 
+    * print csrf
 
-# selectores para util.select*: ver https://jsoup.org/cookbook/extracting-data/selector-syntax
-# objetivo de la forma
-# <html lang="en">...<body><div><form>
-#   <input name="_csrf" type="hidden" value="..." />
-
-Scenario: html url encoded form submit - post
-    Given path 'login'
-    And form field username = 'a'
-    And form field password = 'aa'
-    And form field _csrf = csrf
-    When method post
-    Then status 200
-    * string response = response    
+    * path 'login'
+    * form field username = 'a'
+    * form field password = 'aa'
+    * form field _csrf = csrf
+    * method post    
+    * status 200
+    * print response
+    * print responseCookies
     * def h4s = util.selectHtml(response, "h4");
     * print h4s
-    And match h4s contains 'Usuarios'
+    * match h4s contains 'Usuarios'

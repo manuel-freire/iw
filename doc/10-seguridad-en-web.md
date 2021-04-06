@@ -1,6 +1,6 @@
 % Seguridad en aplicaciones Web Java
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.07
+% 2020.04.06
 
 # Introducción
 
@@ -38,7 +38,7 @@
     + si entran, que no se lo lleven _todo_
 
 * Evita exponer datos sensibles
-    + [contraseñas: ~7700 M cuentas comprometidas](https://haveibeenpwned.com/)
+    + [contraseñas: ~10.7 M cuentas comprometidas](https://haveibeenpwned.com/)
     + tarjetas / información de pago
     + otra información personal delicada
 
@@ -79,30 +79,32 @@
     + no permite entrar con la modificación
 
 * Receta para un buen **formato modificado**
-    + clave (elegida por el usuario)
-    + sal (generada aleatoriamente, fastidia ataques de diccionario)
-    + pimienta (igual para todos, pero no contenida en la BBDD)
+    + **clave** (elegida por el usuario)
+    + **sal** (generada aleatoriamente, fastidia *ataques de diccionario*)
+    + **pimienta** (igual para todos, pero no contenida en la BBDD; opcional)
     + y todo ello pasado por una buena batidora de bits (**hash**)
 
-## Contraseñas: Hashes
+## Contraseñas: Hashes criptográficos
 
 * Dada una cadena de bits _b_, h(b) (un hash) debe cumplir
-    + consistente: $b_1 = b_2 \implies h(b_1) = h(b_2)$
-    + longitud constante: $\forall b, |h(b)| = cte$
-* Como hay más claves que hashes, habrá _colisiones_
+    + **consistente**: $b_1 = b_2 \implies h(b_1) = h(b_2)$
+    + longitud constante: $\forall b, |h(b)| = {n_h}$, \
+    con ${h} típicamente entre 128 y 512 bits (16 a 64 bytes)
+* Como puede haber más claves ($2^{n_k}$) que hashes ($2^{n_h}$), habrá _colisiones_
+    + ¿cómo, tu contraseña no es de al menos 16 caracteres? \
+    (la mía tampoco; pero también es posible hashear cosas que no son contraseñas)
     + colisión: $a \neq b \wedge h(a) = h(b)$ \
-    *mismo resultado, pero a partir de cosas distintas"
-    
-* Para ser criptográficamente útil, debe ser difícil\footnote{por ejemplo, con probabilidades del orden de $2^{-128}$}
-    + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $h(b_1)$ (pre-imagen)
-    + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $b_1$ (segunda pre-imagen)
-    + encontrar cualquier colisión, en general (resistencia fuerte)
+    "mismo resultado, a partir de cosas distintas"
 
 - - - 
 
-Notación 
 
-$h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$ 
+* $h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$ 
+
+* Para que $h$ sirva como hash **criptográfico**, debe ser difícil\footnote{por ejemplo, con probabilidades de acertar del orden de $2^{-128}$}
+    + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $h(b_1)$ (pre-imagen)
+    + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $b_1$ (segunda pre-imagen)
+    + encontrar cualquier colisión, en general (resistencia fuerte)
 
 - - - 
 
@@ -111,15 +113,19 @@ $h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$
 * Ataques contra un hash "sin sal", que almacena $h(pass)$
     + hash de gran diccionario: ¿alguna coincide?
         - puedo encontrar coincidencias entre diccionario y BD en tiempo logarítmico
-    + extensión del diccionario: *rainbow tables*
-        - genero muchas cadenas de hashes
-        - luego itero sobre hashes de la BD para ver si aterrizo en una cadena
-        - si hay suerte, miro en esa cadena para encontrar el punto anterior
-    + miro lista de hashes: ¿alguna coincide?
+    + miro lista de hashes: ¿alguna coincide con alguna otra?
         - contraseñas con el mismo hash seguramente son iguales
         - y si tienen pistas, esto se convierte en crucigrama
+    + extensión del diccionario: *rainbow tables*
+        - genero $n$ cadenas de hashes almacenando $p_{i}$ y $h_{2^{10}}(p_{i})$ para $i \in 1..n$
+        - luego, itero ${2^{10}}$ veces sobre cada uno  de los $m$ hashes de la BD, \
+        comparando a cada iteración con los $n$ finales de cadena
+        - si un final coincide, vuelvo a recorrer esas cadenas desde el principio; \
+            con alta probabilidad, hay un eslabón que cumple $b = h(a)$ \
+            **aceleración con un factor $n$ durante $2^{10}$ iteraciones**
 
-(referencias: [XKCD](http://xkcd.com/1286/), [crucigrama al respecto](http://zed0.co.uk/crossword/) ) 
+
+(referencias crucigrama: [XKCD](http://xkcd.com/1286/), [crucigrama al respecto](http://zed0.co.uk/crossword/) ) 
 
 - - -
 
@@ -129,7 +135,7 @@ $h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$
     + $h(s_1\:||\:pass_1) \neq h(s_2\:||\:pass_2) \not \Rightarrow pass_1 \neq pass_2$\
     (excepto por colisión)
     + $\leadsto$ sólo puedes atacar contraseñas **una por una**, con su respectiva sal\
-    -- en lugar poder atacarlas todas a la vez y/o reaprovechar trabajo previo
+    -- en lugar poder atacarlas todas a la vez (¡crucigramas!) y/o reaprovechar trabajo previo (¡diccionarios, tablas arcoiris!)
 
 ## Mejores prácticas 
 
@@ -147,8 +153,10 @@ $h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$
         * 2a: algoritmo **blowfish** sobre cadenas **utf8 terminadas con `\0`**
         * 10: **$2^{10}$ rondas**
         * siguientes 22 caracteres: la **sal** (128 bits, en algo similar a Base-64\footnote{bcrypt:  \texttt{./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789}\\
-        Base-64 usa: \texttt{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/}})
-        * siguientes 31 caracteres: el **hash** resultante (184 bits, misma codificación)
+        Base-64 usa: \texttt{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/}}) \
+        \texttt{N9qo8uLOickgx2ZMRZoMye = 0x3ffb2afb035091e9a2cf86ce4dba8ed20}
+        * siguientes 31 caracteres: el **hash** resultante (184 bits, misma codificación) \
+        \texttt{IjZAgcfl7p92ldGxad68LJZdL17lhWy = 0xa95b0a27a19fdaffe277c8cdc7fcf8d2db7cddfd9e3634}
 * Alternativas (entre [muchas soportadas por Spring Security](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/factory/PasswordEncoderFactories.html))
     + Argon2
     + PBKDF2
@@ -157,10 +165,10 @@ $h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$
 ## Tarjetas de crédito
 
 * Peores que las contraseñas: 16 dígitos
-    * 6 del banco (adivinables)
+    * 6 del banco (conocidos)
     * 1 redundante (se calcula a partir de los otros)
     * 4 últimos usados para resolver incidencias (semipúblicos, tendrías que guardarlos 'en claro')
-    * adivinar 5 restantes por fuerza bruta es fácil
+    * adivinar 5 restantes por fuerza bruta es fácil: 100k posibilidades
 * **Evita gestionarlas**
     * Usa las APIs de tu proveedor
     * Que carguen _otros_ con las responsabilidades asociadas ([PCI](https://www.pcisecuritystandards.org/))
