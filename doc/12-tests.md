@@ -1,6 +1,6 @@
 % Probando tu aplicación web
 % (manuel.freire@fdi.ucm.es)
-% 2020.04.20
+% 2021.04.12
 
 ## Objetivo
 
@@ -27,15 +27,19 @@
 > Un buen programador es un vago ingenioso
 
 > Si vas a tener que hacerlo más de una vez, automatízalo \vskip
-(DRY aplicado a pruebas)
+(DRY\footnote{don't repeat yourself} aplicado a pruebas)
 
 - Pruebas de más a menos automatizables:
-	+ de unidad
+	+ de unidad (muy fácil de automatizar)
 	+ integración (sí, navegador inclusive -- contra historias predefinidas)
 	+ carga (contra patrones de carga predefinidos)
 	+ compatibilidad (contra plataformas específicas)
 	+ seguridad (contra amenazas conocidas)
-	+ usabilidad (sólo humanos, hoy por hoy)
+	+ usabilidad (sólo probable con humanos, hoy por hoy)
+
+. . . 
+
+En esta asignatura nos concentraremos en pruebas de *unidad* y de *integración*
 
 # Pruebas y código
 
@@ -43,19 +47,24 @@ Estructura tu código para que sea fácil de probar, siguiendo filosofía 	TDD (
 
 - Principios aplicables
 	* KISS - keep it simple, st*pid
-	* SRP - Single Responsibility Principle (parte de SOLID):
-		- SRP: que cada cosa haga sólo 1 cosa, y la haga bien
+	* SOLID - los de toda la vida:
+		- Single Responsibility Principle: que cada cosa haga sólo 1 cosa, y la haga bien
 		- Open-closed: abierto a extensión, cerrado a modificación
-		- Liskov-substitution: una subclase debe poder substituir a sus superclases sin romperlas
-		- Interface-segregation: expón interfaces mínimas a cada cliente, en lugar de interfaces más exhaustivas
+		- Liskov-substitution: una *subclase* debe poder substituir a sus *sus superclases* \
+		sin romper el programa -- y si no, ese uso de herencia es sospechoso
+		- Interface-segregation: expón interfaces mínimas a cada cliente\footnote{\emph{cliente} es el que usa algo - por ejemplo, el código que llama a una API es \emph{cliente} de esa API}, \
+		en lugar de interfaces más exhaustivas
 		- Dependency-inversion: depende de abstracciones, y no de elementos abstractos
-	* YAGNI - _You aren't going to need it_, interpretado como "no hagas pruebas innecesarias sólo por hacerlas"
+	* YAGNI - _You aren't going to need it_, interpretado como \
+	"no hagas pruebas innecesarias sólo por hacerlas"
 - Ventajas de **código fácil de probar**
 	- más fácil encontrar errores (porque puedes probarlo)
 	- y reemplazarlo por otro si los tiene (por SRP)
 	- mejor diseño (por KISS, SRP, YAGNI)
 
-Es decir, aunque no acabes automatizando pruebas, el mero hecho de estructurar tu código para que pueda ser probado hace que sea mucho más mantenible, y por tanto mejor
+. . .
+
+Es decir, aunque no acabes automatizando pruebas, el mero hecho de **estructurar tu código para que pueda ser probado** hace que sea mucho más mantenible, y por tanto mejor
 
 # Tabla de contenidos
 
@@ -75,11 +84,31 @@ Es decir, aunque no acabes automatizando pruebas, el mero hecho de estructurar t
     + escribes métodos anotados con `@Test`
     + donde usas `assertAlgo` para hacer pruebas, o `fail` si decides que ha fallado
     + y lo pruebas vía `mvn test` (o vía IDE)
-- Además, puedes usar
-    + `@Test(expected = WeirdException.class)`, que falla si no lanza `WeirdException`
-    + `@Test(timeout=100)`, que falla si pasan más de 100 segundos sin salir de la prueba
-    + `@Before` y `@After`, que se ejecutan antes y después de pasar *cada* test del fichero
-    + `@BeforeClass` y `@AfterClass`, que deben ser estáticos, y se ejecutan, respectivamente, *una* vez, antes de hacer cualquier cosa con la clase, o cuando ya se ha acabado todo lo que se iba a hacer con esa clase.
+- Además, puedes usar anotaciones para indicar código pre- y post-test:
+    + `@BeforeEach` y `@AfterEach`, que se ejecutan antes y después de pasar *cada* test del fichero
+    + `@BeforeAll` y `@AfterAll`, que deben ser estáticos, y se ejecutan, respectivamente, *una* vez, antes de hacer cualquier cosa con la clase, o cuando ya se ha acabado todo lo que se iba a hacer con esa clase.
+
+# excepciones y tiempos
+
+~~~~ {.java}
+
+@Test
+public void shouldRaiseAnException() throws Exception {
+    Assertions.assertThrows(Exception.class, () -> {
+        // este código hará que el test falle, 
+		// porque debería lanzar una excepción y no lo hace
+    });
+}
+
+@Test
+public void shouldFailBecauseTimeout() throws InterruptedException {
+    Assertions.assertTimeout(Duration.ofMillis(1), () -> {
+		// este código hará que el test falle: debería tardar < 1 ms
+		Thread.sleep(10); // y tarda 10 ms
+	});
+}
+
+~~~~
 
 # probando clases aisladas con JUnit
     
@@ -177,20 +206,21 @@ public class ApiControllerTest {
 
 * Pruebas manuales
 	- requieren mucha disciplina para hacer lo mismo una y otra vez
+	- *¿¡qué somos, robots!?*
 * Pruebas automáticas con selenium
 	- puede lanzar varios navegadores
 	- muy establecido
 	- [sintaxis y conceptos complejos, fruto de 16 años de historia](https://hackernoon.com/the-world-needs-an-alternative-to-selenium-so-we-built-one-zrk3j3nyr)
 	- difícil de integrar con nuestras aplicaciones (porque está pensado para integrarse con 5 tipos de entornos, y por tanto no es fácil en ninguno)
-* Pruebas automáticas con [karate](https://github.com/intuit/karate#quickstart)
+* Pruebas automáticas con [karate](https://github.com/intuit/karate)
 	- escrito en Java, pensado para usarse con Java
 	- integración muy limpia [con Spring MVC](https://github.com/Sdaas/hello-karate)
-	- mucho más sencillo que selenium
+	- *mucho más* sencillo que selenium
 
 # Añadiendo Karate
 
 1. modificad el pom para incorporar cambios a la plantilla
-	- nuevas librerías: junit, mockito, karate-apache + karate-junit4
+	- nuevas librerías: junit, mockito, karate-core + karate-junit5
 	- sección build: cambios en configuración de pruebas
 2. añadid pruebas en carpeta `test/java/`, con estructura
 
@@ -198,22 +228,25 @@ public class ApiControllerTest {
 
 ~~~{.text}
 test/java/
-	karate-config.js			// json para configurar karate
-	logback.xml					// configuracion de logging para pruebas
-	karate/	                    // para agrupar pruebas de karate
-		KarateTests.java		// lanza todos los tests de karate
-		login/					// agrupa pruebas sobre 1 funcionalidad
-			login1.feature		// cuenta una historia ejecutable
-			login2.feature		// otra historia ejecutable
-			LoginRunner.java	// para explicar a karate cómo probarlas
-		...
+		karate-config.js			// json para configurar karate "interno"
+		logback.xml					// configuracion de logging para pruebas
+		karate/	                    // para agrupar pruebas "internas"
+			KarateTests.java		// lanza todos los tests de karate
+			login/					// agrupa pruebas sobre 1 funcionalidad
+				login1.feature		// cuenta una historia ejecutable
+				login2.feature		// otra historia ejecutable
+				LoginRunner.java	// para explicar a karate cómo probarlas
+	karate-ui/                  // para agrupar pruebas externas de karate
+		login.feature			// una prueba externa
+		message.feature	        // otra prueba externa
 ~~~
 
 \normal
 
 3. para lanzar las pruebas, hay que usar
 	- `mvn spring-boot:run` -- porque karate usa un navegador para hablar con vuestro servidor, que tiene que estar funcionando
-	- `mvn test -Dtest=KarateTests` -- para lanzar las pruebas en sí
+	- `mvn test -Dtest=KarateTests` -- para lanzar las pruebas de `karate`, con `HttpClient` como navegador
+	- `mvn exec:java` -- para lanzar pruebas externas, con Chrome/Chromium como navegador
 
 # Un archivo .feature
 
@@ -226,27 +259,28 @@ Feature: Hello World
 
   Scenario: Hello world
 
-    When method GET
-    Then status 200
-    And match $ == "Hello world!"
+    * method GET
+    * status 200
+    * match $ == "Hello world!"
 
   Scenario: Hello with a param
 
-    Given param name = 'Daas'
-    When method GET
-    Then status 200
-    And match $ == "Hello Daas!"
+    * param name = 'Patata'
+    * method GET
+    * status 200
+    * match $ == "Hello Patata!"
 ~~~
 
 # Vocabulario
 
 * `#` - empieza un comentario
 * `Feature:` - un conjunto de escenarios relacionados
-* `Scenario:` - una prueba, del tipo "entra por aquí, haz esto, espera que suceda esto otro":
-	- `Given` - detalles de petición
-	- `When` - petición en sí
-	- `Then` - lo que tiene que pasar
-* `Background:` - trasfondo común a todos los escenarios
+* `Scenario:` - una prueba, tipo `@Test` del tipo "entra por aquí, haz esto, espera que suceda esto otro":
+	- `*` - detalles de petición (`method`, `param`, `form field`, ...), \
+	o de lo que tiene que pasar (`status`, `assert`, `match`), \
+	o de lo que quieres apuntar cuando mires los resultados (`print`)
+	- También puedes usar `Given`, `And`, `When` y `Then` en lugar de `*` - pero son azúcar sintáctica
+* `Background:` - trasfondo común a todos los escenarios (piensa en `@BeforeEach`)
 
 Esta sintaxis viene de [Gherkin/Cucumber](https://cucumber.io/docs/gherkin/reference/), y constituye un DSL (_Domain-Specific Language_) mucho más legible que el equivalente en java. 
 
@@ -282,85 +316,129 @@ Feature: Create and Read persons ...
 Feature: csrf and sign-in end point
 
 Background:
-* url baseUrl
+    * url baseUrl
+    * def util = Java.type('karate.KarateTests')
 
-Given path 'login'
-When method get
-Then status 200
-* def csrf = //input[@name="_csrf"]/@value
+Scenario: get login page, capture csrf, send login
+    * path 'login'
+    * method get
+    * status 200
+    # ... name="_csrf" value="0a7c65e8-4e8e-452f-ad44-40b995bb91d6"
+    * def csrf = karate.extract(response, '"_csrf" value="([^"]*)"', 1) 
 
-#<html lang="en">...<body><div><form>
-#   <input name="_csrf" type="hidden" value="..." />
-
-Scenario: html url encoded form submit - post
-    Given path 'login'
-    And form field username = 'a'
-    And form field password = 'aa'
-    And form field _csrf = csrf
-    When method post
-    Then status 200
-    * string response = response
-    And match response contains 'Plantilla de IW'
+    * path 'login'
+    * form field username = 'a'
+    * form field password = 'aa'
+    * form field _csrf = csrf
+    * method post    
+    * status 200
+    * def h4s = util.selectHtml(response, "h4");
+    * match h4s contains 'Usuarios'
 ~~~
 
 - - - 
 
+¿Qué es eso de `    * def csrf = karate.extract(response, '"_csrf" value="([^"]*)"', 1) 
+`?
+
+~~~{.java}
+String html = "... name=\"_csrf\" value=\"0a7c65e8-4e8e-452f\" ... ";
+String csrf = Pattern.compile("\"_csrf\" value=\"([^\"]*)\"")
+					.matcher(html)
+					.group(1); // --> 0a7c65e8-4e8e-452f
+~~~
+
+(Hora de repasar [expresiones regulares](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html))
+
+- - - 
+
+También puedes usar unas pruebas desde otras, con \
+`call read(pruebaAEjecutar)`
+
+Y puedes parsear HTML vía [JSoup](https://jsoup.org/), con selectores CSS, usando \
+`util.selectHtml(documento, selectorCss)` 
+-- pero tienes que importarlo vía \
+`def util = Java.type('karate.KarateTests')`
+
 ~~~{.txt}
+
 Background:
-* url baseUrl
-* call read('login1.feature')
+	* url baseUrl
+	# ejecuta una tras otra todas las acciones del escenario
+	* call read('login1.feature')
+	* def util = Java.type('karate.KarateTests')
 
 Scenario: user page
+    * path 'user/1'
+    * method get
+    * print response
+    * status 200
+    * def userName = util.selectHtml(response, "h4>span")
+    * assert userName == 'a'
 
-    Given path 'user/1'
-    When method get
-    Then status 200
-    * string response = response
-    And match response contains 'Información del usuario <span>a'
 ~~~
 
-# XPath
+# Karate-UI
 
-* Otro DSL\footnote{Domain Specific Language}, similar a los selectores de CSS.
-* Usa `//` para inicio del selector. Algunos ejemplos:
+* Pruebas externas - un navegador de verdad, y no `HttpClient`
+	- HttpClient no interpreta ni ejecuta js, ni solicita recursos tipo CSS o favicon
+	- HttpClient no entiende de websockets
 
-~~~{.js}
-    xpath_locator = '//div[@class="button-section col-xs-12 row"]'
-    css_locator = 'div.button-section.col-xs-12.row'
+* ¿Qué navegador?
+	- cualquiera que tenga un RemoteWebDriver de [Selenium](https://www.selenium.dev/documentation/en/remote_webdriver/remote_webdriver_client/) / que implemente [WebDriver](https://www.w3.org/TR/webdriver/) - o el protocolo propio de Chrome
+	- Karate-UI soporta [12 drivers distintos](https://github.com/intuit/karate/tree/master/karate-core#driver-types) (en su v1.0.1)
 
-	css_locator = '#table1 tbody tr td:nth-of-type(4)'
-	xpath_locator = "//table[@id='table1']//tr/td[4]"
+* Usando Chrome bajo Windows / Linux:
+
+~~~{.txt}
+  * configure driver = { type: 'chrome', showDriverLog: true }
 ~~~
 
-* Ejemplos de [esta respuesta](https://stackoverflow.com/a/50292127/15472) en StackOverfow
-* Un buen [tutorial de XPath]()
-* Una herramienta para probar [XPath de forma interactiva](https://extendsclass.com/xpath-tester.html)
+# Diferencias con Karate "interno"
 
-# XPath mínimo
+* Se ejecuta vía un programa separado: no son pruebas JUnit\
+`mvn java:exec` - ver [pom.xml](https://github.com/manuel-freire/iw/blob/a97e6112d102704edc10b4a35fbe467a3f1edcc8/plantilla/pom.xml#L209)
+* Da acceso al dom tras modificaciones de JS, permite probar websockets
+* Documentado en [karate-core](https://github.com/intuit/karate/tree/master/karate-core)
+* Nuevos verbos/acciones:
+	+ `screenshot` para sacar pantallazos (que luego salen en el informe)
+	+ `scroll`, `click`, `fullscreen`, ... no tienen sentido sin pantalla y ratón
+	+ Una [sintaxis de localizadores](https://github.com/intuit/karate/tree/master/karate-core#locators) bastante más fácil de usar que la de las pruebas internas
 
-~~~{.js}
-/*
-<html>
-<head>
-  <title>This is a title</title>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type" />
-</head>
-<body>
-  <div>
-    <div>
-      <p>This is a paragraph.</p>
-      <p>Is this <a href="page2.html">a link</a>?</p>
-*/
+# Un ejemplo
 
-//a/@href 						=> ["page2.html", "page3.html"]
-//a[@href="page2.html"]/text() 	=> "a link"
+\smallsize
+
+~~~{.txt}
+Given driver 'http://localhost:8080/login'
+* input('#username', 'a')
+* input('#password', 'aa')
+* submit().click("button[type=submit]")
+* match html('title') contains 'Admin'
+* driver.screenshot()
+
+# voy al perfil si pulso en su foto
+* click("img[class=userthumb]")
+* match html('title') contains 'Perfil'
+
+# voy a mensajes si pulso en el buzon
+* click("a[id=received]")
+* match html('title') contains 'Mensajes'
+
+# me auto-envio un mensaje (via ajax) con un número aleatorio
+* def msg = script("'el secreto es ' + ((Math.random() * 1000) | 0)")
+* input('#message', msg)
+# ojo: lo envío sin submit():es ajax y no hay recarga de página
+* click("button[id=sendmsg]")
+# retardo de 500 ms para dar tiempo a recibir respuesta vía WS
+* delay(500)                  
+
+# y puedo leer el resultado 
+* match html('#datatable') contains mensaje
+* driver.screenshot()
 ~~~
 
-# XML vs HTML
-
-* Sólo podeis usar XPath si la página es XML válido
-* Esto parece ser una limitación de Karate, que os hará reescribir parte de vuestras páginas
-* Por ahora, he cambiado el login de la plantilla para que sea XML válido... 
+\normalsize
 
 # Fin
 
