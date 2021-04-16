@@ -611,37 +611,65 @@ messagingTemplate.convertAndSend("/topic/admin", json);
 
 ## Creando JSON para enviar cosas
 
-* Con Jackson (incluido en Spring). Ventajas
-  - API que facilita escribir JSON correcto
+* Con Jackson, usando la API
   - Escapa cadenas de forma correcta
+  - No tienes que definir una clase para tu mensaje
 
 ~~~{.java}
 User requester = (User)session.getAttribute("u");
 ObjectMapper mapper = new ObjectMapper();
 ObjectNode rootNode = mapper.createObjectNode();
-rootNode.put("text", requester.getUsername() + " is looking up " + u.getUsername());
+rootNode.put("text", requester.getUsername() 
+  + " is looking up " + u.getUsername());
 String json = mapper.writeValueAsString(rootNode);
 // { "text": "pepito is looking up juanito" }
 ~~~
 
 - - - 
 
-* Sin Jackson. Ventaja: puede ser más sencillo. Ojo con los escapes
+* Con Jackson, serializando objetos
+  - Escapa cadenas de forma correcta
+  - No tienes que aprender a usar la API
+  - Pero tienes que definir una clase para cada mensaje
 
 ~~~{.java}
-		User requester = (User)session.getAttribute("u");
-		
-		String json = "{ \"text\": " 
-      + requester.getUsername() + " is looking up " + u 
-      + "}";
+
+// en algún sitio
+@Getter
+public static class Chivatazo {
+  private String text;
+  public Chivatazo(User uno, User otro) {
+    this.text = uno.getUserName() + 
+      + " is looking up " + otro.getUsername());    
+  }
+}
+
+
+// en el método del controlador:
+User requester = (User)session.getAttribute("u");
+ObjectMapper mapper = new ObjectMapper();
+String json = mapper.writeValueAsString(new Chivatazo(requester, u));
 ~~~
 
-* Desventaja: escapar bien es muy difícil. En ese fragmento hay 2 nombres de usuario sin escapar, y ambos pueden contener `"` que rompan cosas.
+- - - 
+
+* Sin Jackson: *NO RECOMENDADO*
+  - Son cadenas de texto, fáciles de montar por concatenación
+  - **Pero también es fácil no escaparlas, o escaparlas mal**
+
+~~~{.java}
+User requester = (User)session.getAttribute("u");
+
+String json = "{ \"text\": " 
+  + requester.getUsername() + " is looking up " + u 
+  + "}";
+~~~
+
+**En ese fragmento hay 2 nombres de usuario sin escapar, y ambos pueden contener `"` que rompan cosas**
 
 ## Referencias para websockets
 
 * Websockets según [Spring Framework](https://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html)
-
 
 * Más docs de [Spring MVC](https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket)
 
@@ -649,6 +677,109 @@ String json = mapper.writeValueAsString(rootNode);
 
 * Api de Websockets, [según Mozilla](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
+# Resumen final
+
+## Ajax
+
+* Primero que funcione, y luego Ajax donde tenga sentido
+* Usad formularios normales con `th:action` - así tendran las URLs correctas, y si son post, los CSRFs necesarios.
+* Convertidlos a Ajax vía JS que inhabilite el envío tradicional, y en su lugar use un `fetch`
+* Ejemplo en [messages.html](https://github.com/manuel-freire/iw/blob/master/plantilla/src/main/resources/templates/messages.html)
+
+~~~{.html}
+
+<!-- formulario normal (sólo resulta raro el "idOfTarget") -->
+<form th:action="@{/user/idOfTarget/msg}" method="POST">
+<select id="idOfTarget">
+  <option th:each="user: ${users}" th:value="${user.id}" 
+    th:text="${user.username}">mfreire</option>
+</select>
+<textarea id="message" rows="4" cols="20" 
+  placeholder="escribe al usuario seleccionado"></textarea>
+<button id="sendmsg" type="submit">Enviar</button>
+</form>
+
+~~~
+
+- - - 
+
+~~~{.javascript}
+// envío de mensajes vía AJAX, sin recargar la página
+document.addEventListener("DOMContentLoaded", () => {
+  let b = document.getElementById("sendmsg");
+  b.onclick = (e) => {
+    let idOfTarget = document.getElementById("idOfTarget").value;
+    let url = b.parentNode.action.replace("idOfTarget", idOfTarget);
+    e.preventDefault(); // <-- evita que se envíe de la forma normal
+    console.log(b, b.parentNode)
+    go(url, 'POST',     // <-- hace el `fetch`, y recibe resultados
+       { message: document.getElementById("message").value })
+      .then(d => console.log("happy", d))
+      .catch(e => console.log("sad", e))
+  }
+});
+~~~
+
+## Websockets
+
+Ficheros implicados, lado servidor:
+
+- WebSocketConfig.java: ¿qué URLs habrá? 
+- WebSocketSecurityConfig.java: ¿quién puede registrarse dónde?
+- LoginSuccessHandler.java: ¿cómo saben los clientes a qué URL escuchar?
+
+Y en el lado cliente:
+
+- header.html: objeto 'config', y carga stomp.js + iwclient.js
+- stomp.js: librería para protocolo STOMP del lado de cliente
+- iwclient.js: 
+  + establece comunicación STOMP con servidor
+  + configura objeto 'ws', donde se configura lo que pasa cuando llegan mensajes
+  + define una función 'go' para hacer peticiones 'fetch' sencillas enviando y recibiendo JSON
+
+## Recibiendo datos de WS
+
+* Por defecto, en [iwclient.js](https://github.com/manuel-freire/iw/blob/a97e6112d102704edc10b4a35fbe467a3f1edcc8/plantilla/src/main/resources/static/js/iwclient.js#L14):
+
+~~~{.javascript}
+const ws = { 
+  // lo que recibes por WS se muestra por consola y punto
+  receive: (text) => console.log(text)
+
+  // ... otras cosas
+}
+~~~
+
+* Si quieres hacer algo más sofisticado, como aquí en [messages.html](https://github.com/manuel-freire/iw/blob/a97e6112d102704edc10b4a35fbe467a3f1edcc8/plantilla/src/main/resources/templates/messages.html#L80), debes sobreescribir el comportamiento de `ws.receive`:
+~~~{.javascript}
+ws.receive = (m) => {
+  // cuando recibo un mensaje, lo añado como fila al final de la tabla
+  dt.rows().add([m.from, m.to, 
+    formatDate(new Date().toISOString()), "", m.text, m.id]);		
+}
+~~~
+
+## Enviando cosas por WS
+
+* Sólo servidor $\rightarrow$ cliente\
+(para enviar cliente $\rightarrow$ servidor usamos peticiones normales)
+
+* Basta con especificar destinatario y mensaje, y usar un `messagingTemplate`: 
+
+~~~{.java}
+// en el controlador...
+@Autowired
+private SimpMessagingTemplate messagingTemplate;
+
+// dentro de un @AlgoMapping ...
+ObjectMapper mapper = new ObjectMapper();
+String json = mapper.writeValueAsString(
+  new CosaQueJacksonPuedeConvertirAJSON(argumentos));
+messagingTemplate.convertAndSend(
+  // podría ser un topic: "/topic/algo"; sólo reciben los suscritos
+  // en este caso, se lo enviamos por su canal personal
+  "/user/"+u.getUsername()+"/queue/updates", json);
+~~~
 
 # Fin
 
