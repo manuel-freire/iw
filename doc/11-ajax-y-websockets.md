@@ -1,6 +1,6 @@
 % Uso de AJAX y websockets
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.17
+% 2020.04.20
 
 ## Objetivo
 
@@ -22,7 +22,7 @@
 - usando JS para interpretar sus resultados (que se suponían serían XML)
 - Evolución:
 
-    - Copiado por Mozilla en el '00, Safari\footnote{Google Chrome aparece en el '08, basado en WebKit, el motor de Safari; luego se divorciaron, y ahora Blink $\neq$ WebKit, aunque ambos descienden del mismo tronco} en el '04, ...
+    - Copiado por Mozilla en el '00, Safari\footnote{Google Chrome aparece en el '08, basado en WebKit, el motor de Safari; luego se divorciaron, y ahora Blink (Google)$\neq$ WebKit (Safari), aunque ambos descienden del mismo tronco} en el '04, ...
     - Estandarizado por el W3C en el '06
     - Mejoras al estándar (progreso, ...) en el '08
     - Incluido en HTML5 por WhatWG en el '12
@@ -61,8 +61,8 @@ $.get( "test.php", { func: "getNameAndTime" },  function( data ) {
   console.log( data.time ); // 2pm
 }, "json");
 
-// parecido, pero en breve
-$.getJSON('test.php', (d) => console.log(d);
+// parecido, pero en breve - mostrando el resultado como objeto
+$.getJSON('test.php', (d) => console.log(d));
 ~~~
 
 ---
@@ -84,7 +84,7 @@ fetch('http://example.com/movies.json')
 
 ## Usando fetch
 
-Podeis elegir usar `JQuery`\footnote{Si lo haceis, usad una copia descargada en local y servida desde /\texttt{js}}. En los ejemplos siguientes, uso Fetch.
+Podeis elegir usar `JQuery`\footnote{Si lo haceis, usad una copia descargada en local y servida desde /\texttt{js}; en general, recomiendo hacer eso para todas las librerías y recursos}. En los ejemplos siguientes, uso Fetch.
 
 - Moderno, usa promesas para gestionar asincronía
 - No requiere librerías externas
@@ -153,7 +153,7 @@ console.log("Me imprimo antes de que el fetch acabe")
 ## Cosas que podemos sacar un objeto `Response`
 
 * `Response.status` - estado HTTP
-* `Response.ok` - true $\iff$ `Response.status == 200`
+* `Response.ok == true` $\iff$ `Response.status == 200`
 * `Response.body` - cuerpo de la respuesta. \
 Se le pueden sacar las [siguientes promesas](https://developer.mozilla.org/en-US/docs/Web/API/Body):
     * `.blob()` - contenido en binario, leído de un único golpe
@@ -173,11 +173,11 @@ Con Ajax es posible emular cualquier petición. Y con HTTP es posible hacer much
 
 ## Cosas típicas que puedes recibir
 
-- Nada. Porque a menudo basta con ver el\
-código de estado del resultado para saber si la petición ha funcionado o no
-- `texto`. Y lo muestras por consola o lo usas para reemplazar un elemento
-- `html`. Y luego lo muestras reemplazando el contenido de cualquier elemento
-- `json`. Máxima flexibilidad
+- Nada. Porque a menudo basta con ver el **código de estado** \
+del resultado para saber si la petición ha funcionado o no
+- **`texto`**. Y lo muestras por consola o lo usas para reemplazar un elemento
+- **`html`**. Y luego lo muestras reemplazando el contenido de cualquier elemento
+- **`json`**. Máxima flexibilidad, porque puede expresar cualquier estructura de datos sin ciclos.
 
 ## Usando AJAX
 
@@ -192,14 +192,14 @@ En la asignatura, usaremos Ajax para:
 
 - **Botones**: Borrar un elemento de un listado no debería requerir recargar todo el listado.
 
-En general, siempre que quieras no recargar página (pero hacer una petición), un fetch estaría justificado. Y más si la página es cara de construir (ejemplo: listado)
+En general, siempre que quieras **pedir o informar de algo sin recargar** la página, un fetch estaría justificado. Y más si la página es cara de construir (ejemplo: listado)
 
 ## JQuery y JS moderno
 
 * [JQuery]() facilita mucho interaccionar con el modelo (DOM) de las páginas. **Su uso en la asignatura es opcional**.
 * En los ejemplos, y en la plantilla, **no lo usaré** - porque de un tiempo a esta parte, [hay equivalentes no-JQuery](https://plainjs.com/javascript/):
-  - `$(selector)` $\larrow$ `document.querySelectorAll(selector)`
-  - `$(html)` $\larrow$ `const el = document.createElement('div'); el.innerHTML(html)`
+  - `$(selector)` $\longrightarrow$ `document.querySelectorAll(selector)`
+  - `$(html)` $\longrightarrow$ `const el = document.createElement('div'); el.innerHTML(html)`
   - ... (más en [web de plainjs](https://plainjs.com/javascript/)
 
 ## Ajax para validación
@@ -207,7 +207,7 @@ En general, siempre que quieras no recargar página (pero hacer una petición), 
 Recordamos el código de validación estándar:
 
 ~~~{.javascript}
-// manejador que se ejecuta cuando la página se carga
+// manejador que se ejecuta cuando la página se carga, sin machacar otros
 document.addEventListener("DOMContentLoaded", () => {
     // selector para elegir sobre qué elementos validar
 	let u = document.querySelectorAll('#username')[0]
@@ -215,6 +215,11 @@ document.addEventListener("DOMContentLoaded", () => {
     u.oninput = u.onchange = 
         () => u.setCustomValidity(  // si "", válido; si no, inválido
             validaUsername(u.value))
+})
+
+// NO LO HAGAS ASÍ: machaca manejador existente (si lo hay)
+document.onload = () => {
+    // (mismo contenido)
 }
 ~~~
 
@@ -233,6 +238,26 @@ function validaUsername(username) {
         .catch(() => "nombre de usuario inválido o duplicado");
 }
 ~~~
+
+. . .
+
+\small
+
+~~~{.js}
+// ejemplo de 'config', definido en templates/head.html de la plantilla
+const config = {
+  socketUrl: "ws://localhost:8080/ws",	// vacío indica falso
+  rootUrl: "/",
+  csrf: {
+    name: "_csrf",
+    value: "e8079d8b-84dc-405b-8eca-9d95a48a0fc7"
+  },
+  admin: true,
+  userId: 1
+};
+~~~
+
+\normalsize
 
 ---
 
@@ -278,34 +303,60 @@ En el cliente...
 new simpleDatatables.DataTable(
   '#datatable', { 
       ajax: {
-          url: config.rootUrl + "message/received"
+          url: config.rootUrl + "message/received", 
+          load: (xhr) => { /* ... opcional: fechas más bonitas */ } 
       }});
 ~~~
 
 ---
 
-Y en el servidor...
+Y en el [MessageController](https://github.com/manuel-freire/iw/blob/a97e6112d102704edc10b4a35fbe467a3f1edcc8/plantilla/src/main/java/es/ucm/fdi/iw/control/MessageController.java#L47) ...
 
 ~~~{.java}
 @GetMapping(path = "/received", produces = "application/json")
 @Transactional // para no recibir resultados inconsistentes
-@ResponseBody // para indicar que no devuelve vista, sino un objeto (jsonizado)
+@ResponseBody  // no devuelve nombre de vista, sino objeto JSON
 public List<Message.Transfer> retrieveMessages(HttpSession session) {
   long userId = ((User)session.getAttribute("u")).getId();		
   User u = entityManager.find(User.class, userId);
   log.info("Generating message list for user {} ({} messages)", 
-      u.getUsername(), u.getReceived().size());
-  return Message.asTransferObjects(u.getReceived());
+     u.getUsername(), u.getReceived().size());
+  return  u.getReceived()          // List<Message>
+    .stream()                      // para operar como flujo
+    .map(Transferable::toTransfer) // Message => Message.Transfer
+    .collect(Collectors.toList()); // List<Message.Transfer>
 }	
 ~~~
 
 --- 
 
-Sobre Transfer Objects
+Los métodos de controlador anotados con `@ResponseBody` convierten su resultado a JSON usando **Jackson**
+
+Jackson (y otras librerías que van de objeto Java a JSON y viceversa)
+
+  - fallan con estructuras que tengan circularidad (*stack overflow*)
+  - estarán encantadas de enviar la BD entera siguiendo *toodas* las referencias (no saben cuándo parar)
+  - no sabe cómo quieres manejar tus fechas 
+
+Solución estándar: usar [anotaciones](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations) para indicar qué se JSONiza cómo
+
+  - `@JsonProperty("nombre-distinto")` - para que el nombre en JSON sea otro
+  - `@JsonIgnore` - para ignorar un campo al JSONizar
+  - `@JsonView` - para agrupar muchas instruccines sobre cómo JSONizar por perfiles (ejemplo: `@JsonView("admin")` vs `@JsonView("public")`)
+  -  anotaciones + configuración vía `mapper.addMixInAnnotations(UnaClase.class, ClaseQueLaSerializa.class);` para dar el cambiazo de una clase por otra
+
+Solución propuesta: **objetos delegados (`Transferrable`)** que no requieren anotaciones, porque la serialización "por defecto" funciona perfectamente.
+
+---
+
+\small
 
 ~~~{.java}
-public class Message {
-  // ... resto de una entidad mensaje estandar
+public class Message implements Transferable<Message.Transfer> {
+
+  // ... campos de Message
+
+  @Getter @AllArgsConstructor
   public static class Transfer {
     private String from;
     private String to;
@@ -313,17 +364,20 @@ public class Message {
     private String received;
     private String text;
     long id;
-    public Transfer(Message m) {
-      this.from = m.getSender().getUsername();
-      this.to = m.getRecipient().getUsername();      
-      this.sent = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
-      m.getDateSent());
-      // ... convierte todos los campos al formato de intercambio
-    }
-    // ... getters para el TransferObject
+  }
+
+  @Override
+  public Transfer toTransfer() {
+    return new Transfer(sender.getUsername(), recipient.getUsername(), 
+      DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateSent),
+      dateRead == null ? null : 
+        DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateRead),
+      text, id);
   }
 }
 ~~~
+
+\normalsize
 
 # Websockets
 
@@ -362,7 +416,7 @@ Sec-WebSocket-Protocol: v10.stomp
     - Puedes enviar cualquier cosa; y recibir cualquier cosa. ¿Cómo poner orden?
 
 * El palabro
-    - **S**treaming **T**ext-Oriented **M**essaging **P**rotocol
+    - **S**treaming **T**ext-**O**riented **M**essaging **P**rotocol
     - Otra acepción: sonido que hace dar un pisotón
 
 * El protocolo
@@ -372,7 +426,7 @@ Sec-WebSocket-Protocol: v10.stomp
         - 0 o más cabeceras de tipo _clave_:_valor_
         - una línea en blanco
         - un contenido textual (posiblemente vacío)
-        - un carácter nulo (aquí uso `^@`)
+        - un *carácter nulo* (aquí uso `^@`)
 
 Ejemplo de frame:
 
@@ -456,8 +510,29 @@ receipt:77
 * Cada página que quiera usarlos tiene que solicitar la conexión vía JS
     - necesita la dirección `ws://aplicacion/ruta`
     - necesita cargar una librería STOMP para gestionar el protocolo
+
+\small
+
+~~~{.html}
+  <!-- declarado en fragments/head.html -->
+  <script type="text/javascript">
+    const config = {
+      // dirección (metida en la sesión en el "LoginSuccessHandler")
+      socketUrl: "[[${session.ws}?:'']]",	// vacío indica falso
+      // ... otras propiedades
+    };
+  </script>
+  <!-- librería para gestionar protocolo -->
+  <script th:src="@{/js/stomp.js}" src="js/stomp.js" 
+    type="text/javascript"></script>
+  <!-- y aquí es donde te suscribes y manejas lo que viene por el WS -->
+  <script th:src="@{/js/iwclient.js}" src="js/iwclient.js"
+      type="text/javascript"></script>
+~~~
+
+\normalsize
+
 * El servidor tiene que ofrecer esas rutas, y saber gestionarlas
-* Necesita también 
 
 ## Lo que usaremos de STOMP
 
@@ -474,11 +549,13 @@ receipt:77
 
 ~~~{.javascript}
 document.addEventListener("DOMContentLoaded", () => {
-	if (config.socketUrl) {
-		let subs = config.admin ? 
-				["/topic/admin", "/user/queue/updates"] : ["/user/queue/updates"]
-		ws.initialize(config.socketUrl, subs);
-	}
+  if (config.socketUrl) {
+    let subs = config.admin ? 
+        ["/topic/admin", "/user/queue/updates"] : 
+        ["/user/queue/updates"]
+    ws.initialize(config.socketUrl, subs);
+  }
+);
 ~~~
 
 ## Controlando la suscripción en el servidor
@@ -486,18 +563,20 @@ document.addEventListener("DOMContentLoaded", () => {
 ~~~{.java}
 @Configuration
 public class WebSocketSecurityConfig
-      extends AbstractSecurityWebSocketMessageBrokerConfigurer { 
+    extends AbstractSecurityWebSocketMessageBrokerConfigurer { 
 
-	
-    protected void configureInbound(
-            MessageSecurityMetadataSourceRegistry messages) {
-        messages
-            .simpSubscribeDestMatchers("/topic/admin")// solo admin
-            	.hasRole(User.Role.ADMIN.toString())
-            .anyMessage().authenticated(); 			// solo logueado
-    }
+
+  protected void configureInbound(
+      MessageSecurityMetadataSourceRegistry messages) {
+    messages
+      .simpSubscribeDestMatchers("/topic/admin") // solo admin
+        .hasRole(User.Role.ADMIN.toString())
+      .anyMessage().authenticated();             // solo logueado
+  }
 }
 ~~~
+
+... de forma que sin un no-admin abre la consola y se intenta suscribir a `/topic/admin`, la operación falla
 
 ## Enviando mensajes a un usuario
 
