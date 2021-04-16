@@ -616,11 +616,12 @@ messagingTemplate.convertAndSend("/topic/admin", json);
   - Escapa cadenas de forma correcta
 
 ~~~{.java}
-		User requester = (User)session.getAttribute("u");
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode rootNode = mapper.createObjectNode();
-		rootNode.put("text", requester.getUsername() + " is looking up " + u.getUsername());
-		String json = mapper.writeValueAsString(rootNode);
+User requester = (User)session.getAttribute("u");
+ObjectMapper mapper = new ObjectMapper();
+ObjectNode rootNode = mapper.createObjectNode();
+rootNode.put("text", requester.getUsername() + " is looking up " + u.getUsername());
+String json = mapper.writeValueAsString(rootNode);
+// { "text": "pepito is looking up juanito" }
 ~~~
 
 - - - 
