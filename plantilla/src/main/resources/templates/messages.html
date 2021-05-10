@@ -1,86 +1,87 @@
 <!DOCTYPE html>
-<html 
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><th:block th:replace="fragments/head :: header"/>
-	<title>Mensajes</title>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-	<script th:src="@{/js/simple-datatables-2.1.10.min.js}"></script>
-	<link th:href="@{/css/simple-datatables-2.1.10.css}" rel="stylesheet">
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>Mensajes</title>
+
+    <script th:src="@{/js/simple-datatables-2.1.10.min.js}"></script>
+    <link th:href="@{/css/simple-datatables-2.1.10.css}" rel="stylesheet">
 </head>
-<body>
-	<nav th:replace="fragments/nav.html :: nav">
-		Nav goes here
-	</nav>
-	
-	<div class="container">
-	<div class="main">
-	<h1>Mensajes recibidos</h1>
-	
-	<table class="datatable" id="datatable"></table>
-	
-	</div>
-	</div>	
 
-	<div class="sidebar">
-		<form th:action="@{/user/idOfTarget/msg}" method="POST">
-		<select id="idOfTarget">
+<body>
+    <nav th:replace="fragments/nav.html :: nav">
+        Nav goes here
+    </nav>
+
+    <div class="container">
+        <div class="main">
+            <h1>Mensajes recibidos</h1>
+
+            <table class="datatable" id="datatable"></table>
+
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <form th:action="@{/user/idOfTarget/msg}" method="POST">
+            <select id="idOfTarget">
 			<option th:each="user: ${users}" th:value="${user.id}" th:text="${user.username}">mfreire</option>
 		</select>
-		<textarea id="message" placeholder="escribe al usuario seleccionado" rows="4" cols="20"></textarea>
-		<button id="sendmsg" type="submit">Enviar</button>
-		</form>
-	</div>
+            <textarea id="message" placeholder="escribe al usuario seleccionado" rows="4" cols="20"></textarea>
+            <button id="sendmsg" type="submit">Enviar</button>
+        </form>
+    </div>
 
-	<script>
-	
-	function formatDate(d) {
-		// 2020-03-23T10:48:11.074 => 23/3/2020@10:48:18
-		return new Date(d).toLocaleString("es-ES").split(" ").join("@")
-	}
+    <script>
+        function formatDate(d) {
+            // 2020-03-23T10:48:11.074 => 23/3/2020@10:48:18
+            return new Date(d).toLocaleString("es-ES").split(" ").join("@")
+        }
 
-	// mostrando una tabla dinámica con datos cargados del servidor vía AJAX
-	let dt = new simpleDatatables.DataTable(
-		'#datatable', { 
-		    ajax: {
-		        url: config.rootUrl + "message/received", // empieza siempre por config.rootUrl
-		        load: function(xhr) {
-		        	let data = JSON.parse(xhr.responseText);
-		        	for (let i=0; i<data.length; i++) {
-		        		let row = data[i];
-		        		row.sent = formatDate(row.sent);
-		        		if (row.received) {
-		        			row.received = formatDate(row.received);
-		        		}
-		        	}
-		        	
-		        	return JSON.stringify(data);
-		        }
-		    }
-		}
-	);
+        // mostrando una tabla dinámica con datos cargados del servidor vía AJAX
+        let dt = new simpleDatatables.DataTable(
+            '#datatable', {
+                ajax: {
+                    url: config.rootUrl + "message/received", // empieza siempre por config.rootUrl
+                    load: function(xhr) {
+                        let data = JSON.parse(xhr.responseText);
+                        for (let i = 0; i < data.length; i++) {
+                            let row = data[i];
+                            row.sent = formatDate(row.sent);
+                            if (row.received) {
+                                row.received = formatDate(row.received);
+                            }
+                        }
 
-	// envío de mensajes vía AJAX, sin recargar la página
-	document.addEventListener("DOMContentLoaded", () => {
-		let b = document.getElementById("sendmsg");
-		b.onclick = (e) => {
-			let idOfTarget = document.getElementById("idOfTarget").value;
-			let url = b.parentNode.action.replace("idOfTarget", idOfTarget);
-			e.preventDefault();
-			console.log(b, b.parentNode)
-			go(url, 'POST', {message: 
-					document.getElementById("message").value})
-				.then(d => console.log("happy", d))
-				.catch(e => console.log("sad", e))
-		}
-	});
+                        return JSON.stringify(data);
+                    }
+                }
+            }
+        );
 
-	// sobreescribid esta funcion para especificar qué sucede cuando recibes un mensaje
-	// aquí estoy metiendo el mensaje al final de la tabla
-	ws.receive = (m) => {
-		dt.rows().add([m.from, m.to, formatDate(new Date().toISOString()), "", m.text, m.id]);		
-	}
-	
-	</script>
+        // envío de mensajes vía AJAX, sin recargar la página
+        document.addEventListener("DOMContentLoaded", () => {
+            let b = document.getElementById("sendmsg");
+            b.onclick = (e) => {
+                let idOfTarget = document.getElementById("idOfTarget").value;
+                let url = b.parentNode.action.replace("idOfTarget", idOfTarget);
+                e.preventDefault();
+                console.log(b, b.parentNode)
+                go(url, 'POST', {
+                        message: document.getElementById("message").value
+                    })
+                    .then(d => console.log("happy", d))
+                    .catch(e => console.log("sad", e))
+            }
+        });
+
+        // sobreescribid esta funcion para especificar qué sucede cuando recibes un mensaje
+        // aquí estoy metiendo el mensaje al final de la tabla
+        ws.receive = (m) => {
+            dt.rows().add([m.from, m.to, formatDate(new Date().toISOString()), "", m.text, m.id]);
+        }
+    </script>
 </body>
+
 </html>
