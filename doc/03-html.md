@@ -1,6 +1,6 @@
 % Introducción a html
 % (manuel.freire@fdi.ucm.es)
-% 2020.02.22
+% 2022.01.31
 
 ## Objetivo
 
@@ -158,19 +158,27 @@
 
 ## Comentarios
 
+\large
+
 ~~~{.html}
   <!-- esto es un comentario-->
+
   <!-- 
     este comentario
     tiene varias líneas
    -->
 ~~~
 
-- OJO: no debe contener `--`. O, siendo más precisos, 
+\normalfont
 
-> must not start with the string `>`, nor start with the string `->`, nor contain the strings 
-> `<!--`, `-->`, or `--!>`, nor end with the string `<!-`.
-[Sección `12.1.6 Comments` del estándar](https://html.spec.whatwg.org/#comments)
+**NO** anides comentarios; las reglas son algo [raras](https://html.spec.whatwg.org/multipage/syntax.html#comments):
+
+- Empiezan con `<!--`
+- Luego viene, opcionalmente, texto, que
+    + no puede empezar por `>` ni `->`
+    + no puede contener `<!--`, `-->`, ó `--!>`
+    + no puede acabar por `<!-`
+- Acaban con `-->`
 
 ## Estructura de un documento
 

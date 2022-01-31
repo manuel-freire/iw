@@ -1,6 +1,6 @@
 % Presentación de la asignatura
 % (manuel.freire@fdi.ucm.es)
-% 2021.02.15
+% 2022.02.25
 
 ## Objetivo
 
@@ -53,7 +53,9 @@ introduction to JS and CSS
 
 - Conocimientos esperados:
     + Familiaridad con Java, MVC
-    + Familiaridad con tecnologías web y marcado
+    + Algo de familiaridad con 
+        - tecnologías web y marcado
+        - bases de datos
 
 - Asignatura basada en **proyectos**
     + Propuesta + 3 prototipos en grupo
@@ -89,7 +91,7 @@ Security.
 10. tutorías en laboratorio; **Entrega** del 2º prototipo (con BD)
 11. y posteriores: tutorías en laboratorio, con **Entrega final** el último día
 
-- examen de junio: individual, *correcciones de la entrega final*
+- examen final: individual, *correcciones de la entrega final*
 - 1 semana después: **entrega versión revisada** \
 
     (con mejoras solicitadas en el examen)
@@ -206,6 +208,25 @@ más complejas y ricas que las de AW *y se espera que las hagais*)
 
 ![www.tiobe.com/tiobe-index/, febrero 2021](img/tiobe-2021-02.png "www.tiobe.com/tiobe-index/"){ width=100% }
 
+# Tecnologías según SO dev survey
+
+![https://insights.stackoverflow.com/survey/2021, febrero 2021](img/so-21-langs.png "https://insights.stackoverflow.com/survey/2021"){ width=80% }
+
+ - - - 
+
+![https://insights.stackoverflow.com/survey/2021, febrero 2021](img/so-21-web.png "https://insights.stackoverflow.com/survey/2021"){ width=80% }
+
+ - - - 
+
+![https://insights.stackoverflow.com/survey/2021, febrero 2021](img/so-21-env.png "https://insights.stackoverflow.com/survey/2021"){ width=80% }
+
+ - - - 
+
+![https://insights.stackoverflow.com/survey/2021, febrero 2021](img/so-21-qna.png "https://insights.stackoverflow.com/survey/2021"){ width=80% }
+
+ - - - 
+
+![https://insights.stackoverflow.com/survey/2021, febrero 2021](img/so-21-dops.png "https://insights.stackoverflow.com/survey/2021"){ width=80% }
 
 # Comparando lenguajes de programación
 

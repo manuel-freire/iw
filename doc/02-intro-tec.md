@@ -1,6 +1,6 @@
 % Introducción a las tecnologías web
 % (manuel.freire@fdi.ucm.es)
-% 2020.02.16
+% 2022.02.25
 
 ## Objetivo y contenido
 
@@ -448,7 +448,9 @@ rfc3875 en el '04; mucho Perl, e incluso C/C++
 - '09: Node.js, Go, DevOps
 - '10: Angular
 - '11: Bootstrap
+- '13: React
 - '14: NPM
+- '15: JS ES6
 
 # Epílogo
 
