@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+    </head>
+    <body>
+        <form>
+            <span th:text="${pregunta.text}">Texto de la pregunta</span>
+            <ul>
+                <li>
+                    <input type="checkbox" name="respuestas" value="0"/>
+                    <span th:text="${pregunta.answers[0].text}">Texto de una respuesta</span>     
+                </li>
+                <li>
+                    <input type="checkbox" name="respuestas" value="1"/>
+                    <span th:text="${pregunta.answers[1].text}">Texto de una respuesta</span>     
+                </li>
+                <li>
+                    <input type="checkbox" name="respuestas" value="2"/>
+                    <span th:text="${pregunta.answers[2].text}">Texto de una respuesta</span>     
+                </li>
+                <li>
+                    <input type="checkbox" name="respuestas" value="3"/>
+                    <span th:text="${pregunta.answers[3].text}">Texto de una respuesta</span>     
+                </li>
+            </ul>
+            <button type="submit">Enviar estas respuestas</button>
+        </form>
+    </body>
+</html>
