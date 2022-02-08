@@ -1023,6 +1023,302 @@ div.sidebar { grid-area: sidebar; }
 
 ![depurando un grid](img/grid-f12.png "depurando un grid"){ width=90% }
 
+## Bootstrap 
+
+
+### Introducción
+
+- Desarrollada por Twitter para su interfaz web
+   + aparece en 2011, layout revolucionario
+       - 2012: bootstrap 2, con glyphicons y responsive
+       - 2013: bootstrap 3, "flat design", sin soporte para IE7
+       - 2014-18: bootstrap 4, flexbox, rediseño completo
+       - 2021: bootstrap 5, deja de usar JQuery, iconos propios
+   + 11º proyecto por [número de estrellas en GitHub](https://github.com/EvanLi/Github-Ranking/blob/master/Top100/Top-100-stars.md)
+- Librería de estilos CSS "responsive"
+   + **nadie escribe CSS desde cero** (y boostrap genera el suyo vía SASS)
+   + competidores en CSS:
+       - materialize (google)
+       - foundation (zurb)
+       - uikit (yootheme)
+       - ... muchos, muchos más
+   + otras opciones de frontend web: react, angular, vue, ... no se limitan al CSS
+
+### Conceptos clave
+
+- Boostrap = estilos y algo de comportamiento
+  + un .css al principio (en tu `<head>`)
+  + un .js al final (justo antes de cerrar tu `<body>`)
+- Layout = disposición de elementos en página
+  + tamaño de pantalla dicta disposición según **breakpoints**, en colaboración con **contenedores** (grande, pequeño, estirable, ...)
+  + grid (por debajo, flexbox) fácil de usar, con filas y columnas.
+  + reparto basado en 12 = todo, 6 = mitad, 4 = 1/3, ...
+  + sistema de **gutters** para espaciar filas/columnas
+- Cambios a "estilo por defecto" y componentes extra
+  + formularios reestilados, y validación más sencilla 
+  + 23 componentes adicionales, y en particular
+  + accordion (expanden/contraen para mostrar/ocultar detalles)
+  + card (para mostrar ítems estructurados)
+  + modales (para solicitar detalles)
+  + navbar (para usar como menú/barra superior de una aplicación)
+  + nav&tab (para generar interfaces tabuladas)
+
+### Layout: breakpoints
+
+![https://flukeout.github.io/](../img/t06/b5-breakpoints.png "https://getbootstrap.com/docs/5.0/layout/breakpoints/"){ height=60% }
+
+Si pides `md` pero no hay suficientes píxeles, entonces tu solicitud no se tiene en cuenta, y se pasa a "columna única".
+
+### Layout: ideas
+
+~~~{.html}
+<div class="container"> <!-- sin container, ignoraría row y col -->
+  <div class="row"> <!-- primeras 2 iguales, en todos los tamaños -->
+    <div class="col"> col </div>
+    <div class="col"> col </div>
+    <div class="col-auto"> me ajusto a mi contenido </div>
+  </div>
+  <div class="row"> <!-- relacion 3:1 -->
+    <div class="col-9"> col-9 </div>
+    <div class="col"> col </div>
+  </div>
+  <div class="row"> <!-- colapso cuando llegue a sm -->
+    <div class="col-sm-8">col-sm-8</div>
+    <div class="col-sm-4">col-sm-4</div>
+  </div>
+</div>
+~~~
+
+- `row` = soy una fila, y voy a contener columnas (`col`)
+- `col-sm-4` = quiero ocupar 1/3 del ancho, pero me colapso si llego a  `sm`
+- `col-auto` = dame lo que ocupo, y nada más
+- detalles: [https://getbootstrap.com/docs/5.0/layout/grid](https://getbootstrap.com/docs/5.0/layout/grid)
+- este ejemplo en [https://jsfiddle.net/mfreire/s3tbmj5g/](https://jsfiddle.net/mfreire/s3tbmj5g/)
+
+- - - 
+
+
+
+### Formularios
+
+ver [https://getbootstrap.com/docs/5.0/forms/validation/](https://getbootstrap.com/docs/5.0/forms/validation/)
+
+\small
+
+~~~{.html}
+
+<form class="row g-3">
+  <div class="col-md-4">
+    <label for="fname" class="form-label">First name</label>
+    <input type="text" class="form-control" id="fname" value="Mark"
+     required> <!-- validación del propio navegador -->
+  </div>
+    <div class="col-md-4">
+    <label for="lname" class="form-label">Last name</label>
+    <input type="text" class="form-control" id="lname" value="Otto" 
+    required>
+  </div>
+  <div class="col-md-4">
+    <label for="uname" class="form-label">Username</label>
+    <div class="input-group">
+      <span class="input-group-text" id="inputGroupPrepend2">@</span>
+      <input type="text" class="form-control" id="uname"  aria-describedby="inputGroupPrepend2" 
+    required>
+    </div>
+  </div>
+    <div class="col-12">
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </div>
+</form>
+
+~~~
+
+\normalfont
+
+- - -
+
+Etiquetando campos:
+
+  - Usad `<label for="idDeControl"><input id="idDeControl" ...>` para asociar etiquetas con controles. 
+  - O, si queréis ahorrar espacio, `<input id="idDeControl" placeholder="cosaQueDesapareceCuandoEscribes" ...>`
+  - O incluso símbolos: `<span class="input-group-text" id="inputGroupPrepend2">@</span>` + `aria-describedby="inputGroupPrepend2"`
+
+Etiquetar cosas es importante - y uno de los requisitos principales de **ARIA** (Accessible Rich Internet Applications). Para más sobre **accesibilidad**: [WAI-ARIA](https://www.w3.org/TR/wai-aria-practices-1.1/)
+
+### Componentes: navbar
+
+Permite montar una barra de navegación (ver [docs/5.0/components/navbar](https://getbootstrap.com/docs/5.0/components/navbar/)) con 
+
+  - título/logo (`navbar-brand`)
+  - enlaces (`nav-item` + `nav-link`)
+  - búsqueda (`input` con `type="search"`)
+  - enlaces en menús desplegables (útil para detalles/logout), vía `nav-item dropdown` y compañía.
+
+Una barra de navegación típica:
+
+![](../img/t06/b5-navbar-expandido.png){ height=20% } 
+
+La misma barra, cuando hay poco espacio:
+
+![](../img/t06/b5-navbar-colapsado.png){ height=5% } 
+
+### Componentes: accordion
+
+Permite mostrar/ocultar detalles. Ver [docs/5.0/components/accordion](https://getbootstrap.com/docs/5.0/components/accordion/)
+
+\small
+
+~~~{.html}
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button"
+       data-bs-toggle="collapse" data-bs-target="#collapseOne"
+       aria-expanded="true" aria-controls="collapseOne">
+        Accordion Item #1
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show"
+     aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        Muchos detalles aquí
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    ...
+  </div>
+</div>
+~~~
+
+\normalfont
+
+### Componentes: card
+
+Para mostrar información en formato postal (= tamaño fijo), generalmente usado para poner muchos juntos. Ver [docs/5.0/components/card](https://getbootstrap.com/docs/5.0/components/card/)
+
+~~~{.html}
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">An item</li>
+    <li class="list-group-item">A second item</li>
+    <li class="list-group-item">A third item</li>
+  </ul>
+  <div class="card-body">
+    <a href="#" class="card-link">Card link</a>
+    <a href="#" class="card-link">Another link</a>
+  </div>
+</div>
+~~~
+
+### Componentes: modales
+
+Para mostrar un diálogo emergente que no te deja hacer nada hasta que lo rellenas. Útil para, por ejemplo, pedir detalles sobre algo sin incluir un formulario siempre visible. Más en [docs/5.0/components/modal](https://getbootstrap.com/docs/5.0/components/modal/)
+
+\small
+
+~~~{.html}
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" 
+ data-bs-target="#exampleModal">Click me!</button>
+<div class="modal fade" id="exampleModal" tabindex="-1"   
+ aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Titulo</h5>
+        <button type="button" class="btn-close"
+         data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ... cuerpo ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" 
+         data-bs-dismiss="modal">
+          Cerrar</button>
+        <button type="button" class="btn btn-primary">
+          Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+~~~
+
+\normalfont
+
+
+### Componentes: nav&tab
+
+Para mostrar pestañas y pasar de una a otra. Detalles en [docs/5.0/components/navs-tabs](https://getbootstrap.com/docs/5.0/components/navs-tabs/)
+
+~~~{.html}
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="#">
+      Active</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link disabled" href="#" tabindex="-1" 
+     aria-disabled="true">Disabled</a>
+  </li>
+</ul>
+~~~
+
+### Componentes: badge
+
+Para mostrar etiquetas pequeñas y, posiblemente, llamar la atención del usuario. Detalles en [docs/5.0/components/badge](https://getbootstrap.com/docs/5.0/components/badge/)
+
+~~~{.html}
+<button type="button" class="btn btn-primary position-relative">
+  Inbox
+  <span class="position-absolute top-0 start-100 
+   translate-middle badge rounded-pill bg-danger">
+    99+
+    <span class="visually-hidden">unread messages</span>
+  </span>
+</button>
+<!-- y con más colores; text-dark evita blanco-con-fondo-claro -->
+<span class="badge bg-primary">Primary</span>
+<span class="badge bg-secondary">Secondary</span>
+<span class="badge bg-success">Success</span>
+<span class="badge bg-danger">Danger</span>
+<span class="badge bg-warning text-dark">Warning</span>
+<span class="badge bg-info text-dark">Info</span>
+<span class="badge bg-light text-dark">Light</span>
+<span class="badge bg-dark">Dark</span>
+~~~
+
+### Componentes: tooltips
+
+El atributo `title` sirve para poner tooltips. Pero para que queden más bonitos, puedes usar `data-bs-toggle="tooltip"`, y ya puestos elegir dónde colocarlos (usando *popper.js*, integrado en tu `bootstrap.bundle.js`). Detalles en [docs/5.0/components/tooltips](https://getbootstrap.com/docs/5.0/components/tooltips/)
+
+~~~{.html}
+<button type="button" class="btn btn-secondary"
+ data-bs-toggle="tooltip" data-bs-placement="top" 
+ title="Tooltip on top">
+  Tooltip on top
+</button>
+<button type="button" class="btn btn-secondary" 
+ data-bs-toggle="tooltip" data-bs-placement="right" 
+ title="Tooltip on right">
+  Tooltip on right
+</button>
+<!-- e igual para bottom ó left; y si especificas 
+     data-bs-html="true" puedes insertar html
+-->
+~~~
+
 # Fin
 
 ## ¿dudas?
