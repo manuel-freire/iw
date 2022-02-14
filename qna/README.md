@@ -1,12 +1,47 @@
-### instalando el entorno
+# Proyecto de demo: un clon de kahoot
 
-Extension Pack for Java: 0.12.1
-Spring Initizlizr Java Support: 0.8
-Spring Boot Dashboard: 0.2.0
-Live Share: 1.0.5273
-Lombok Annotations Support for VS Code: 1.0.1
+## instalando el entorno
 
-### creando un nuevo proyecto
+Usaremos Visual Studio Code, con las siguientes extensiones:
+- Extension Pack for Java: 0.12.1
+- Spring Initizlizr Java Support: 0.8
+- Spring Boot Dashboard: 0.2.0
+- Live Share: 1.0.5273
+- Lombok Annotations Support for VS Code: 1.0.1
+
+Es importante instalar *todas* las extensiones, y tener un entorno de Java funcionando, antes de emprender los siguientes pasos.
+
+Para el entorno Java+Maven, necesitaremos:
+
+### Windows 10/11
+
+En los laboratorios de la FDI tenemos limitada la instalación de recursos a nivel de sistema. Esto dificulta el uso de los instaladores java que vienen en la última versión oficial; en cualquier caso, el profesor recomienda usar la versión abierta ([OpenJDK](https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_windows-x64_bin.zip)) en lugar de la [versión Oracle](https://www.oracle.com/java/technologies/downloads/#jdk17-windows).
+
+En ordenadores de clase, uso
+
+* [OpenJDK 11](https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_windows-x64_bin.zip)
+* [Maven 3.8](https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip)
+
+Para que funcionen desde línea de comandos, es necesario incluir sus ejecutables en la variable de sistema `PATH`:
+
+- busca "variables de entorno" (o "environment variables" si te va el inglés)
+- `PATH` debe incorporar las rutas de los ejecutables de **java**, **javac**, y **mvn**. Así, si estaban instaladas en `C:\code\openjdk-11+28_windows-x64_bin\jdk-11\bin` (java, javac) y `C:\code\apache-maven-3.8.4\bin` (maven), `PATH` debería incorporar ambas rutas
+- `JAVA_HOME` debe apuntar a la ruta de la **JDK**, que es justo lo que hay antes de la carpeta `bin` con los ejecutables. Es decir, en el ejemplo anterior, `C:\code\openjdk-11+28_windows-x64_bin\jdk-11`
+
+Si **no** tienes acceso a la configuración de variables de entorno, puedes usar las siguientes instrucciones en una consola tipo `powershell` (que es la que usa el terminal de VS Code). Tendrás que volver a introducirlas cada vez que abras un terminal:
+
+~~~{.ps1}
+$env:Path = 'C:\code\openjdk-11+28_windows-x64_bin\jdk-11\bin;C:\code\apache-maven-3.8.4\bin;' + $env:Path
+$env:JAVA_HOME = 'C:\code\openjdk-11+28_windows-x64_bin\jdk-11'
+~~~
+
+### Linux
+
+Puedes descargar OpenJDK y Maven como paquetes para muchas distribuciones. Yo uso la OpenJDK tal y como la empaqueta Ubuntu (paquetes `openjdk-11-jdk` y `openjdk-11-doc`); pero prefiero descargar maven por mi cuenta (https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip), colocarlo en `/opt/maven`, y añadir enlaces simbólicos para sus ejecutables vía `ln -s /opt/maven/bin/* /usr/local/bin`.
+
+## creando un nuevo proyecto
+
+
 
 Emmet... => Initialzr
 

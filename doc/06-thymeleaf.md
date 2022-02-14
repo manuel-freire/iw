@@ -1,6 +1,6 @@
 % Thymeleaf
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.01
+% 2022.02.14
 
 ## Objetivo
 
@@ -28,6 +28,23 @@ echo "<section>\n"
 <h1> bienvenido, <span th:text="${nombre}">Luis</span></h1>
 </section>
 ~~~
+
+- - - 
+
+(novedad en Thymeleaf 3.0+)
+
+~~~{.html}
+<section>
+<h1> bienvenido, <span th:text="${nombre}">Luis</span></h1>
+</section>
+~~~
+
+~~~{.html}
+<section>
+<h1> bienvenido, [[${nombre}]]></h1>
+</section>
+~~~
+
 
 ## Lenguajes de plantillas
 
@@ -61,9 +78,9 @@ echo "<section>\n"
     </thead>
     <tbody>  <!-- th:each repite elemento -->
         <tr th:each="prod: ${allProducts}">
-        <td th:text="${prod.name}">Oranges</td>
-        <td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">
-            0.99
+            <td th:text="${prod.name}">Oranges</td>
+            <td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">
+                0.99
         </td>
         </tr>
     </tbody>
@@ -78,6 +95,20 @@ echo "<section>\n"
 - javascript - similar a text, pero con elementos js-específicos
 - css - también similar a text, pero con elementos de css
 - raw (= crudo) - no hace nada
+
+- - - 
+
+(cambios en v3.0+)
+
+- de marcado
+    + HTML - cualquier html; soporte mejorado para html5
+    + XML - sólo bien formados
+- textuales
+    - TEXT 
+    - JAVASCRIPT
+    - CSS
+- nop
+    - RAW - sigue sin hacer nada
 
 ## Texto internacionalizado (i18n) con `#`
 
@@ -166,7 +197,7 @@ Tras thymeleaf ...
 ~~~
 
 - Problemas de no usar `th:href`
-    - si usas enlaces absolutos (empiezan por `/`), no puedes meter varias apliaciones en un mismo servidor. Si despliego la aplicación en \
+    - si usas enlaces absolutos (empiezan por `/`), no puedes meter varias aplicaciones en un mismo servidor. Si despliego la aplicación en \
     `http://localhost:8080/miApp/`, `<a href="/logout">salir<a>` falla.
     - si usas enlaces relativos (no empiezan por `/`), tienes un problema para usar URLs RESTful. Por ejemplo, con `<a href="/logout">salir<a>` desde... 
         - `http://localhost:8080/perfil`, el enlace va a \
@@ -174,7 +205,7 @@ Tras thymeleaf ...
         - `http://localhost:8080/usuario/42/pedidos`, el enlace va a \
         `http://localhost:8080/usuario/42/logout`, que no esperabas
 
-- **Todos tus enlaces internos deberían ser de tipo th:href**, porque \
+- **Todos tus enlaces internos deberían ser de tipo `th:href`**, porque \
     *las vistas no deberían conocer su contexto de uso*. 
 
 ## Argumentos en enlaces
@@ -212,12 +243,39 @@ Tras thymeleaf ...
 <!-- ... -->
 ~~~
 
+- - - 
+
+Nuevo en Thymeleaf 3+: posible usar fragmentos en muchos más sitios
+
+\small
+
+~~~{.html}
+<head th:replace="base :: common_header(~{::title},~{::link})">
+  <title>Awesome - Main</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}">
+</head>
+
+<!-- en common_header -->
+<head th:fragment="common_header(title,links)">
+  <title th:replace="${title}">The awesome application</title>
+
+  <!-- Common styles and scripts -->
+  <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/awesomeapp.css}">
+  <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+  <script type="text/javascript" th:src="@{/sh/scripts/codebase.js}"></script>
+
+  <!--/* Per-page placeholder for additional links */-->
+  <th:block th:replace="${links}" />
+</head>
+~~~
+
 ## Fragmentos sin etiqueta: \<th:block\>
 
 - en general, Thymeleaf funciona con anotaciones `th:algo` \
 *dentro* de una etiqueta `html` existente, como *atributos*
-- a veces no quieres move o reemplazar etiquetas completas; usa \
-`<th:block>` como etiqueta (desaparece en el html resultante)
+- a veces no quieres ni mover ni reemplazar etiquetas completas \
+si usas **`<th:block>`**, la etiqueta en sí *desaparece* del html resultante:
 
 ~~~{.html}
 <!DOCTYPE html>
@@ -253,6 +311,7 @@ Tras thymeleaf ...
     - las comparaciones también funcionan, pero tienes que **escapar** `<` y `>` (vía `&lt;` y `&gt;`). Como queda feo, puedes usar `ge` para `<=`, etcétera.
     - también tienes el operador ternario, donde \
     `condición?siCierto:siFalso` evalúa a `siCierto` ó `siFalso`
+    - v3.0+: operador "nop": `<span th:text="${user.name} ?: _">nadie</span>`
 
 ~~~{.html}
 <span th:text="'Welcome to our application, ' + ${user.name} + '!'">
@@ -533,10 +592,37 @@ th:xmlbase 	th:xmllang 	th:xmlspace
 </script>
 ~~~
 
-## Ejemplos comentados
+## Separando presentación y template
+
+Desde Thymeleaf 3 es posible separar un template en **.html** (puro) + **.th.xml** (sólo con información de template):
 
 ~~~{.html}
+<!DOCTYPE html>
+  <!-- ... -->
+    <table id="usersTable">
+      <tr>
+        <td class="username">Jeremy Grapefruit</td>
+        <td class="usertype">Normal User</td>
+      </tr>
+      <tr>
+        <!-- ... -->
+      </tr>
+    </table>
+</html>
+~~~
 
+- - - 
+
+~~~{.xml}
+<?xml version="1.0"?>
+<thlogic>
+  <attr sel="#usersTable" th:remove="all-but-first">
+    <attr sel="/tr[0]" th:each="user : ${users}">
+      <attr sel="td.username" th:text="${user.name}" />
+      <attr sel="td.usertype" th:text="#{|user.type.${user.type}|}" />
+    </attr>
+  </attr>
+</thlogic>
 ~~~
 
 ## Referencias
@@ -544,6 +630,7 @@ th:xmlbase 	th:xmllang 	th:xmlspace
 - [Tutorial básico de thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html), de su página
 - [Spring Expression Language](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions-language-ref), también llamado SpEL, muy similar a OGNL
 - [Object Graph Navigation Language](https://commons.apache.org/proper/commons-ognl/language-guide.html), base de SpEL
+- [Novedades de Thymeleaf 3](https://www.thymeleaf.org/doc/articles/thymeleaf3migration.html), de su página
 
 # Fin
 
