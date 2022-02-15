@@ -12,7 +12,8 @@
     <main class="flex-shrink-0">
         <div class="container">
             <h1 class="mt-5">Perfil de <span th:text="${user.username}">Paco</span></h1>
-            <div class="py-3 footer">
+            <!-- para enviar mensajes; algo feo -->
+            <div class="py-5 position-absolute bottom-0 row ">
                 <form th:action="@{/user/__${user.id}__/msg}" method="POST">
                     <input type="text" id="message" placeholder="escribe a este usuario" />
                     <button id="sendmsg" class="btn btn-secondary" type="submit">Enviar</button>

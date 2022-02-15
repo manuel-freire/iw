@@ -66,17 +66,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		        .getSingleResult();		
 		session.setAttribute("u", u);
 
-		// get count of unread messages
-		long unread = entityManager.createNamedQuery("Message.countUnread", Long.class)
-			.setParameter("userId", u.getId())
-			.getSingleResult();	
-		session.setAttribute("unread", unread);
-
-		// add a 'ws' session variable
-		String ws = request.getRequestURL().toString()
-				.replaceFirst("[^:]*", "ws")		// http[s]://... => ws://...
-				.replaceFirst("/[^/]*$", "/ws");	// .../foo		 => .../ws
-		session.setAttribute("ws", ws);
+		// add 'url' and 'ws' session variables
+		String url = request.getRequestURL().toString()
+			.replaceFirst("/[^/]*$", ""); 	    // .../foo		 => ...
+		session.setAttribute("url", url);
+		String ws = url
+			.replaceFirst("[^:]*", "ws");       // http[s]://... => ws://...
+		session.setAttribute("ws", ws + "/ws");
 
 		// redirects to 'admin' or 'user/{id}', depending on the user
 		String nextUrl = u.hasRole(User.Role.ADMIN) ? 

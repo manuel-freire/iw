@@ -15,6 +15,10 @@ const ws = {
      */
     receive: (text) => {
         console.log(text);
+        let p = document.querySelector("#nav-unread");
+        if (p) {
+            p.textContent = +p.textContent + 1;
+        }
     },
 
     headers: { 'X-CSRF-TOKEN': config.csrf.value },
@@ -108,6 +112,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (config.socketUrl) {
         let subs = config.admin ? ["/topic/admin", "/user/queue/updates"] : ["/user/queue/updates"]
         ws.initialize(config.socketUrl, subs);
+
+        let p = document.querySelector("#nav-unread");
+        if (p) {
+            go(`${config.rootUrl}/user/unread`, "GET").then(d => p.textContent = d.unread);
+        }
     } else {
         console.log("Not opening websocket: misssing config", config)
     }
