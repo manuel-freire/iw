@@ -1,0 +1,20 @@
+/* usa este fichero para personalizar tus vistas */
+
+.iwthumb {
+    height: 32px;
+    width: 32px;
+}
+
+.errTable tr>td:first-child {
+    min-width: 200px;
+    max-width: 200px;
+    word-break: break-all;
+    font-weight: bold;
+    color: gray;
+}
+
+.errTable td {
+    vertical-align: top;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+}

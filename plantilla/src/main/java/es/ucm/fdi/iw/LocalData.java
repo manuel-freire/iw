@@ -53,8 +53,8 @@ public class LocalData {
     /**
      * Returns a file in a given folder. Beware: you should have
      * carefully escaped any user-supplied folder or file names prior to calling this.
-     * @param folderName
-     * @param fileName
+     * @param folderName to use; the (hardcoded) name of a DB table is a simple, safe bet
+     * @param fileName to use; the integer ID of a table row is a simple, safe bet
      * @return a File pointing to baseFolder/folderName/fileName. If
      * the file does not exist, it is not created. However, if its folder
      * does not exist, it *will* be created (as by a call to getFolder).

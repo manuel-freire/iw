@@ -7,9 +7,9 @@ import org.springframework.security.config.annotation.web.socket.AbstractSecurit
 import es.ucm.fdi.iw.model.User;
 
 /**
- * Similar a SecurityConfig, pero para websockets con STOMP.
+ * Similar to SecurityConfig, but for websockets that use STOMP.
  * 
- * @author mfreire
+ * @see https://docs.spring.io/spring-security/reference/servlet/integrations/websocket.html
  */
 @Configuration
 public class WebSocketSecurityConfig
@@ -18,8 +18,8 @@ public class WebSocketSecurityConfig
 	
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
         messages
-            .simpSubscribeDestMatchers("/topic/admin")	// solo admines pueden suscribirse a este topic
+            .simpSubscribeDestMatchers("/topic/admin")	// only admins can subscribe
             	.hasRole(User.Role.ADMIN.toString())
-            .anyMessage().authenticated(); 				// todo tiene que proceder de sesiones autenticadas
+            .anyMessage().authenticated(); 				// must log in to use websockets
     }
 }

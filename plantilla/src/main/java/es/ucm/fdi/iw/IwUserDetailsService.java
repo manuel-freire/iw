@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import es.ucm.fdi.iw.model.User;
 
+/**
+ * Authenticates login attempts against a JPA database
+ */
 public class IwUserDetailsService implements UserDetailsService {
 
 	private static Logger log = LogManager.getLogger(IwUserDetailsService.class);
@@ -39,7 +42,7 @@ public class IwUserDetailsService implements UserDetailsService {
 	        return new org.springframework.security.core.userdetails.User(
 	        		u.getUsername(), u.getPassword(), roles); 
 	    } catch (Exception e) {
-    		log.info("No such user: " + username + "(e = " + e.getMessage() + ")");
+    		log.info("No such user: " + username + " (error = " + e.getMessage() + ")");
     		throw new UsernameNotFoundException(username);
     	}
     }

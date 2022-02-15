@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  
-	Uso desde consola (si tienes maven y java bien instalados, 
-	y estas en el mismo directorio que este pom.xml):
-		- compilar y ejecutar el proyecto:
-			mvn spring-boot:run
--->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.4</version>
+		<version>2.6.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>es.ucm</groupId>
-	<artifactId>plantilla</artifactId>					<!-- cambia esto -->
-	<version>0.0.1-SNAPSHOT</version>
-	<name>plantilla</name>								<!-- cambia esto -->
-	<description>Cambia esta descripción</description>	<!-- cambia esto -->
-	<packaging>jar</packaging>
-
+	<groupId>es.ucm.fdi.iw</groupId>
+	<artifactId>plantilla</artifactId>                      <!-- cambia esto -->
+	<version>0.0.1-SNAPSHOT</version>     
+	<name>plantilla</name>                                  <!-- cambia esto -->
+	<description>Demo project for Spring Boot</description> <!-- cambia esto -->
 	<properties>
-		<java.version>1.8</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>	
+		<java.version>11</java.version>
+		<maven.compiler.version>3.8.1</maven.compiler.version>
+        <maven.surefire.version>2.22.2</maven.surefire.version>        
+        <karate.version>1.1.0</karate.version>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -39,59 +34,34 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>		
-
-		<!--	
-			BD concreta (H2) 
-		-->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<!-- 
-			Seguridad
-		-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-messaging</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-			<artifactId>owasp-java-html-sanitizer</artifactId>
-			<version>20211018.1</version>
-		</dependency>		
 
-		<!-- 
-			Generación de getters, setters, constructores, equals/hashcode
-		-->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-messaging</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<!-- evita vulnerabilidades en versión incluida con 2.6.3 -->
+			<version>2.1.210</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- 
-			Pruebas
-		-->
-
-		<!-- 
-			Incluye mockito-core, junit5, junit-jupiter, ...
-		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -100,61 +70,19 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
-		</dependency>
-		<!-- 
-			para generar mockups (falsos objetos que simulan ser objetos reales)
-			en tus pruebas unitarias
-			https://mvnrepository.com/artifact/org.mockito/mockito-core 
-		-->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>3.8.0</version>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- 
-			integración entre karate y junit4
-			https://mvnrepository.com/artifact/com.intuit.karate/karate-junit4 
-		-->
-        <dependency>
-            <groupId>com.intuit.karate</groupId>
-            <artifactId>karate-junit5</artifactId>
-            <version>1.0.1</version>
-            <scope>test</scope>
-        </dependency>
-		<!-- 
-			karate usa chrome u otro navegador para automatizar pruebas
-			https://mvnrepository.com/artifact/com.intuit.karate/karate-core 
-		-->
+		<!-- pruebas con Karate https://github.com/karatelabs/karate -->
 		<dependency>
 			<groupId>com.intuit.karate</groupId>
-			<artifactId>karate-core</artifactId>
-			<version>1.0.1</version>
-			<scope>test</scope>
-		</dependency>	
-		<!-- 
-			karate sólo quiere parsear xml válido, pero lo normal es escribir
-			html que no es xhtml válido. JSoup permite convertir lo uno a lo otro
-			https://mvnrepository.com/artifact/org.jsoup/jsoup
-			(solo hace falta cuando usas Karate para probar APIs; 
-			si automatizas navegador, no es necesario)
-		-->
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.14.2</version>
+			<artifactId>karate-junit5</artifactId>
+			<version>${karate.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
-
-		<!--
-			para poder tener todos los recursos de prueba
-			mezclados con las pruebas en sí en src/test/java
-			(esto dice "los recursos están ahí, pero no incluyen los .java")
-		-->
 		<testResources>
 			<testResource>
 				<directory>src/test/java</directory>
@@ -163,64 +91,39 @@
 				</excludes>
 			</testResource>
 		</testResources>
-
 		<plugins>
-			<!-- 
-				Downgrading until fixed in maven:
-				https://issues.apache.org/jira/projects/MRESOURCES/issues/MRESOURCES-272?filter=allopenissues
-			-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.1.0</version>
-			</plugin>			
-			
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
-
-			<!-- 
-				surefire se encarga de pasar pruebas JUnit. No queremos
-				que se ejecute Karate siempre, sólo si se especifica
-				
-				mvn test -Dtest=KarateTests 
-				(ojo: sólo se pueden pasar con la aplicación funcionando!)
-			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<compilerArgument>-Werror</compilerArgument>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M5</version>
+				<version>${maven.surefire.version}</version>
 				<configuration>
-					<excludes>
-						<exclude>karate/**/*.java</exclude>
-					</excludes>
-					<includes>
-						<include>es/**/*.java</include>
-					</includes>
+					<argLine>-Dfile.encoding=UTF-8</argLine>
 				</configuration>
-			</plugin>
-
-			<!-- 
-				para ejecutar karate desde fuera (pruebas externas de interfaz):
-				
-				mvn exec:java
-			-->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<configuration>
-					<executable>java</executable>
-					<classpathScope>test</classpathScope>
-					<mainClass>com.intuit.karate.cli.Main</mainClass>
-					<arguments>
-						<!-- mete aqui una linea para cada feature a probar 
-						<argument>src/test/karate-ui/login.feature</argument> -->
-						<argument>src/test/karate-ui/message.feature</argument>						
-					</arguments>
-				</configuration>
-			</plugin>
+			</plugin>          
 		</plugins>
 	</build>
+
 </project>

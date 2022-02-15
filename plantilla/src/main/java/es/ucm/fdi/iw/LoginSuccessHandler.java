@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
@@ -11,11 +12,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.User.Role;
 
 /**
  * Called when a user is first authenticated (via login).
@@ -43,27 +46,38 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-	    String username = ((org.springframework.security.core.userdetails.User)
-			authentication.getPrincipal()).getUsername();
+	   
+		/* 
+		  Avoids following warning: 
+		  Cookie “JSESSIONID” will be soon rejected because it has the “SameSite” 
+		  attribute set to “None” or an invalid value, without the “secure” attribute. 
+		  To know more about the “SameSite“ attribute, read 
+		  https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+		*/
+		addSameSiteCookieAttribute(response);
+
+		String username = ((org.springframework.security.core.userdetails.User)
+				authentication.getPrincipal()).getUsername();
 	    
 	    // add a 'u' session variable, accessible from thymeleaf via ${session.u}
+	    log.info("Storing user info for {} in session {}", username, session.getId());
 		User u = entityManager.createNamedQuery("User.byUsername", User.class)
-			.setParameter("username", username)
-			.getSingleResult();		
+		        .setParameter("username", username)
+		        .getSingleResult();		
 		session.setAttribute("u", u);
 
-		// find count of unread messages
+		// get count of unread messages
 		long unread = entityManager.createNamedQuery("Message.countUnread", Long.class)
 			.setParameter("userId", u.getId())
 			.getSingleResult();	
 		session.setAttribute("unread", unread);
-		
+
 		// add a 'ws' session variable
 		String ws = request.getRequestURL().toString()
 				.replaceFirst("[^:]*", "ws")		// http[s]://... => ws://...
 				.replaceFirst("/[^/]*$", "/ws");	// .../foo		 => .../ws
 		session.setAttribute("ws", ws);
-		
+
 		// redirects to 'admin' or 'user/{id}', depending on the user
 		String nextUrl = u.hasRole(User.Role.ADMIN) ? 
 			"admin/" :
@@ -74,5 +88,25 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		// note that this is a 302, and will result in a new request
 		response.sendRedirect(nextUrl);
+	}
+
+	/**
+	 * Set samesite cookie - see https://stackoverflow.com/a/58996747/15472
+	 * @param response
+	 */
+	private void addSameSiteCookieAttribute(HttpServletResponse response) {
+		Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE);
+		boolean firstHeader = true;
+		// there can be multiple Set-Cookie attributes
+		for (String header : headers) {
+			if (firstHeader) {
+				response.setHeader(HttpHeaders.SET_COOKIE,
+						String.format("%s; %s", header, "SameSite=Strict"));
+				firstHeader = false;
+				continue;
+			}
+			response.addHeader(HttpHeaders.SET_COOKIE,
+					String.format("%s; %s", header, "SameSite=Strict"));
+		}
 	}
 }

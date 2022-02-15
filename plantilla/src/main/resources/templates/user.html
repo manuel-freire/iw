@@ -1,67 +1,39 @@
 <!DOCTYPE html>
-<html 
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><th:block th:replace="fragments/head :: header"/>
-	<title>Perfil</title>
-</head></head>
-<body>
-	<nav th:replace="fragments/nav.html :: nav">
-		Nav goes here
-	</nav>
-	
-	<div class="container">
-	<div class="main">
-	<h1 th:text="#{index.welcome}">Bienvenido a la plantilla de IW</h1>
-		
-	<h4>Información del usuario <span th:text="${user.username}">Pepe</span></h4>
-	
-	<div th:if="(${session.u.id} eq ${user.id}) or ${session.u.hasRole('ADMIN')}">
-		<!-- puedes cambiar todo -->
-		<form id="usermod" class="smallform" th:action="@{/user/{id}(id=${user.id})}" method="POST">
-			
-			<label for="firstname">Nombre</label>
-			<input name="firstName" id="firstName" required placeholder="Nombre" th:value="${user.firstName}"/>
-			
-			<label for="lastname">Apellidos</label>
-			<input name="lastName" id="lastname" required placeholder="Apellidos" th:value="${user.lastName}"/>			
-			
-			<label for="username">Usuario</label>
-			<input name="username" id="username" required placeholder="username" th:value="${user.username}"/>
-			
-			<label for="password">Contraseña</label>
-			<input type="password" id="password" required name="password" placeholder="Contraseña"/>
-			<label for="pass2">(repetida)</label>
-			<input type="password" id="pass2" required name="pass2" placeholder="Confirmación"/>
-			
-			<label for="password">Roles</label>
-			<input id="roles" name="roles" required placeholder="Roles" th:value="${user.roles}"/>
-			<button type="submit">Modificar</button>
-		</form>
-		<form th:action="@{/user/{id}/photo(id=${user.id})}" method="POST" enctype="multipart/form-data">
-			Nueva foto <input type="file" name="photo"/>
-			<button type="submit">Actualizar</button>
-		</form>
-	</div>
-	<img th:src="@{/user/{id}/photo(id=${user.id})}">
-	</div>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
-	<footer th:replace="fragments/footer.html :: footer">
-		Footer goes here
-	</footer>
-	
-	<script>
-// esto es algo feo, y se podría sacar a un JS externo
-document.addEventListener("DOMContentLoaded", () => {
-	// selecciona los campos de contraseña
-	let ps = document.querySelectorAll('#usermod > input[type="password"]')
-	// cada vez que cambie uno de ellos...
-	ps[0].oninput = ps[0].onchange = ps[1].oninput = ps[1].onchange = () => {
-		// dice que si no son iguales, el segundo no es válido
-		ps[1].setCustomValidity(ps[0].value === ps[1].value ? 
-				"" : "Ambas contraseñas tienen que coincidir");
-	}
-});	
-	</script>	
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>IW: Perfil</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5">Perfil de <span th:text="${user.username}">Paco</span></h1>
+            <div class="py-3 footer">
+                <form th:action="@{/user/__${user.id}__/msg}" method="POST">
+                    <input type="text" id="message" placeholder="escribe a este usuario" />
+                    <button id="sendmsg" class="btn btn-secondary" type="submit">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+    <script>
+        // envio de mensajes con AJAX
+        let b = document.getElementById("sendmsg");
+        b.onclick = (e) => {
+            e.preventDefault();
+            go(b.parentNode.action, 'POST', {
+                    message: document.getElementById("message").value
+                })
+                .then(d => console.log("happy", d))
+                .catch(e => console.log("sad", e))
+        }
+    </script>
 </body>
+
 </html>

@@ -1,9 +1,5 @@
 package es.ucm.fdi.iw;
 
-import java.text.SimpleDateFormat;
-
-import javax.servlet.ServletContext;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +7,9 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletContext;
+import java.text.SimpleDateFormat;
 
 /**
  * This code will execute when the application first starts.

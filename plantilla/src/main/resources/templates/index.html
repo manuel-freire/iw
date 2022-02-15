@@ -1,40 +1,21 @@
 <!DOCTYPE html>
-<html 
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><th:block th:replace="fragments/head :: header"/>
-	<title>IW: Plantilla</title>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>IW: Welcome</title>
 </head>
-<body>
-	<nav th:replace="fragments/nav.html :: nav">
-		Nav goes here
-	</nav>
-	
-	<div class="container">
-	<div class="main">
-	
-	<h1 th:text="#{index.welcome}">Bienvenido a la plantilla de IW</h1>
-	
-	<p>
-	Esta plantilla sirve para lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
-	Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis 
-	dis parturient montes, nascetur ridiculus mus. Donec qu
-	</p>
-	
-	<div th:if="${session.u == null}">
-	<h4>Intenta ver un perfil</h4>
-	<ul>
-		<li><a th:href="@{/user/1}">Uno</a>
-		<li><a th:href="@{/user/2}">Dos</a>
-		<li><a th:href="@{/user/3}">Tres</a>
-	</li>
-	</div>
-	
-	</div>
-	</div>
-		
-	<footer th:replace="fragments/footer.html :: footer">
-		Footer goes here
-	</footer>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5">Bienvenid@</h1>
+        </div>
+    </main>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
 </body>
+
 </html>
