@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Nav fragment - rest intentionally left empty</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+    <!-- barra de navegación bootstrap 5 -->
+    <header th:fragment="nav">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- nombre del sitio; es un enlace que lleva a la página ppal -->
+                <a class="navbar-brand" th:href="@{/}" href="/">
+                    <!--<img th:src="@{/img/logo.png}" src="/img/logo.png" alt="logo IW" width="32" height="32" class="d-inline-block align-text-top"> IW 2021-22-->
+                    <p class="fs-1 fst-italic fw-bold" style="color: green;" >EatAway</p>
+                </a>
+                <!-- menu hamburguesa si no cabe todo -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto">
+                        <th:block th:if="${session.u}">
+                            <li class="nav-item mx-3">
+                                <a class="nav-link" th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">Administrar</a>
+                            </li>
+
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" th:href="@{/user/{id}(id=${session.u.id})}">
+                                    <img class="iwthumb rounded" th:src="@{/user/{id}/pic(id=${session.u.id})}">
+                                    <span th:text="${session.u.username}">Pepe</span>
+                                </a>
+                            </li>
+                            <li class="nav-item align-self-center me-4">
+                                <button type="button" class="btn btn-outline-primary btn-sm position-relative">
+                                    ✉️ <span id="nav-unread" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">+99 <span class="visually-hidden">unread messages</span></span>
+                                </button>
+                            </li>
+                            <li class="nav-item align-self-center">
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">logout</button>
+                                </form>
+                            </li>
+                        </th:block>
+                        <th:block th:unless="${session.u}">
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" th:href="@{/login}" href="/login">Login</a>
+                            </li>
+                            <!--/*
+                                Esto es un comentario "thymeleaf" - no se verá en el HTML
+                                El bloque de "debug" sólo está activado si application.properties tiene debug a "true"
+                                    (ver StartupConfig.java para ver cómo se lee de la configuración
+                                    y luego se escribe a ${application.debug})
+                            */-->
+                            <li class="nav-item debug align-self-center" th:if="${application.debug}">
+                                <form class="d-flex" th:action="@{/login}" method="post">
+                                    <input type="hidden" name="username" value="a">
+                                    <input type="hidden" name="password" value="aa">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">a</button>
+                                </form>
+                            </li>
+                            <li class="nav-item debug align-self-center" th:if="${application.debug}">
+                                <form class="d-flex" th:action="@{/login}" method="post">
+                                    <input type="hidden" name="username" value="b">
+                                    <input type="hidden" name="password" value="aa">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">b</button>
+                                </form>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+</body>
+
+
+</html>
