@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>IW: Platos</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav"></header>
+    <h1>Plato realizado por: Restaurante</h1>
+    <div class="text-center"   
+        <img src="..." class="rounded" alt="...">
+    </div>
+   <main>
+        <section class="contenedor sobre el plato">
+            <h2 class="Ingredientes">Ingredientes: Pollo crujiente, salsa BBQ chipotle sobre tomate, lechuga, pepinillo y salsa baconesa en pan brioche tostado</h2>
+        </section>    
+       <section class="Garniciones">
+           <select class="Guarniciones a elegir" aria-label=".Guarniciones a elegir">
+                <option selected>Open this select menu</option>
+                <option value="1">Patatas frias</option>
+                <option value="2">Patatas Gajo</option>
+                <option value="3">Ketchup</option>
+                <option value="4">Mayonesa</option>
+             </select>
+       </section>   
+       <section class="Punto de carne">
+            <select class="Punto de la carne" aria-label=".Punto de la carne">
+                <option selected>Open this select menu</option>
+                <option value="1">Poco hecha</option>
+                <option value="2">Hecha</option>
+                <option value="3">Muy hecha</option>
+             </select>
+        </section>   
+        <label for="CantidadPlato">Numero de platos:</label>
+        <input id="Plato" type="Cantidad" name="Plato" value="0">
+
+
+   </main> 
+</body>
+
+</html>
