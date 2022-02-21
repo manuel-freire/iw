@@ -1,8 +1,6 @@
 package es.ucm.fdi.iw.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 
@@ -18,8 +16,20 @@ public class Pedido {
         ENTREGADO
     }
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
+    @SequenceGenerator(name = "gen", sequenceName = "gen")
     private int idPedido;
     private String dirEntrega;
     private String infoPago;
     private Estado estado;
+    private double propina;
+    private double precioEntrega;
+    private double precioServicio;
+    
+    @ManyToOne
+    private User cliente;
+    @ManyToOne
+    private Restaurante restaurante;
+    @ManyToOne
+    private User repartidor;
 }
