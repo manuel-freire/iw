@@ -21,9 +21,12 @@ public class Restaurante{
     private String horario;
     private String direccion;
     private double valoracion;
-    //Poner ArrayList sin vincularlos a una tabla hace que crashee!!!
-    //private List<String> comentarios = new ArrayList<>();
-    //private List<String> labels = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name="idComentario")
+    private List<Comentario> comentarios = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name="idLabel")
+    private List<Label> labels = new ArrayList<>();
     @OneToMany
     @JoinColumn(name="idPlato")
     private List<Plato> platos = new ArrayList<>();

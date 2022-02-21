@@ -1,18 +1,16 @@
 package es.ucm.fdi.iw.model;
 
 import javax.persistence.*;
+
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name="Extra")
-public class Extra {
+@Table(name="Label")
+public class Label {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int idExtra;
+    private int idLabel;
     private String nombre;
-    private double precio;
-    @ManyToOne
-    private Plato plato;
 }
