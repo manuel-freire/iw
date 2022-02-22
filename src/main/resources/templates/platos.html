@@ -8,16 +8,19 @@
 
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav"></header>
-    <h1>Plato realizado por: Restaurante</h1>
-    <div class="text-center"   
-        <img src="..." class="rounded" alt="...">
-    </div>
-   <main>
-        <section class="contenedor sobre el plato">
+    <div class="container">
+        <h3 align="center">Plato realizado por: Restaurante</h3>
+        <div class="card-group">
+            <a class="card mx-1 rounded" href="#">
+                <img src="/img/hamburguesa.jpg" class="card-img-top" alt="..." href="{/]" width="2000" height="500" >
+            </a>
+        </div>
+   
+        <section class="">
             <h2 class="Ingredientes">Ingredientes: Pollo crujiente, salsa BBQ chipotle sobre tomate, lechuga, pepinillo y salsa baconesa en pan brioche tostado</h2>
         </section>    
-       <section class="Garniciones">
-           <select class="Guarniciones a elegir" aria-label=".Guarniciones a elegir">
+       <section class="">
+           <select class="" aria-label=".">
                 <option selected>Open this select menu</option>
                 <option value="1">Patatas frias</option>
                 <option value="2">Patatas Gajo</option>
@@ -25,8 +28,8 @@
                 <option value="4">Mayonesa</option>
              </select>
        </section>   
-       <section class="Punto de carne">
-            <select class="Punto de la carne" aria-label=".Punto de la carne">
+       <section class="">
+            <select class="" aria-label=".">
                 <option selected>Open this select menu</option>
                 <option value="1">Poco hecha</option>
                 <option value="2">Hecha</option>
@@ -35,9 +38,9 @@
         </section>   
         <label for="CantidadPlato">Numero de platos:</label>
         <input id="Plato" type="Cantidad" name="Plato" value="0">
+    </div>
 
-
-   </main> 
+   
 </body>
 
 </html>
