@@ -35,10 +35,19 @@ public class RootController {
         return "login";
     }
 
+    @GetMapping("/repartidor")
+    public String repartidor(Model model) {
+        return "repartidor";
+    }
 
     @GetMapping("/listaPedidos")
     public String listaPedidos(Model model) {
         return "listaPedidos";
+    }
+
+    @GetMapping("/carrito")
+    public String carrito(Model model) {
+        return "carrito";
     }
 
 	@GetMapping("/")
