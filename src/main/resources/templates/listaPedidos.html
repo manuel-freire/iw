@@ -10,9 +10,68 @@
     <header th:replace="fragments/nav.html :: nav"></header>
 
     <main class="flex-shrink-0">
+        <h1 style = 'text-align: center;'>PEDIDOS</h1>
         <div class="container">
-            <h1>PEDIDOS</h1>
-        </div>
+            
+            <div class="row">
+                <!-- Pedidos Clientes-->
+              <div class="col">
+
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">CLIENTE</th>
+                        <th scope="col">RESTAURANTE</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>BurguerKing</td>
+                        <td><button type="button" class="btn btn-success">Recoger</button></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">2</th>
+                        <td>Jacob</td>
+                        <td>Telepizza</td>
+                        <td><button type="button" class="btn btn-success">Recoger</button></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">3</th>
+                        <td> Pili </td>
+                        <td> Tacobell</td>
+                        <td><button type="button" class="btn btn-success">Recoger</button></td>
+                      </tr>
+                    </tbody>
+                  </table>                    
+                
+              </div>
+              <!-- Mapa -->
+              <div class="col">
+                <img src="/img/mapa.jpg" class="card-img-top" alt="..." href="{/]" width="2000" height="500" >
+              </div>
+              <!-- Chat Cliente-->
+              <div class="col">
+                <div class="container">
+                    <!-- Chat -->
+                    <div class="row">
+                        <div style="border: 1px solid; border-color: black; height: 300px;">
+                                    
+                        </div>
+                    </div>
+                    <!-- Para Escribir-->
+                    <div class="row">
+                        <div style="display:flex; align-items:initial; margin-top: 10px;">
+                            <input type="text" style="width : 270px;">
+                            <button type="button" class="btn btn-success">Enviar</button>
+                        </div>
+                  </div>
+              </div>
+            </div>
+          </div>
     </main>
 
     <th:block th:replace="fragments/footer.html :: footer" />
