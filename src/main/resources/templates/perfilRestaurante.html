@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:replace="fragments/head :: header" />
+        <title>EatAway: Perfil Restaurante</title>
+    </head>
+    <body class="d-flex flex-column h-100">
+        <header th:replace="fragments/nav.html :: nav"></header>
+        <div class="container">
+            <div class="text-center">
+                <h1>Perfil del usuario dueño del restaurante (Aquí deberia ir el nombre del restaurante)</h1>
+                <img src="/img/logoRestaurante.png" width="300px" height="300px" alt="Logo del restaurante">
+                <h2>Valoración media - (X estrellas)</h2>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row align-items start">
+                <div class="col">
+                    <h2>Últimas valoraciones</h2>
+                    <ol>
+                        <li>Reseña 1</li>
+                        <li>Reseña 2</li>
+                        <li>Reseña 3</li>
+                        <li>Reseña 4</li>
+                        <li>Reseña 5</li>
+                    </ol>
+                </div>
+                <div class="col">
+                    <h2>Últimos pedidos realizados</h2>
+                    <ol>
+                        <li>Pedido 1</li>
+                        <li>Pedido 2</li>
+                        <li>Pedido 3</li>
+                        <li>Pedido 4</li>
+                        <li>Pedido 5</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <th:block th:replace="fragments/footer.html :: footer" />
+    </body>
+</html>
