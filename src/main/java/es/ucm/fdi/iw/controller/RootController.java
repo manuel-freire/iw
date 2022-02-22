@@ -24,6 +24,12 @@ public class RootController {
         return "platos";
     }
 
+    @GetMapping("/perfilRest")
+    public String perfilRest(Model model){
+        return "perfilRestaurante";
+    }
+
+
 	@GetMapping("/login")
     public String login(Model model) {
         return "login";
