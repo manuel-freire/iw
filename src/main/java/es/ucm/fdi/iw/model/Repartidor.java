@@ -6,7 +6,7 @@ import java.util.List;
 
 import lombok.Data;
 
-@Entity
+
 @Data
 @Table(name="IWUser")
 public class Repartidor extends User{
