@@ -1,6 +1,4 @@
-# Aplicación de Plantilla de IW
-
-Debes buscar todos los lugares donde aparece la palabra "plantilla" (incluido este párrafo) y reemplazar las ocurrencias, y el contexto circundante, por valores que tengan sentido en tu aplicación. Por ejemplo, este párrafo deberías eliminarlo de tu proyecto.
+# Eat Away
 
 ¿No te apetece cocinar?¿Tienes la nevera vacía?¿Te apetece probar sabores nuevos? ¿Quieres impresionar a tu cita pero la cocina no es lo tuyo? EatAway resolverá todos estos problemas y más. Selecciona tus platos preferidos y en un abrir y cerrar de ojos tendrás tu comida en casa o dónde prefieras.
 
