@@ -10,35 +10,39 @@
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav"></header>
 
-    <div class="container">
-        <h3 align="center">Restaurante</h3>
-        <div class="card-group">
-            <a class="card mx-1 rounded" href="#">
-                <img src="/img/restaurante1.jpg" class="card-img-top" alt="..." href="{/]" width="2000" height="500" >
-            </a>
+    <main class="flex-shrink-0"></main>
+        <div class="container">
+            <h3 align="center">Restaurante</h3>
+            <div class="card-group">
+                <a class="card mx-1 rounded" href="#">
+                    <img src="/img/restaurante1.jpg" class="card-img-top" alt="..." href="{/]" width="2000" height="500" >
+                </a>
+            </div>
+
+            <h3 class="mt-5">Bebidas</h1>
+                <div class="list-group list-group-horizontal">
+                    <a class="list-group-item border-0">
+                        <img href="#" src="/img/cocacola.jpg" width="400" height="200">
+                    </a>
+                    <a class="list-group-item border-0">
+                        <img href="#" src="/img/sprite2.jfif" width="400" height="200">
+                    </a>
+                </div>
+            </h3>
+
+            <h3 class="mt-5">Principales</h1>
+                <div class="list-group list-group-horizontal">
+                    <a class="list-group-item border-0">
+                        <img href="#" src="/img/samosa.jpg" width="400" height="200">
+                    </a>
+                    <a class="list-group-item border-0">
+                        <img href="#" src="/img/tika.jpg" width="400" height="200">
+                    </a>
+                </div>
+            </h3>
         </div>
+    </main>
 
-        <h3 class="mt-5">Bebidas</h1>
-            <div class="list-group list-group-horizontal">
-                <a class="list-group-item border-0">
-                    <img href="#" src="/img/cocacola.jpg" width="400" height="200">
-                </a>
-                <a class="list-group-item border-0">
-                    <img href="#" src="/img/sprite2.jfif" width="400" height="200">
-                </a>
-            </div>
-        </h3>
-
-        <h3 class="mt-5">Principales</h1>
-            <div class="list-group list-group-horizontal">
-                <a class="list-group-item border-0">
-                    <img href="#" src="/img/samosa.jpg" width="400" height="200">
-                </a>
-                <a class="list-group-item border-0">
-                    <img href="#" src="/img/tika.jpg" width="400" height="200">
-                </a>
-            </div>
-        </h3>
-    </div>
+    <th:block th:replace="fragments/footer.html :: footer" />
 </body>
 </html>
