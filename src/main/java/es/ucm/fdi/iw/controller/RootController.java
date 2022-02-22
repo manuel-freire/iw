@@ -20,12 +20,12 @@ public class RootController {
     }
 
     @GetMapping("/restaurante")
-    public String login(Model model) {
+    public String restaurante(Model model) {
         return "login";
     }
 
     @GetMapping("/listaPedidos")
-    public String login(Model model) {
+    public String listaPedidos(Model model) {
         return "login";
     }
 
