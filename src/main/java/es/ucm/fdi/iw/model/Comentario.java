@@ -12,7 +12,7 @@ public class Comentario {
     @SequenceGenerator(name = "gen", sequenceName = "gen")
     private int idComentario;
     private String texto;
-    @OneToOne
+    @OneToOne //FIXME: no sería Many to One?
     @JoinColumn(name="id")
     private User autor;
 }
