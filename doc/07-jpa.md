@@ -1,6 +1,6 @@
 % JPA
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.15
+% 2022.02.21
 
 ## Objetivo
 
@@ -407,6 +407,70 @@ WHERE t.league.sport = :sport
 ~~~~
 
 (`t.league.sport` sí vale, ya que cada equipo sólo está en una liga)
+
+# Herencia y Entidades
+
+## Hay muchas formas de gestionar herencia (OO) usando tablas (Relacional)
+
+* *Todos* los atributos de *todas* las entidades de un único árbol de herencia van a una misma tabla; sabes el tipo concreto de cada entidad usando una nueva *columna discriminadora*: `InheritanceType.SINGLE_TABLE`
+  - poco coste desde el punto de vista de procesamiento / tiempo de consulta
+  - algo caro desde el punto de vista de espacio de almacenamiento: columnas que no usas
+  - problemas para verificar integridad en la BD
+
+* Cada entidad del árbol de herencia resulta en una tabla, que mediante un *join" con la tabla raíz de ese árbol, permite conseguir los datos de la entidad completa: `InheritanceType.JOINED`
+  - caro para procesamiento / consulta de 1 entidad de una subclase concreta
+  - barato en almacenaje, y bueno para validación en BD
+
+* Cada entidad del árbol de herencia resulta en una tabla. No hay joins - a no ser que necesites datos de múltiples subclases de una misma clase a la vez: `InheritanceType.TABLE_PER_CLASS`
+  - caro para procesamiento / consulta de 1 entidad y sus subclases
+  - barato en almacenaje, y bueno para validación en BD
+
+## Herencia con todo-en-una-tabla
+
+* Por defecto en Hibernate (que es lo que usa Spring como proveedor de JPA): no hace falta especificar `@InheritanceType`
+* Requiere establecer una columna discriminadora: 
+
+~~~~ {.java}
+@Entity
+@Table(name = "IWUser")
+@DiscriminatorColumn(name="DISC", discriminatorType=STRING, length=16)                  
+~~~~
+
+## Ejemplo con animales
+
+~~~~ {.java}
+// adaptado de https://stackoverflow.com/a/48415922/15472
+ 
+@Entity 
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "TYPE")
+public class Animal {
+  @Id
+  private long id;
+
+  @Column(name = "NAME")
+  private String name;
+}
+
+@Entity @DiscriminatorValue("REPTILE")
+public class Reptile extends Animal {
+  /* ... */
+}
+
+@Entity @DiscriminatorValue("BIRD")
+public class Bird extends Animal {
+  /* ... */
+}
+~~~~
+
+- - - 
+
+ID  NAME        TYPE     
+--- ----------  -------
+1   Crocodile   REPTILE  
+2   Dinosaur    REPTILE   
+3   Lizard      REPTILE   
+4   Owl         BIRD     
+5   parrot      BIRD     
 
 # Tipos de BDs
 

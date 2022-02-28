@@ -1,6 +1,6 @@
 % Logging
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.22
+% 2022.02.28
 
 ## Objetivo
 
@@ -203,19 +203,22 @@ Más detalles en la [api de log4j 2](https://logging.apache.org/log4j/2.x/manual
 
 ~~~{.txt}
 
-[INFO] +- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.3.RELEASE:compile
-[INFO] +- org.springframework.boot:spring-boot-starter-thymeleaf:jar:2.1.3.RELEASE:compile
-[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.1.3.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.1.3.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.1.3.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.1.3.RELEASE:compile
-[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
-[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.3:compile
-[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.11.2:compile
-[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.11.2:compile
-[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.25:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-security:jar:2.6.3:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.6.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.3:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.33:compile
 ...
-
+[INFO] \- com.intuit.karate:karate-junit5:jar:1.1.0:test
+[INFO]    +- com.intuit.karate:karate-core:jar:1.1.0:test
+...
+[INFO]    |  +- ch.qos.logback:logback-classic:jar:1.2.10:compile
+[INFO]    |  |  \- ch.qos.logback:logback-core:jar:1.2.10:compile
+[INFO]    |  +- org.slf4j:jcl-over-slf4j:jar:1.7.33:test
+...
 ~~~
 
 \large 
@@ -226,6 +229,7 @@ Es decir, tenemos disponible y cargadas:
 - log4j-to-slf4j
 - log4j-api
 - jul-to-slf4j
+- jcl-over-slf4j
 
 ## Configurando logging
 
