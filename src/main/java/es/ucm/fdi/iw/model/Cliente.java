@@ -7,7 +7,6 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-@Table(name="IWUser")
 public class Cliente extends User{
     private String direccion;
     private String infoPago;

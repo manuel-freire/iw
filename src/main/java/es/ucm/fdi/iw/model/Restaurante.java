@@ -7,12 +7,11 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name="Restaurante")
 public class Restaurante{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int idRestaurante;
+    private int id;
     @OneToOne
     @JoinColumn(name="id")
     private User Dueno;

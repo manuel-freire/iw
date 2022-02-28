@@ -27,7 +27,8 @@ import java.util.List;
                         + "WHERE u.username = :username")
 })
 @Table(name="IWUser")
-public class User implements Transferable<User.Transfer> { //TODO: Como hacemos la herencia?
+@DiscriminatorColumn(name="Rol", discriminatorType =DiscriminatorType.STRING, length=16)
+public class User implements Transferable<User.Transfer> {
 
     public enum Role {
         USER,			// normal users 

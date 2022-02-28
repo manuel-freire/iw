@@ -2,6 +2,9 @@ package es.ucm.fdi.iw.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.persistence.*;
 
 import lombok.Data;
@@ -20,7 +23,7 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int idPedido;
+    private int id;
     private String dirEntrega;
     //private String infoPago;
     private Estado estado;
@@ -28,7 +31,10 @@ public class Pedido {
     private double precioEntrega;
     private double precioServicio;
     private LocalDateTime fechaPedido;
-    //TODO: Definir como gestionar el subtotal
+    @OneToMany
+    @JoinColumn(name="idPlato")
+    //private ArrayList<Plato> contenidoPedido = new ArrayList<>();
+    private HashMap<Plato,Integer> contenidoPedido = new HashMap<>(); //<ID Plato, Cantidad>
     @ManyToOne
     private User cliente;
     @ManyToOne

@@ -5,12 +5,11 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="Extra")
 public class Extra {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int idExtra;
+    private int id;
     private String nombre;
     private double precio;
     @ManyToOne

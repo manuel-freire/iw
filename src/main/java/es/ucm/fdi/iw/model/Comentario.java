@@ -5,14 +5,16 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="Comentario")
 public class Comentario {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int idComentario;
+    private int id;
     private String texto;
-    @OneToOne //FIXME: no sería Many to One?
+    @ManyToOne
     @JoinColumn(name="id")
     private User autor;
+    @ManyToOne
+    @JoinColumn(name="platoID")
+    private int idPlato;
 }
