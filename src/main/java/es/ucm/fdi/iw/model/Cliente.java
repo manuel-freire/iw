@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@DiscriminatorValue("CLIENTE")
 public class Cliente extends User{
     private String direccion;
     private String infoPago;

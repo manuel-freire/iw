@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@DiscriminatorValue("REPARTIDOR")
 public class Repartidor extends User{
     @OneToMany
     //@JoinColumn(name="Pedido_id")

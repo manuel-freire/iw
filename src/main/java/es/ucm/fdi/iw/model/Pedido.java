@@ -1,7 +1,8 @@
 package es.ucm.fdi.iw.model;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.*;
 
@@ -33,8 +34,8 @@ public class Pedido {
     private LocalDateTime fechaPedido;
     @OneToMany
     @JoinColumn(name="Plato_id")
-    //private ArrayList<Plato> contenidoPedido = new ArrayList<>();
-    private HashMap<Plato,Integer> contenidoPedido = new HashMap<>(); //<ID Plato, Cantidad>
+    private List<PlatoPedido> contenidoPedido = new ArrayList<>();
+    //private Map<Plato,Integer> contenidoPedido = new HashMap<>(); //<ID Plato, Cantidad>
     @ManyToOne
     private User cliente;
     @ManyToOne

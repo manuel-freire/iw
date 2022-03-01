@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@DiscriminatorValue("RESTAURANTE")
 public class UsrRestaurante extends User{
     @OneToMany
     //@JoinColumn(name="Pedido_id")

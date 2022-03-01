@@ -5,16 +5,13 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Comentario {
+public class PlatoPedido {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private long id;
-    private String texto;
+    private int id;
+    private int cantidad;
     @ManyToOne
-    @JoinColumn(name="User_id")
-    private User autor;
-    @ManyToOne
-    @JoinColumn(name="Plato_id")
     private Plato plato;
 }
+
