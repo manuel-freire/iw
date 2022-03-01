@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Entity
 @Data
+@Inheritance
 @NoArgsConstructor
 @NamedQueries({
         @NamedQuery(name="User.byUsername",

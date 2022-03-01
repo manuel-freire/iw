@@ -1,8 +1,6 @@
 package es.ucm.fdi.iw.model;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.persistence.*;
@@ -13,6 +11,7 @@ import lombok.Data;
 @Data
 @Table(name="Pedido")
 public class Pedido {
+
     public enum Estado{
         PENDIENTE,
         PREPARANDO,
@@ -20,6 +19,7 @@ public class Pedido {
         REPARTO,
         ENTREGADO
     }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
@@ -32,7 +32,7 @@ public class Pedido {
     private double precioServicio;
     private LocalDateTime fechaPedido;
     @OneToMany
-    @JoinColumn(name="idPlato")
+    @JoinColumn(name="Plato_id")
     //private ArrayList<Plato> contenidoPedido = new ArrayList<>();
     private HashMap<Plato,Integer> contenidoPedido = new HashMap<>(); //<ID Plato, Cantidad>
     @ManyToOne

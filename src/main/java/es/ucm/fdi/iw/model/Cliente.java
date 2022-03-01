@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Data;
 
+@Entity
 @Data
 public class Cliente extends User{
     private String direccion;

@@ -12,7 +12,7 @@ public class Comentario {
     private int id;
     private String texto;
     @ManyToOne
-    @JoinColumn(name="id")
+    @JoinColumn(name="User_id")
     private User autor;
     @ManyToOne
     @JoinColumn(name="platoID")

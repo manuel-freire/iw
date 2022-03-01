@@ -6,12 +6,11 @@ import java.util.List;
 
 import lombok.Data;
 
-
+@Entity
 @Data
 public class Repartidor extends User{
-    
     @OneToMany
-    @JoinColumn(name="idPedido")
+    //@JoinColumn(name="Pedido_id")
     private List<Pedido> pedidos = new ArrayList<>();
     private double valoracion;
 }

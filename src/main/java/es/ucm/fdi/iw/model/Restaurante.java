@@ -13,7 +13,7 @@ public class Restaurante{
     @SequenceGenerator(name = "gen", sequenceName = "gen")
     private int id;
     @OneToOne
-    @JoinColumn(name="id")
+    @JoinColumn(name="User_id")
     private User Dueno;
     private String nombre;
     private String descripcion;
@@ -21,12 +21,12 @@ public class Restaurante{
     private String direccion;
     private double valoracion;
     @OneToMany
-    @JoinColumn(name="idComentario")
+    @JoinColumn(name="Comentario_id")
     private List<Comentario> comentarios = new ArrayList<>();
     @OneToMany
-    @JoinColumn(name="idLabel")
+    @JoinColumn(name="Label_id")
     private List<Label> labels = new ArrayList<>();
     @OneToMany
-    @JoinColumn(name="idPlato")
+    @JoinColumn(name="Plato_id")
     private List<Plato> platos = new ArrayList<>();
 }

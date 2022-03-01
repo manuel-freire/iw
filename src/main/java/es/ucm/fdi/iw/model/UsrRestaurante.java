@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
-
+@Entity
 @Data
 public class UsrRestaurante extends User{
     @OneToMany
-    @JoinColumn(name="idPedido")
+    //@JoinColumn(name="Pedido_id")
     private List<Pedido> pedidos = new ArrayList<>();
 }
