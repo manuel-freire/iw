@@ -40,15 +40,15 @@ Disponemos de 4 tipos de usuarios. Dependiendo de cuál se trate, se podrá acce
 
 ## Vistas
 
-- **Página de inicio:** (localhost:8080/)
+* **[Página de inicio:](http://localhost:8080/)** 
     - En esta página se verán las diferentes comidas y restaurantes inscritos en la aplicación web, y se podrá seleccionar la comida y restaurante que uno desee ordenar. Para los usuarios "avanzados" (Administrador, Dueño del restaurante y Repartidor) la página de inicio corresponderá con una vista especial para éstos, con las opciones que cada uno tenga habilitadas.
-* **Información del Restaurante:** (localhost:8080/restaurante)
+* **[Información del Restaurante:](http://localhost:8080/restaurante)** 
     - Aquí se va a ver la información detallada del restaurante desde la perspectiva de un cliente que quiere ordenarle comida a ellos. Podrá consultar la carta de este restaurante, su valoración media, entre otras cosas.
-- **Información del Plato:** (localhost:8080/platos)
+- **[Información del Plato:](http://localhost:8080/platos)** 
     - Aquí se podrá ver información detallada de cada plato que haya en la carta de un determinado restaurante, pudiendo ver sus ingredientes, cantidad a comprar, extras posibles, etc.
-* **Lista de Pedidos Disponibles (Para el Repartidor):** (localhost:8080/listaPedidos)
+* **[Lista de Pedidos Disponibles (Para el Repartidor):](http://localhost:8080/listaPedidos)** 
     - Aquí el repartidor podrá ver la lista de pedidos que han sido pedidos por los clientes en la aplicación, para que puedan "designarse" un pedido para recogerlo en el restaurante que lo está preparando, y entregarselo al cliente una vez esté preparado. Tiene acceso a un pequeño mapa donde puede ver la dirección del restaurante y de entrega, y un chat para hablar con el cliente.
-- **Perfil del Dueño del Restaurante:** (localhost:8080/perfilRestaurante)
+- **[Perfil del Dueño del Restaurante:](http://localhost:8080/perfilRest)** 
     - Aquí el dueño de un restaurante podrá visualizar las últimas valoraciones y pedidos que se le han hecho a su restaurante, así como actualizar su carta, información de contacto, y hacer otras gestiones administrativas
-* **Carrito:** (localhost:8080/carrito)
+* **[Carrito:](http://localhost:8080/carrito)**
     - En esta vista el cliente podrá ver los productos que ha ido añadiendo a su pedido, y cuando esté preparado para pagar, efectuar la compra y supervisar el estado de su pedido, así como hablar con el repartidor que vaya a entregarle su comida
