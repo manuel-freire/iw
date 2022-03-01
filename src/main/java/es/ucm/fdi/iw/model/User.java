@@ -28,8 +28,8 @@ import java.util.List;
                         + "WHERE u.username = :username")
 })
 @Table(name="IWUser")
-@DiscriminatorColumn(name="ROL", discriminatorType =DiscriminatorType.STRING, length=16)
-@DiscriminatorValue("USER")
+@DiscriminatorColumn(name="DISC_ROL", discriminatorType =DiscriminatorType.STRING, length=16)
+@DiscriminatorValue("ADMIN")
 public class User implements Transferable<User.Transfer> {
 
     public enum Role {
