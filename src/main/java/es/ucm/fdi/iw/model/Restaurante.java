@@ -11,7 +11,7 @@ public class Restaurante{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int id;
+    private long id;
     @OneToOne
     @JoinColumn(name="User_id")
     private User Dueno;

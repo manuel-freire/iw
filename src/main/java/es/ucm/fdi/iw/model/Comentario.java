@@ -9,12 +9,12 @@ public class Comentario {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int id;
+    private long id;
     private String texto;
     @ManyToOne
     @JoinColumn(name="User_id")
     private User autor;
     @ManyToOne
-    @JoinColumn(name="platoID")
+    @JoinColumn(name="Plato_id")
     private int idPlato;
 }
