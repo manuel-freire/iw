@@ -9,7 +9,7 @@ public class Extra {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int id;
+    private long id;
     private String nombre;
     private double precio;
     @ManyToOne

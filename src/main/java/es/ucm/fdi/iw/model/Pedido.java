@@ -24,7 +24,7 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private int id;
+    private long id;
     private String dirEntrega;
     //private String infoPago;
     private Estado estado;
@@ -32,6 +32,7 @@ public class Pedido {
     private double precioEntrega;
     private double precioServicio;
     private LocalDateTime fechaPedido;
+    private double valoracion;
     @OneToMany
     @JoinColumn(name="Plato_id")
     private List<PlatoPedido> contenidoPedido = new ArrayList<>();
