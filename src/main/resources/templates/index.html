@@ -11,33 +11,70 @@
 
     <main class="flex-shrink-0">
         <div class="container">
-            <h3 class="mt-5">Categorías</h1>
+            <div class="list-group">
+                <select aling="left" class="mt-5">
+                     <option selected>Filtrar por</option>
+                     <option value="1">Favoritos</option>
+                     <option value="2">Precio ascendente</option>
+                     <option value="3">Precio descendente</option>
+                     <option value="4">Populares</option>
+                </select>
+            </div>  
+        </div>
+
+        <div class="container">
+            <h3 class="mt-5">Categorías</h3>
             <div class="list-group list-group-horizontal">
-                <a href="#" class="list-group-item border-0">
-                    <img th:src="@{/img/logo.png}" src="/img/logo.png">
-                </a>
-                <a href="#" class="list-group-item border-0">
-                    <img th:src="@{/img/logo.png}" src="/img/logo.png">
-                </a>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Desayuno">
+                    </div>
+                    <div class="col">
+                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Pizzas">
+                    </div>
+                    <div class="col">
+                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Hamburguesas">
+                    </div>
+                    <div class="col">
+                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Pasta">
+                    </div>
+                    <div class="col">
+                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Meriendas">
+                    </div>
+                    <div class="col">
+                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Burritos">
+                    </div>
+
+                  </div>
             </div>
         </h3>
         <div class="container">
             <h3>Restaurantes</h3>
             <div class="card-group">
                 <a class="card mx-2 rounded" th:href="@{/restaurante}" href="/restaurante">
-                    <img th:src="@{/img/default-pic.jpg}" src="/img/default-pic.jpg" class="card-img-top" alt="...">
+                    <img th:src="@{/img/vips.jpg}" src="/img/vips.jpg" class="card-img-top" width="500" height="300">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
+                        <h5 class="card-title">Vips</h5>
                     </div>
                 </a>
                 <a class="card mx-2 border-start rounded" th:href="@{/restaurante}" href="/restaurante">
-                    <img th:src="@{/img/default-pic.jpg}" src="/img/default-pic.jpg" class="card-img-top" alt="...">
+                    <img th:src="@{/img/fooster.jpg}" src="/img/fooster.jpg" class="card-img-top" width="500" height="300">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
+                        <h5 class="card-title">Fooster Hollywood</h5>
+                    </div>
+                </a>
+                <a class="card mx-2 border-start rounded" th:href="@{/restaurante}" href="/restaurante">
+                    <img th:src="@{/img/ginos.jpg}" src="/img/ginos.jpg" class="card-img-top" width="500" height="300">
+                    <div class="card-body">
+                        <h5 class="card-title">Ginos</h5>
                     </div>
                 </a>
             </div>
+            <h3>Cerca de ti</h3>
+            <div class="card-group">
+                    <img th:src="@{/img/mapa.jpg}" src="/img/mapa.jpg" class="right" width="50" height="50">
         </div>
+    
     </main>
 
     <th:block th:replace="fragments/footer.html :: footer" />
