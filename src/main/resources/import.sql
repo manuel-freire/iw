@@ -15,14 +15,14 @@ VALUES ('RESTAURANTE', 4, TRUE, 'USER', 'dueñoRestaurante',
 INSERT INTO Restaurante (id, descripcion, direccion, horario, nombre, valoracion, user_id)
 VALUES (1,'Restaurante de pruebas', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
 -- TABLA PLATOS
-INSERT INTO Plato (id, descripcion, nombre, precio)
-VALUES (1, 'Hamburguesa de carne y queso', 'Hamburguesa', 10.99);
+INSERT INTO Plato (id, descripcion, nombre, precio, restaurante_id)
+VALUES (1, 'Hamburguesa de carne y queso', 'Hamburguesa', 10.99, 1);
 -- TABLA EXTRA
 INSERT INTO Extra (id, nombre, precio, plato_id)
 VALUES (1, 'Bacon', 3.0, 1);
 -- TABLA COMENTARIO
-INSERT INTO Comentario (id, texto, user_id, plato_id)
-VALUES (1, 'Tiene buen sabor', 2, 1);
+INSERT INTO Comentario (id, texto, user_id, plato_id, restaurante_id)
+VALUES (1, 'Tiene buen sabor', 2, 1, 1);
 -- TABLA PEDIDO
 INSERT INTO Pedido (id, dir_entrega, estado, fecha_pedido, precio_entrega, precio_servicio, propina, cliente_id, repartidor_id, restaurante_id, valoracion)
 VALUES (1,'Calle Falsisima, 345', 0, CURRENT_TIMESTAMP, 3.54, 6.56, 1.20, 2, 3, 1, 0.0);
@@ -30,5 +30,5 @@ VALUES (1,'Calle Falsisima, 345', 0, CURRENT_TIMESTAMP, 3.54, 6.56, 1.20, 2, 3, 
 INSERT INTO IWUSER_PEDIDOS (usr_restaurante_id, pedidos_id, repartidor_id, cliente_id)
 VALUES (4, 1, 3, 1);
 -- TABLA PLATO-PEDIDO
-INSERT INTO PLATO_PEDIDO (id, cantidad, plato_id)
-VALUES (1, 2, 1);
+INSERT INTO PLATO_PEDIDO (id, cantidad, plato_id, pedido_id)
+VALUES (1, 2, 1, 1);

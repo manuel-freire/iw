@@ -21,12 +21,12 @@ public class Restaurante{
     private String direccion;
     private double valoracion;
     @OneToMany
-    @JoinColumn(name="Comentario_id")
+    @JoinColumn(name="Restaurante_id")
     private List<Comentario> comentarios = new ArrayList<>();
     @OneToMany
-    @JoinColumn(name="Label_id")
+    @JoinColumn(name="Restaurante_id")
     private List<Label> labels = new ArrayList<>();
     @OneToMany
-    @JoinColumn(name="Plato_id")
+    @JoinColumn(name="Restaurante_id")
     private List<Plato> platos = new ArrayList<>();
 }

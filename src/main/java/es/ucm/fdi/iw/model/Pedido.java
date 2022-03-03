@@ -34,7 +34,7 @@ public class Pedido {
     private LocalDateTime fechaPedido;
     private double valoracion;
     @OneToMany
-    @JoinColumn(name="Plato_id")
+    @JoinColumn(name="Pedido_id")
     private List<PlatoPedido> contenidoPedido = new ArrayList<>();
     //private Map<Plato,Integer> contenidoPedido = new HashMap<>(); //<ID Plato, Cantidad>
     @ManyToOne
