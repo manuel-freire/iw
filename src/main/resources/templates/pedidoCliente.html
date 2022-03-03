@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>IW: pedidosCliente</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav"></header>
+
+    <main class="flex-shrink-0">
+        <h2 style = 'text-align: center;'>PEDIDOS</h2>
+        <div class="container">
+            
+            <div class="row">
+                <div class="col">
+                <!-- Informacion pedido cliente -->
+                <h3 style = 'text-align:left;'>Estado Pedido</h3>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Pagado</li>
+                        <li class="breadcrumb-item active" aria-current="page">Preparado</li>
+                        <li class="breadcrumb-item"><a href="#">En reparto</a></li>
+                        <li class="breadcrumb-item"><a href="#">Entregado</a></li>
+                    </ol>
+                  </nav>
+                <h3 style = 'text-align:left;'>Informacion Pedido</h3>
+
+
+                <h3 style = 'text-align:left;'>Total: 40€</h3>
+
+                </div>
+              
+
+            
+              <!-- Mapa -->
+              <div class="col">
+                <img src="/img/mapa.jpg" class="card-img-top" alt="..." href="{/]" width="2000" height="500" >
+              </div>
+              <!-- Chat Cliente-->
+              <div class="col">
+                <div class="container">
+                    <h3 style = 'text-align: center;'>Chat con el repartidor</h3>
+                    <!-- Chat -->
+                    <div class="row">
+                        <div style="border: 1px solid; border-color: black; height: 300px;">
+                                    
+                        </div>
+                    </div>
+                    <!-- Para Escribir-->
+                    <div class="row">
+                        <div style="display:flex; align-items:initial; margin-top: 10px;">
+                            <input type="text" style="width : 270px;">
+                            <button type="button" class="btn btn-success">Enviar</button>
+                        </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+    </main>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+</body>
+
+</html>

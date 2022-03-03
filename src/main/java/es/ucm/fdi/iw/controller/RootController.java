@@ -50,6 +50,11 @@ public class RootController {
         return "carrito";
     }
 
+    @GetMapping("/pedidoCliente")
+    public String pedidoCliente(Model model) {
+        return "pedidoCliente";
+    }
+
 	@GetMapping("/")
     public String index(Model model) {
         return "index";
