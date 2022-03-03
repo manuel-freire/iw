@@ -63,6 +63,8 @@ const ws = {
  * @param {string} url 
  * @param {string} method (GET|POST)
  * @param {*} data, typically a JSON-izable object, like a Message
+ * @param {*} headers, to be used instead of defaults, if specified. To send NO headers,
+ *  use {}. To send defaults, specify no value, or use false
  * 
  * @return {Promise}, which you should chain with `.then()` to manage responses, 
  *             and with `.catch()` to manage possible errors. 
@@ -74,12 +76,12 @@ const ws = {
  *     text: <describing the error>
  *  }
  */
-function go(url, method, data = {}) {
+function go(url, method, data = {}, headers = false) {
     let params = {
         method: method, // POST, GET, POST, PUT, DELETE, etc.
-        headers: {
+        headers: headers === false ? {
             "Content-Type": "application/json; charset=utf-8",
-        },
+        } : headers,
         body: JSON.stringify(data)
     };
     if (method === "GET") {
@@ -118,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             go(`${config.rootUrl}/user/unread`, "GET").then(d => p.textContent = d.unread);
         }
     } else {
-        console.log("Not opening websocket: misssing config", config)
+        console.log("Not opening websocket: missing config", config)
     }
 
     // add your after-page-loaded JS code here; or even better, call 
