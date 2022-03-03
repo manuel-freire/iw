@@ -16,6 +16,6 @@ public class Plato {
     private String descripcion;
     private double precio;
     @OneToMany
-    @JoinColumn(name = "Extra_id")
+    @JoinColumn(name = "Plato_id")
     private List<Extra> extras = new ArrayList<>();
 }
