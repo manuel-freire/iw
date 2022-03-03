@@ -8,45 +8,49 @@
 
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav"></header>
-    <div class="container">
-        <h3 align="center">Plato realizado por: Restaurante</h3>
-        <div class="card-group">
-            <a class="card mx-1 rounded" href="#">
-                <img src="/img/hamburguesa.jpg" class="card-img-top" alt="..." href="{/]" width="1000" height="400" >
-            </a>
-            <h4 class="Ingredientes">Ingredientes: Pollo crujiente, salsa BBQ chipotle sobre tomate, lechuga, pepinillo y salsa baconesa en pan brioche tostado</h4>
-            <h4 align="left">Precio: 14,95 € </h4>
-        </div> 
-       <section class="">
-           <select class="mt-5">
-                <option selected>Elige tu guarnición a elegir</option>
-                <option value="1">Patatas frias</option>
-                <option value="2">Patatas Gajo</option>
-                <option value="3">Ketchup</option>
-                <option value="4">Mayonesa</option>
-             </select>
-       </section>   
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <h3 class="text-center">Pollo Crujiente</h3>
+            <div class="card-group col-8">
+                <a class="card mx-1 rounded" href="#">
+                    <img src="/img/hamburguesa.jpg" class="card-img-top" alt="..." href="{/]" width="1000" height="400" >
+                </a>
+                <h4 class="Ingredientes mt-3">Pollo crujiente, salsa BBQ chipotle sobre tomate, lechuga, pepinillo y salsa baconesa en pan brioche tostado</h4>
+                <h6>Precio: 14,95 € </h6>
+            </div> 
+        </div>
+        <div class="row justify-content-center my-4">
+            <div class="col-4">
+                <input class="form-control" list="datalistOptions" id="guarnición" placeholder="Elige tu guarnición">
+                <datalist id="datalistOptions">
+                    <option value="Patatas fritas">
+                    <option value="Patatas Gajo">
+                    <option value="Ketchup">
+                    <option value="Mayonesa">
+                </datalist>
+            </div>  
       
-            <select class="mt-5">
-                <option selected>Elige el punto de la carne</option>
-                <option value="1">Poco hecha</option>
-                <option value="2">Hecha</option>
-                <option value="3">Muy hecha</option>
-             </select>
-       
-        <section class="mt-5">
-            <label for="CantidadPlato">Numero de platos:</label>
-            <input id="Plato" type="Cantidad" name="Plato" value="0">
-            <p align="right">
-                <input style="background-color:forestgreen;" type="button" value="Añadir al Pedido">
-            </p>    
-        </section>
-       
-        
-
+            <div class="col-3">
+                <input class="form-control" list="datalistOptions" id="punto-carne" placeholder="Elige el punto de la carne">
+                <datalist id="datalistOptions">
+                    <option value="Poco hecha">
+                    <option value="Hecha">
+                    <option value="Muy hecha">
+                </datalist>
+            </div>
+        </div>     
+        <div class="row justify-content-center mb-3">
+            <div class="col-4">
+                <div class="input-group">
+                    <span class="input-group-text">Número de platos</span>
+                    <input class="border border-disabled rounded-end" id="Plato" type="number" name="Plato" value="1">
+                </div>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-success">Añadir al pedido</button>
+            </div> 
+        </div>
     </div>
-
-   
+    <th:block th:replace="fragments/footer.html :: footer" />
 </body>
-
 </html>
