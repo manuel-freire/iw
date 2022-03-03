@@ -32,3 +32,19 @@ VALUES (4, 1, 3, 1);
 -- TABLA PLATO-PEDIDO
 INSERT INTO PLATO_PEDIDO (id, cantidad, plato_id, pedido_id)
 VALUES (1, 2, 1, 1);
+--TABLA CATEGORIAS
+INSERT INTO LABEL (id,nombre)
+VALUES(1, 'Desayuno');
+INSERT INTO LABEL (id,nombre)
+VALUES(2, 'Pizzas');
+INSERT INTO LABEL (id,nombre)
+VALUES(3, 'Hamburguesas');
+INSERT INTO LABEL (id,nombre)
+VALUES(4, 'Pasta');
+INSERT INTO LABEL (id,nombre)
+VALUES(5, 'Meriendas');
+INSERT INTO LABEL (id,nombre)
+VALUES(6, 'Burritos');
+
+
+

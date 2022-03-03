@@ -12,12 +12,10 @@
     <main class="flex-shrink-0">
         <div class="container">
             <div class="list-group">
-                <select aling="left" class="mt-5">
-                     <option selected>Filtrar por</option>
-                     <option value="1">Favoritos</option>
-                     <option value="2">Precio ascendente</option>
-                     <option value="3">Precio descendente</option>
-                     <option value="4">Populares</option>
+                <select name = "filter" aling="left" class="mt-5">
+                    
+                    <option th:each = "x : ${filterOptions}" th:text="${x}" ></option>
+
                 </select>
             </div>  
         </div>
@@ -26,26 +24,11 @@
             <h3 class="mt-5">Categorías</h3>
             <div class="list-group list-group-horizontal">
                 <div class="row align-items-center">
-                    <div class="col">
-                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Desayuno">
-                    </div>
-                    <div class="col">
-                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Pizzas">
-                    </div>
-                    <div class="col">
-                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Hamburguesas">
-                    </div>
-                    <div class="col">
-                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Pasta">
-                    </div>
-                    <div class="col">
-                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Meriendas">
-                    </div>
-                    <div class="col">
-                        <input style="background-color:rgb(202, 207, 214);" type="button" value="Burritos">
+                    <div class="col" th:each = "x : ${labelOptions}">
+                        <input th:value="${x.nombre}" style="background-color:rgb(202, 207, 214);" type="button">
                     </div>
 
-                  </div>
+                </div>
             </div>
         </h3>
         <div class="container">

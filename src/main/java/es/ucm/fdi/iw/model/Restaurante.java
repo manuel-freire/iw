@@ -23,9 +23,9 @@ public class Restaurante{
     @OneToMany
     @JoinColumn(name="Restaurante_id")
     private List<Comentario> comentarios = new ArrayList<>();
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name="Restaurante_id")
-    private List<Label> labels = new ArrayList<>();
+    Label label;
     @OneToMany
     @JoinColumn(name="Restaurante_id")
     private List<Plato> platos = new ArrayList<>();
