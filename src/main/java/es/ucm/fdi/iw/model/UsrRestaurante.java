@@ -10,6 +10,9 @@ import lombok.Data;
 @DiscriminatorValue("RESTAURANTE")
 public class UsrRestaurante extends User{
     @OneToMany
-    //@JoinColumn(name="Pedido_id")
+    private List<Restaurante> restaurantes = new ArrayList<>();
+    @OneToMany
+    //@JoinColumn(name="Pedidos_ids")
+    @Column(name = "pedidos_restaurante")
     private List<Pedido> pedidos = new ArrayList<>();
 }

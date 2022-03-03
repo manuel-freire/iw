@@ -34,13 +34,13 @@ public class Pedido {
     private LocalDateTime fechaPedido;
     private double valoracion;
     @OneToMany
-    @JoinColumn(name="Plato_id")
+    @JoinColumn(name="PlatoPedido_id")
     private List<PlatoPedido> contenidoPedido = new ArrayList<>();
     //private Map<Plato,Integer> contenidoPedido = new HashMap<>(); //<ID Plato, Cantidad>
     @ManyToOne
-    private User cliente;
+    private Cliente cliente;
     @ManyToOne
     private Restaurante restaurante;
     @ManyToOne
-    private User repartidor;
+    private Repartidor repartidor;
 }
