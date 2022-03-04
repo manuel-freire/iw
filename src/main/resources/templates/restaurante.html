@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="fragments/head :: header" />
-    <title>IW: Restaurante</title>
+    <title th:text="@{Eat Away - } + ${restaurante.nombre}"></title>
 </head>
 
 
@@ -12,7 +12,7 @@
 
     <main class="flex-shrink-0">
         <div class="container">
-            <h3 class="fs-1 fst-italic fw-bold text-center" style="color:brown" th:text="${param.restaurante}"></h3>
+            <h3 class="fs-1 fst-italic fw-bold text-center" style="color:brown" th:text="${restaurante.nombre}"></h3>
             <div id="restaurantImages" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">

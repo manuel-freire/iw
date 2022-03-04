@@ -12,8 +12,44 @@ INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password)
 VALUES ('RESTAURANTE', 4, TRUE, 'USER', 'dueñoRestaurante',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
 -- TABLA RESTAURANTE
-INSERT INTO Restaurante (id, descripcion, direccion, horario, nombre, valoracion, user_id)
-VALUES (1,'Restaurante de pruebas', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (1,'Vips', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (2,'Fosters Hollywood', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (3,'Ginos Ristorante', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (4,'McDonalds', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (5,'Burger King', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (6,'Dominos Pizza', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (7,'Telepizza', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (8,'Rodilla', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (9,'Tagliatella', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (10,'Goiko', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (11,'The Good Burger', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (12,'Udon', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (13,'Dunkin Coffee', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (14,'Tony Romas', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (15,'Starbucks', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (16,'Subway', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (17,'Pans & company', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (18,'100 Montaditos', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
+INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, user_id)
+VALUES (19,'Five Guys', 'Calle Falsa, 123', '24/7', 'Lorem ipsum', 4.0, 4);
 -- TABLA PLATOS
 INSERT INTO Plato (id, descripcion, nombre, precio, restaurante_id)
 VALUES (1, 'Hamburguesa de carne y queso', 'Hamburguesa', 10.99, 1);

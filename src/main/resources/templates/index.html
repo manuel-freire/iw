@@ -31,7 +31,20 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <h3>Restaurantes</h3>
+                <h3>Restaurantes - Dinamico</h3>
+                <div class="card-group">
+                    <div th:each ="x: ${availableRestaurants}">
+                        <a class="card me-2 rounded text-decoration-none" th:href="@{/restaurante?id=}+${x.id}">
+                            <img th:src="@{/img/}+${x.nombre}+@{.jpg}" class="card-img-top" width="500" height="300">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${x.nombre}"></h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <h3>Restaurantes - Estatico</h3>
                 <div class="card-group">
                     <a class="card me-2 rounded text-decoration-none" th:href="@{/restaurante?restaurante=vips}" href="/restaurante?restaurante=vips">
                         <img th:src="@{/img/vips.jpg}" src="/img/vips.jpg" class="card-img-top" width="500" height="300">
