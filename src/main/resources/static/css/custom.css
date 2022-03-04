@@ -5,6 +5,11 @@
     width: 32px;
 }
 
+.profile-pic {
+    height: 85px;
+    width: 85px;
+}
+
 .errTable tr>td:first-child {
     min-width: 200px;
     max-width: 200px;

@@ -10,8 +10,63 @@
     <header th:replace="fragments/nav.html :: nav"></header>
 
     <main class="flex-shrink-0">
-        <div class="container">
-            <h1 class="mt-5">Perfil de <span th:text="${user.username}">Paco</span></h1>
+        <div class="container px-5">
+            <h3 class="text-center my-4">Perfil de <span th:text="${user.username}">Paco Fernández</span></h3>
+            <div class="row justify-content-center">
+                <div class="col-5">
+                    <div class="row">
+                        <div class="col d-flex">
+                            <div class="flex-shrink-0">
+                              <img class="img-thumbnail profile-pic rounded" th:src="@{/user/{id}/pic(id=${session.u.id})}" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <p>Nombre: <span th:text="${user.username}">Paco</span></p>
+                                <p>Dirección: C/ bbb, 9</p>                       
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-5">
+                    <p class="h4">Pedidos anteriores</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item ps-0">
+                            <h5>Foster's Hollywood</h5>
+                            <ul classs="list-group">
+                                <li class="list-group-item border-0">
+                                    <div class="me-auto">
+                                        <div class="fw-bold">Hamburguesa Vip</div>
+                                        <p class="mb-0"><small>Patatas fritas</small></p>
+                                        <p class="mb-0"><small>Carne al punto</small></p>
+                                    </div>
+                                </li>
+                                <li class="list-group-item border-0">
+                                    <div class="me-auto">
+                                        <div class="fw-bold">Costilla</div>
+                                        <p class="mb-0"><small>Carne poco hecha</small></p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item">
+                            <h5>Sol naciente</h5>
+                            <ul classs="list-group">
+                                <li class="list-group-item border-0">
+                                    <div class="me-auto">
+                                        <div class="fw-bold">Tallarines Pad Thai</div>
+                                        <p class="mb-0"><small>Salsa de soja</small></p>
+                                    </div>
+                                </li>
+                                <li class="list-group-item border-0">
+                                    <div class="me-auto">
+                                        <div class="fw-bold">Maki roll</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <!-- para enviar mensajes; algo feo -->
             <div class="py-5 position-absolute bottom-0 row ">
                 <form th:action="@{/user/__${user.id}__/msg}" method="POST">
