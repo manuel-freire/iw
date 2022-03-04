@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.iw.model.Label;
+import es.ucm.fdi.iw.model.Restaurante;
 
 /**
  *  Non-authenticated requests only.
@@ -26,7 +28,10 @@ public class RootController {
 	private static final Logger log = LogManager.getLogger(RootController.class);
 
     @GetMapping("/restaurante")
-    public String restaurante(Model model) {
+    public String restaurante(Model model, @RequestParam long id) {
+        String query = "Select x From Restaurante x Where id="+id;
+        Restaurante restaur = (Restaurante) entityManager.createQuery(query).getSingleResult();
+        model.addAttribute("restaurante", restaur);
         return "restaurante";
     }
 
@@ -68,6 +73,10 @@ public class RootController {
 
 	@GetMapping("/")
     public String index(Model model) {
+        
+        List<Restaurante> availableRestaurants = entityManager.createQuery("SELECT x FROM Restaurante x").getResultList();
+        model.addAttribute("availableRestaurants", availableRestaurants);
+
         List<String> filterOptions = new ArrayList<>();
         filterOptions.add("Sin Filtro");
         filterOptions.add("Favoritos");
