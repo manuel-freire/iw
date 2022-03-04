@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <h3>Restaurantes - Dinamico</h3>
+                <h3>Restaurantes</h3>
                 <div class="card-group">
                     <div th:each ="x: ${availableRestaurants}">
                         <a class="card me-2 rounded text-decoration-none" th:href="@{/restaurante?id=}+${x.id}">
@@ -43,28 +43,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row mt-3">
-                <h3>Restaurantes - Estatico</h3>
-                <div class="card-group">
-                    <a class="card me-2 rounded text-decoration-none" th:href="@{/restaurante?restaurante=vips}" href="/restaurante?restaurante=vips">
-                        <img th:src="@{/img/vips.jpg}" src="/img/vips.jpg" class="card-img-top" width="500" height="300">
-                        <div class="card-body">
-                            <h5 class="card-title">Vips</h5>
-                        </div>
-                    </a>
-                    <a class="card mx-2 border-start rounded text-decoration-none" th:href="@{/restaurante?restaurante=fosters}" href="/restaurante?restaurante=fosters">
-                        <img th:src="@{/img/fooster.jpg}" src="/img/fooster.jpg" class="card-img-top" width="500" height="300">
-                        <div class="card-body">
-                            <h5 class="card-title">Foster's Hollywood</h5>
-                        </div>
-                    </a>
-                    <a class="card mx-2 border-start rounded text-decoration-none" th:href="@{/restaurante?restaurante=ginos}" href="/restaurante?restaurante=ginos">
-                        <img th:src="@{/img/ginos.jpg}" src="/img/ginos.jpg" class="card-img-top" width="500" height="300">
-                        <div class="card-body">
-                            <h5 class="card-title">Ginos</h5>
-                        </div>
-                    </a>
-                </div>
             <!--<div class="row mt-3">
                 <h3>Cerca de ti</h3>
                 <div class="card-group">
