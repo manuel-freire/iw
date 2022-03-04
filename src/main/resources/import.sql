@@ -30,7 +30,7 @@ VALUES (1,'Calle Falsisima, 345', 0, CURRENT_TIMESTAMP, 3.54, 6.56, 1.20, 2, 3, 
 INSERT INTO IWUSER_PEDIDOS (usr_restaurante_id, pedidos_id, repartidor_id, cliente_id)
 VALUES (4, 1, 3, 1);
 -- TABLA PLATO-PEDIDO
-INSERT INTO PLATO_PEDIDO (id, cantidad, plato_id, pedido_id)
+INSERT INTO PLATO_PEDIDO (id, cantidad, plato_id, plato_pedido_id)
 VALUES (1, 2, 1, 1);
 --TABLA CATEGORIAS
 INSERT INTO LABEL (id,nombre)
