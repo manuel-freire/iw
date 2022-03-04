@@ -9,8 +9,136 @@
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav"></header>
     <div class="container">
-        <h3>Carrito</h3>
+        <h3 class="text-center mt-3">Carrito</h3>
+        <div class="row">
+            <div class="col"> <!--Formulario entrega-->
+                <div class="row  justify-content-center">
+                    <div class="col-8">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id ="direccionEntrega" placeholder="C/ Los Ángeles, 5, 4ºF">
+                            <label class="ms-2" for="direccionEntrega">Dirección de entrega</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row  justify-content-center">
+                    <div class="col-8">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="instruccionesEntrega" placeholder="Timbre nº 256" style="height:100px"></textarea>
+                            <label class="ms-2" for="instruccionesEntrega">Instrucciones de entrega</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row  justify-content-center mt-3">  
+                    <div class="col-8">
+                        <label>El pago se llevará a cabo al recibir el pedido</label>
+                        <div class="form-check ms-3">
+                            <input class="form-check-input" type="radio" name="entrega" id="pagoTarjeta" checked>
+                            <label class="form-check-label" for="pagoTarjeta">
+                            Pago con tarjeta
+                            </label>
+                        </div>
+                        <div class="form-check ms-3">
+                            <input class="form-check-input" type="radio" name="entrega" id="pagoEfectivo">
+                            <label class="form-check-label" for="pagoEfectivo">
+                                Pago en efectivo
+                            </label>
+                        </div>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Llevar cambio de 10"></textarea>
+                            <label class="ms-2">Si necesita cambio, pídanoslo aquí</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center mt-3">
+                    <div class="col-8">
+                        <label>Tiempo estimado de espera: 30 minutos</label>
+                        <div class="form-check ms-3">
+                            <input class="form-check-input" type="radio" name="entrega" id="entregaEstandar" checked>
+                            <label class="form-check-label" for="entregaEstandar">
+                              Estándar
+                            </label>
+                          </div>
+                          <div class="form-check ms-3">
+                            <input class="form-check-input" type="radio" name="entrega" id="entregaProgramada">
+                            <label class="form-check-label" for="entregaProgramada">
+                              Programar
+                            </label>
+                          </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center my-3">
+                    <div class="col-8">
+                        <h5>Tus artículos</h5>
+                        <ul class="list-group list-group-flush border rounded">
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="me-auto">
+                                    <div class="fw-bold">Hamburguesa Vip</div>
+                                    <p class="mb-0">Patatas fritas</p>
+                                    <p class="mb-0">Carne al punto</p>
+                                </div>
+                                <span class="badge bg-dark rounded-pill">1</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="me-auto">
+                                    <div class="fw-bold">Tallarines pad thai</div>
+                                    <p>Salsa de soja</p>
+                                </div>
+                                <span class="badge bg-dark rounded-pill">2</span>
+                            </li>
+                        </ul>
+                    </div>  
+                </div>
+            </div>
+            <div class="col"> <!--Precio desglosado-->
+                <div class="border rounded">
+                    <div class="row justify-content-center mt-2">
+                        <div class="col-8 d-flex justify-content-between align-items-start">
+                            <div class="fw-bold h6">Subtotal</div>
+                            <p>22'75</p>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-8 d-flex justify-content-between align-items-start">
+                            <div class="fw-bold h6">Servicio</div>
+                            <p>1'25</p>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-8 d-flex justify-content-between align-items-start">
+                            <div class="fw-bold h6">Entrega</div>
+                            <p>2'5</p>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-7 fw-bold h6">Añadir propina</div>
+                                <div class="col-5">
+                                    <select class="form-select">
+                                    <option selected value="Ahora no">Ahora no</option>
+                                    <option value="10%">10%</option>
+                                    <option value="15%">15%</option>
+                                    <option value="20%">20%</option>
+                                </select>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-3">
+                        <div class="col-8 d-flex justify-content-between align-items-start">
+                            <div class="fw-bold h5">Total</div>
+                            <p>26'5</p>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-4 mb-2">
+                        <button type="button" class="btn btn-outline-success col-6">Hacer pedido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <th:block th:replace="fragments/footer.html :: footer" />
 </body>
 </html>
     
