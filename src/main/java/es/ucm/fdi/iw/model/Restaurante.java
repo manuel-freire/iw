@@ -13,9 +13,8 @@ public class Restaurante{
     @SequenceGenerator(name = "gen", sequenceName = "gen")
     private long id;
 
-    @OneToOne
-    @JoinColumn(name="User_id")
-    private User Dueno;
+    @ManyToOne
+    private User propietario;
 
     private String nombre;
     private String descripcion;
