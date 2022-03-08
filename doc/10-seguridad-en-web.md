@@ -1,6 +1,6 @@
 % Seguridad en aplicaciones Web Java
 % (manuel.freire@fdi.ucm.es)
-% 2020.04.06
+% 2022.03.07
 
 # Introducción
 
@@ -17,13 +17,15 @@
 * Acceso ó control externo de la aplicación
 * Acceso ó control externo del servidor
 
+*(de menos a más grave)*
+
 ## Vectores de ataque
 
-* Externos a la aplicación: _puedes mitigar su impacto_
+* Externos a la aplicación: _puedes **mitigar** su impacto_
     + acceso físico al servidor
     + vulnerabilidad remota
     + vulnerabilidad local
-* Internos a la aplicación: _puedes evitarlos completamente_
+* Internos a la aplicación: _puedes **evitarlos** completamente_
     + inyección de SQL (contra la BD)
     + inyección de HTML/JS (contra clientes)
     + inyección de ficheros (contra datos/programa)
@@ -38,22 +40,22 @@
     + si entran, que no se lo lleven _todo_
 
 * Evita exponer datos sensibles
-    + [contraseñas: ~10.7 M cuentas comprometidas](https://haveibeenpwned.com/)
+    + [contraseñas: ~11752 M cuentas comprometidas](https://haveibeenpwned.com/)\footnote{marzo 2022; cambia con frecuencia}
     + tarjetas / información de pago
-    + otra información personal delicada
+    + otra información personal delicada\footnote{datos demográficos, amistades, ...}
 
 ## Contraseñas: qué NO hacer
 
-* NUNCA guardes contraseñas en _texto claro_
+* **Nunca** guardes contraseñas en _texto claro_
     + no en tu BD
     + no en tus logs (incluso si son fallidas)
-* NUNCA envies contraseñas en _texto claro_
+* **Nunca** envies contraseñas en _texto claro_
     + para 'resetear' acceso, usa tokens aleatorios con expiración (_nonce_)
 
 ## Contraseñas: porqué NO hacerlo
 
 * Usuarios a menudo
-    + reutilizan contraseñas en muchos sitios
+    + **reutilizan** contraseñas en muchos sitios
     + usan un "esquema de contraseña" más o menos atacable \
     (`cebra18`, `leon19`, ... ) para inventar nuevas contraseñas. 
 
@@ -63,20 +65,12 @@
         - reutilizan contraseñas
         - usan esquemas atacables
 
-## qué NO hacer (x2)
-
-* NUNCA guardes contraseñas en _texto claro_
-    + no en tu BD
-    + no en tus logs (incluso si son fallidas)
-* NUNCA envies contraseñas en _texto claro_
-    + para 'resetear' acceso, usa tokens aleatorios con expiración (_nonce_)
-
 ## Contraseñas: qué SI hacer
 
 * Convierte tus contraseñas a un **formato modificado** que
-    + permite verificar el original corresponde a la modificación
-    + no permite obtener el original a partir de la modificación
-    + no permite entrar con la modificación
+    + permite **_verificar_** que el original corresponde a la modificación
+    + **no** permite _obtener_ el original a partir de la modificación
+    + **no** permite _entrar_ con la modificación
 
 * Receta para un buen **formato modificado**
     + **clave** (elegida por el usuario)
@@ -89,20 +83,20 @@
 * Dada una cadena de bits _b_, h(b) (un hash) debe cumplir
     + **consistente**: $b_1 = b_2 \implies h(b_1) = h(b_2)$
     + longitud constante: $\forall b, |h(b)| = {n_h}$, \
-    con ${h} típicamente entre 128 y 512 bits (16 a 64 bytes)
+    con $h$ típicamente entre 128 y 512 bits (16 a 64 bytes)
 * Como puede haber más claves ($2^{n_k}$) que hashes ($2^{n_h}$), habrá\footnote{Teorema del palomar: si hay más palomas (posibles cadenas de bytes) que nidos (hashes), alguna paloma va a tener que compartir nido} _colisiones_
     + ¿cómo, tu contraseña no es de al menos 16 caracteres? \
     (la mía tampoco; pero también es posible hashear \
     cosas que no son contraseñas)
-    + colisión: $a \neq b \wedge h(a) = h(b)$ \
+    + colisión: cuando $a \neq b \wedge h(a) = h(b)$ \
     "mismo resultado, a partir de cosas distintas"
 
 - - - 
 
 
-* $h$($a$ **concatenado_con** $b$) = $h(a\:||\:b)$ 
+* Notación: $h(a\:||\:b)$ significa $h$($a$ **concatenado_con** $b$)
 
-* Para que $h$ sirva como hash **criptográfico**, debe ser difícil\footnote{por ejemplo, con probabilidades de acertar del orden de $2^{-128}$}
+* Para que $h$ sirva como hash **criptográfico**, debe ser difícil\footnote{por ejemplo, con probabilidades de acertar del orden de $2^{-128};$ astronómicamente difícil porque es del orden del número de átomos en el universo visible}
     + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $h(b_1)$ (pre-imagen)
     + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $b_1$ (segunda pre-imagen)
     + encontrar cualquier colisión, en general (resistencia fuerte)
@@ -143,25 +137,30 @@
 * **No escribas código de gestión de contraseñas**
     + La criptografía es difícil
     + Mejor dejársela a los tipos que la saben \
-    y que van a actualizarla cuando se rompa
+    *y que van a actualizarla cuando se rompa*
     + Coste de fuerza bruta siempre disminuye, nunca va a aumentar
-* [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt)
-    + Multironda: aumenta coste de ataque\
-    (y de uso normal, pero es asimétrico: le "duele" mucho más al atacante).
-    + Distintos algorimos: empezó con `md5`, ahora se usa sobre todo con `blowfish`
-    + Autodescriptivo: su salida incluye información sobre algoritmo, rondas, y sal
-    + Por defecto, Spring Security usa algo similar a `$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy`
-        * 2a: algoritmo **blowfish** sobre cadenas **utf8 terminadas con `\0`**
-        * 10: **$2^{10}$ rondas**
-        * siguientes 22 caracteres: la **sal** (128 bits, en algo similar a Base-64\footnote{bcrypt:  \texttt{./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789}\\
-        Base-64 usa: \texttt{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/}}) \
-        \texttt{N9qo8uLOickgx2ZMRZoMye = 0x3ffb2afb035091e9a2cf86ce4dba8ed20}
-        * siguientes 31 caracteres: el **hash** resultante (184 bits, misma codificación) \
-        \texttt{IjZAgcfl7p92ldGxad68LJZdL17lhWy = 0xa95b0a27a19fdaffe277c8cdc7fcf8d2db7cddfd9e3634}
-* Alternativas (entre [muchas soportadas por Spring Security](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/factory/PasswordEncoderFactories.html))
-    + Argon2
+* Usa un estándar para almacenar tus contraseñas transformadas. Buenas opciones (entre [muchas soportadas por Spring Security](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/factory/PasswordEncoderFactories.html))
+    + Bcrypt
     + PBKDF2
+    + Argon2
     + Scrypt
+    
+## Bcrypt 
+
+ * [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt)
+
+* Multironda: aumenta coste de ataque\
+(y de uso normal, pero es asimétrico: le "duele" mucho más al atacante, porque hay que atacar *muchas* veces si quieres romper un hash por fuerza bruta).
++ Distintos algorimos: empezó con `md5`, ahora se usa sobre todo con `blowfish`
++ Autodescriptivo: su salida incluye información sobre algoritmo, rondas, y sal
++ Por defecto, Spring Security usa algo similar a `$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy`
+    * 2a: algoritmo **blowfish** sobre cadenas **utf8 terminadas con `\0`**
+    * 10: **$2^{10}$ rondas**
+    * siguientes 22 caracteres: la **sal** (128 bits, en algo similar a Base-64\footnote{bcrypt:  \texttt{./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789}\\
+    Base-64 usa: \texttt{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/}}) \
+    \texttt{N9qo8uLOickgx2ZMRZoMye = 0x3ffb2afb035091e9a2cf86ce4dba8ed20}
+    * siguientes 31 caracteres: el **hash** resultante (184 bits, misma codificación) \
+    \texttt{IjZAgcfl7p92ldGxad68LJZdL17lhWy = 0xa95b0a27a19fdaffe277c8cdc7fcf8d2db7cddfd9e3634}
 
 ## Tarjetas de crédito
 
@@ -189,7 +188,7 @@ Introducing: little [Bobby tables](http://bobby-tables.com/java.html)
 
 - - - 
 
-(99% de los usuarios no son malvados)
+(99%+ de los usuarios no son malvados)
 
 ~~~{.java}
 login = "Robert"; // del formulario
@@ -419,7 +418,6 @@ static boolean isTokenValid(HttpSession session, String token) {
 }
 ~~~~
 
-
 - - - 
 
 Uso del token en una consulta POST:
@@ -477,7 +475,27 @@ O en la petición AJAX:
 * Lo guarda en la sesión, y está disponible como `${_csrf}` desde Thymeleaf
 * Thymeleaf lo mete automáticamente en formularios con `method="post"`, siempre que haya un `th:action`
 
-* **OJO** si tu formulario es POST pero no usa Thymeleaf (por ejemplo, usas AJAX), *tienes que meter a mano* el token CSRF
+* **OJO** si tu formulario es POST pero no usa Thymeleaf (por ejemplo, usas AJAX), *tienes que meter a mano* el token CSRF - o usar la función que viene en `iw.js`, que lo incorpora
+
+- - - 
+
+~~~~{.js}
+function go(url, method, data = {}, headers = false) {
+    let params = {
+        method: method, // POST, GET, POST, PUT, DELETE, etc.
+        headers: headers === false ? {
+            "Content-Type": "application/json; charset=utf-8",
+        } : headers,
+        body: data instanceof FormData ? data : JSON.stringify(data)
+    };
+    if (method === "GET") {
+        delete params.body;
+    } else {
+        params.headers["X-CSRF-TOKEN"] = config.csrf.value;
+    }
+    console.log("sending", url, params)
+    return fetch(url, params) // ...
+~~~~
 
 ## Vectores internos: ficheros
 

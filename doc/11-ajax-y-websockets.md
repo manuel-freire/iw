@@ -91,30 +91,32 @@ Podeis elegir usar `JQuery`\footnote{Si lo haceis, usad una copia descargada en 
 
 ## Envoltorio sencillo para fetch+JSON
 
-\small
+\tiny
 
 ~~~{.javascript}
 // envía json, espera json de vuelta; lanza error si status != 200
-function go(url, method, data = {}) {
-  let params = {
-    method: method, // POST, GET, POST, PUT, DELETE, etc.
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
-    body: JSON.stringify(data)
-  };
-  if (method === "GET") {
-	  // GET requests cannot have body
-	  delete params.body;
-  }
-  console.log("sending", url, params)
-  return fetch(url, params).then(response => {
-    if (response.ok) {
-        return data = response.json();
+function go(url, method, data = {}, headers = false) {
+    let params = {
+        method: method,
+        headers: headers === false ? {
+            "Content-Type": "application/json; charset=utf-8",
+        } : headers,
+        body: data instanceof FormData ? data : JSON.stringify(data)
+    };
+    if (method === "GET") {
+        delete params.body;
     } else {
-        response.text().then(t => {throw new Error(t + ", at " + url)});
+        params.headers["X-CSRF-TOKEN"] = config.csrf.value;
     }
-  })
+    return fetch(url, params)
+        .then(response => {
+            const r = response;
+            if (r.ok) {
+                return r.json().then(json => Promise.resolve(json));
+            } else {
+                return r.text().then(text => Promise.reject({ /* datos del error */ }));
+            }
+        });
 }
 ~~~
 
@@ -122,14 +124,11 @@ function go(url, method, data = {}) {
 
 ~~~{.javascript}
 function login(uid, pass) {
-  return go(serverApiUrl + "login", 'POST', 
-        {uid: uid, password: pass})
-    .then(d => {serverToken = d.token; updateState(d); return d;})
+  return go(config.rootUrl + "/login", 'POST', {username, password})
+    .then(d => console.log("ok!"))
     .catch(e => console.log(e))
 }
 ~~~
-
-Sacado de una [API Ajax](https://github.com/manuel-freire/iu1920/blob/master/server/src/main/resources/static/js/gbapi.js#L277) usada en IU 2019-20. Por abajo había Spring Boot, pero no usaba seguridad ni websockets.
 
 ## Introducción a promesas JS
 
@@ -186,7 +185,7 @@ En la asignatura, usaremos Ajax para:
 - **Validación**: por ejemplo, para evitar que los usuarios intenten registrarse con logins ya existentes. 
 
 - **Mensajería**: ¿recargar toda la página para enviar un mensaje?\
-¡Estamos en 2020!.
+¡Estamos en 2022!.
 
 - **Carga dinámica de resultados**: Paginar los resultados es una posibilidad. Pero usar algún tipo de carga dinámica es mucho más amigable.
 
@@ -247,7 +246,7 @@ function validaUsername(username) {
 // ejemplo de 'config', definido en templates/head.html de la plantilla
 const config = {
   socketUrl: "ws://localhost:8080/ws",	// vacío indica falso
-  rootUrl: "/",
+  rootUrl: "//localhost:8080/",
   csrf: {
     name: "_csrf",
     value: "e8079d8b-84dc-405b-8eca-9d95a48a0fc7"

@@ -1,6 +1,6 @@
 % Validación
 % (manuel.freire@fdi.ucm.es)
-% 2020.03.22
+% 2020.03.07
 
 ## Objetivo
 
@@ -220,9 +220,79 @@ public class Car {
 
 * Una guía de Spring sobre [validación en servidor](https://spring.io/guides/gs/validating-form-input/)
 
-## Más validación
+# Controladores
 
-* Veremos más sobre validación cuando veamos cómo funcionan los controladores
+## Idea básica
+
+[referencia normativa](https://docs.spring.io/spring-framework/docs/5.3.x/reference/html/web.html#mvc-controller)
+
+~~~ {.java}
+
+@Controller
+@RequestMapping("/appointments")
+public class AppointmentsController {
+    // ...
+}
+~~~ 
+
+## Tipos de peticiones
+
+~~~ {.java}
+@RequestMapping(value="/x", method=RequestMethod.GET)
+
+@GetMapping("/x")
+
+@PostMapping("/x)
+
+@RequestMapping("/x")
+
+@RequestMapping(path="/x", method={RequestMethod.GET, RequestMethod.POST})
+
+@PostMapping(path="/pets", consumes="application/json")
+
+@GetMapping(path = "/pets/{petId}", produces = "application/json") 
+~~~
+
+## Qué puede recibir una petición
+
+[referencia normativa](https://docs.spring.io/spring-framework/docs/5.3.x/reference/html/web.html#mvc-ann-arguments)
+
+- sesión
+- modelo
+- parámetros
+- principal (= identidad del usuario)
+- petición y respuesta
+- ...
+
+## Qué puede devolver una petición
+
+- el nombre de una vista: `String`
+- algo directamente: `@ResponseBody ... Algo`
+- algo directamente, incluyendo cabeceras: `ResponseEntity<Algo>`
+- una vista implícita: `View`
+- ...
+
+## Recibiendo parámetros: por argumentos
+
+~~~ {.java}
+    @GetMapping
+    public String setupForm(@RequestParam("petId") int petId, Model model) { 
+        Pet pet = this.clinic.loadPet(petId);
+        model.addAttribute("pet", pet);
+        return "petForm";
+    }
+~~~
+
+## Recibiendo parámetros: por rutas
+
+~~~ {.java}
+    @GetMapping("/{petId}")
+    public String setupForm(@PathVariable Long petId, Model model) { 
+        Pet pet = this.clinic.loadPet(petId);
+        model.addAttribute("pet", pet);
+        return "petForm";
+    }
+~~~
 
 # Fin
 
