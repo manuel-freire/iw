@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+<html>
+    <head>
+        <th:block th:replace="fragments/head :: header" />
+        <title>EatAway - Registro</title>
+    </head>
+    <body class="d-flex flex-column h-100">
+        <header th:replace="fragments/nav.html :: nav"></header>
+        <main class="flex-shrink-0">
+            <h1>Bienvenido a EatAway</h1>
+            <h3>Regístrate para empezar a comprar</h3>
+            <form action="#" th:action="@{/registro}" th:object="${usuario}" method="post">
+                <div class="container">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{firstName}" required>
+                </div>
+                <div class="container">
+                    <label for="apellido" class="form-label">Apellido:</label>
+                    <input type="text" class="form-control" id="apellido" th:field="*{lastName}" required>
+                </div>
+                <div class="container">
+                    <label for="passwd" class="form-label">Contraseña:</label>
+                    <input type="password" class="form-control" id="passwd" aria-describedby="passwdHelp" th:field="*{password}" required>
+                    <div id="passwdHelp" class="form-text">Debe tener mínimo 8 caracteres, al menos un número, una letra minúscula, una letra mayúscula y un símbolo</div>
+                </div>
+                <div class="container">
+                    <label for="username" class="form-label">Nombre de Usuario:</label>
+                    <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" th:field="*{username}" required>
+                    <div id="usernameHelp" class="form-text">Así es como te verán los demás dentro de la aplicación</div>
+                </div>
+                <div class="container">
+                    <input type="checkbox" class="form-check-input" id="checkToS" required>
+                    <label class="form-check-label" for="checkToS">Acepta los términos y condiciones</label>
+                </div>
+                <div class="container">
+                    <button class="btn btn-success">Enviar</button>
+                </div>
+            </form>
+        </main>
+        <th:block th:replace="fragments/footer.html :: footer"/>
+    </body>
+</html>

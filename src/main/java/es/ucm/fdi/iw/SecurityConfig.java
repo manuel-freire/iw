@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.ignoringAntMatchers("/api/**")
 				.and()
 	        .authorizeRequests()
-	            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/error", "/listaPedidos","/restaurante", "/platos", "/repartidor", "/carrito", "/perfilRestaurante", "/pedidoCliente").permitAll()
+	            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/error", "/listaPedidos","/restaurante", "/platos", "/repartidor", "/carrito", "/perfilRestaurante", "/pedidoCliente", "/registro").permitAll()
 				.antMatchers("/api/**").permitAll()            // <-- public api access	
 				.antMatchers("/admin/**").hasRole("ADMIN")	   // <-- administration
 	            .antMatchers("/user/**").hasRole("USER")	   // <-- logged-in users

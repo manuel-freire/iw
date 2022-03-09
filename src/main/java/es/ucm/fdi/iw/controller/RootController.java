@@ -8,13 +8,17 @@ import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.iw.model.Label;
 import es.ucm.fdi.iw.model.Restaurante;
+import es.ucm.fdi.iw.model.User;
 
 /**
  *  Non-authenticated requests only.
@@ -89,5 +93,22 @@ public class RootController {
         model.addAttribute("filterOptions",filterOptions);
         model.addAttribute("labelOptions",labelOptions);
         return "index";
+    }
+
+    @GetMapping("/registro")
+    public String registro(Model model){
+        model.addAttribute("usuario", new User());
+        return "registro";
+    }
+    
+    @PostMapping("/registro")
+    public String hacerRegistro(@ModelAttribute User usuario ,Model model){
+        BCryptPasswordEncoder cifrador = new BCryptPasswordEncoder();
+        model.addAttribute("usuario", usuario);
+        usuario.setEnabled(true);
+        usuario.setRoles("USER");
+        usuario.setPassword(cifrador.encode(usuario.getPassword()));
+        entityManager.persist(usuario);
+        return "finRegistro";
     }
 }
