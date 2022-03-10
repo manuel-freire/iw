@@ -8,6 +8,7 @@
     <body class="d-flex flex-column h-100">
         <header th:replace="fragments/nav.html :: nav"></header>
         <main class="flex-shrink-0">
+            <p th:text="${usuario.id}"></p>
             <p th:text="${usuario.firstName}"></p>
             <p th:text="${usuario.lastName}"></p>
             <p th:text="${usuario.username}"></p>

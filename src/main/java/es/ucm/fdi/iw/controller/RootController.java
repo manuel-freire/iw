@@ -94,21 +94,4 @@ public class RootController {
         model.addAttribute("labelOptions",labelOptions);
         return "index";
     }
-
-    @GetMapping("/registro")
-    public String registro(Model model){
-        model.addAttribute("usuario", new User());
-        return "registro";
-    }
-    
-    @PostMapping("/registro")
-    public String hacerRegistro(@ModelAttribute User usuario ,Model model){
-        BCryptPasswordEncoder cifrador = new BCryptPasswordEncoder();
-        model.addAttribute("usuario", usuario);
-        usuario.setEnabled(true);
-        usuario.setRoles("USER");
-        usuario.setPassword(cifrador.encode(usuario.getPassword()));
-        entityManager.persist(usuario);
-        return "finRegistro";
-    }
 }
