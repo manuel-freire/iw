@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="fragments/head :: header" />
-    <title>IW: Perfil</title>
+    <title>Perfil</title>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -24,6 +24,15 @@
                                 <p>Dirección: C/ bbb, 9</p>                       
                             </div>
                         </div> 
+                    </div>
+                    <div class="row">
+                        <div id="profile" class="border border-2 border-tertiary rounded">
+                            <input type="file" id="f_avatar" accept="image/jpeg,image/png">
+                            <img id="avatar" alt="imagen a subir" />
+                            <form th:action="@{/user/__${user.id}__/pic}">
+                                <button id="postAvatar">Cambiar foto de perfil</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div class="col-5">
@@ -89,6 +98,26 @@
                 .then(d => console.log("happy", d))
                 .catch(e => console.log("sad", e))
         }
+
+        // refresca previsualizacion cuando cambias imagen
+        document.querySelector("#f_avatar").onchange = e => {
+            let img = document.querySelector("#avatar");
+            let fileInput = document.querySelector("#f_avatar");
+            console.log(img, fileInput);
+            readImageFileData(fileInput.files[0], img);
+        };
+        // click en boton de enviar avatar
+        document.querySelector("#postAvatar").onclick = e => {
+            e.preventDefault();
+            let url = document.querySelector("#postAvatar").parentNode.action;
+            let img = document.querySelector("#avatar");
+            let file = document.querySelector("#f_avatar");
+            postImage(img, url, "photo").then(() => {
+                let cacheBuster = "?" + new Date().getTime();
+                document.querySelector("a.nav-link>img.iwthumb").src = url + cacheBuster;
+            });
+        };
+
     </script>
 </body>
 

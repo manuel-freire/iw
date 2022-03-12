@@ -80,6 +80,9 @@
                             <li class="nav-item mx-2">
                                 <a class="nav-link" th:href="@{/login}" href="/login">Login</a>
                             </li>
+                            <li class="nav-item me-2">
+                                <a class="nav-link" th:href="@{/registro}" href="/registro">Registrar</a>
+                            </li>
                             <!--/*
                                 Esto es un comentario "thymeleaf" - no se verá en el HTML
                                 El bloque de "debug" sólo está activado si application.properties tiene debug a "true"
@@ -93,7 +96,7 @@
                                     <button type="submit" class="btn btn-outline-danger btn-sm">a</button>
                                 </form>
                             </li>
-                            <li class="nav-item debug align-self-center" th:if="${application.debug}">
+                            <li class="nav-item debug align-self-center me-2" th:if="${application.debug}">
                                 <form class="d-flex" th:action="@{/login}" method="post">
                                     <input type="hidden" name="username" value="b">
                                     <input type="hidden" name="password" value="aa">
