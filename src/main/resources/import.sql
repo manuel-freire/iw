@@ -2,9 +2,9 @@
 INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password)
 VALUES ('ADMIN', 1, TRUE, 'ADMIN,USER', 'a',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
-INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password)
+INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password, direccion)
 VALUES ('CLIENTE', 2, TRUE, 'USER', 'b',
-    '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
+    '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'C/ de las Moscas, 5, 8ºF');
 INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password, valoracion)
 VALUES ('REPARTIDOR', 3, TRUE, 'USER', 'repartidor',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 0.0);
@@ -77,4 +77,4 @@ INSERT INTO LABEL (id,nombre)
 VALUES(6, 'Burritos');
 
 
-
+ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;
