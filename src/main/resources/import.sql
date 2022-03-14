@@ -1,15 +1,15 @@
 -- TABLA USUARIOS (Contraseña de todos: aa)
-INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password)
-VALUES ('ADMIN', 1, TRUE, 'ADMIN,USER', 'a',
+INSERT INTO IWUser (id, disc_rol, enabled, roles, username, password)
+VALUES (1, 'ADMIN', TRUE, 'ADMIN,USER', 'a',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
-INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password, direccion)
-VALUES ('CLIENTE', 2, TRUE, 'USER', 'b',
+INSERT INTO IWUser (id, disc_rol, enabled, roles, username, password, direccion)
+VALUES (2, 'CLIENTE', TRUE, 'USER', 'b',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'C/ de las Moscas, 5, 8ºF');
-INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password, valoracion)
-VALUES ('REPARTIDOR', 3, TRUE, 'USER', 'repartidor',
+INSERT INTO IWUser (id, disc_rol, enabled, roles, username, password, valoracion)
+VALUES (3, 'REPARTIDOR', TRUE, 'USER', 'repartidor',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 0.0);
-INSERT INTO IWUser (disc_rol, id, enabled, roles, username, password)
-VALUES ('RESTAURANTE', 4, TRUE, 'USER', 'dueñoRestaurante',
+INSERT INTO IWUser (id, disc_rol, enabled, roles, username, password)
+VALUES (4, 'RESTAURANTE', TRUE, 'USER', 'dueñoRestaurante',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
 -- TABLA RESTAURANTE
 INSERT INTO Restaurante (id, nombre, direccion, horario, descripcion, valoracion, propietario_id)
@@ -75,6 +75,5 @@ INSERT INTO LABEL (id,nombre)
 VALUES(5, 'Meriendas');
 INSERT INTO LABEL (id,nombre)
 VALUES(6, 'Burritos');
-
 
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;
