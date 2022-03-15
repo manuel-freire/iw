@@ -35,9 +35,11 @@ const ws = {
             ws.stompClient.reconnect_callback = () => ws.retries-- > 0;
             ws.stompClient.connect(ws.headers, () => {
                 ws.connected = true;
-                console.log('Connected to ', endpoint, ' - subscribing...');
+                console.log('Connected to ', endpoint, ' - subscribing:');
                 while (subs.length != 0) {
-                    ws.subscribe(subs.pop())
+                    let sub = subs.pop();
+                    console.log(` ... to ${sub} ...`)
+                    ws.subscribe(sub);
                 }
             });
             console.log("Connected to WS '" + endpoint + "'")
