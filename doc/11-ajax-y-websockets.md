@@ -1,6 +1,6 @@
 % Uso de AJAX y websockets
 % (manuel.freire@fdi.ucm.es)
-% 2020.04.20
+% 2022.03.15
 
 ## Objetivo
 
@@ -94,10 +94,10 @@ Podeis elegir usar `JQuery`\footnote{Si lo haceis, usad una copia descargada en 
 \tiny
 
 ~~~{.javascript}
-// envía json, espera json de vuelta; lanza error si status != 200
+// versión completa disponible en resources/static/js/iw.js
 function go(url, method, data = {}, headers = false) {
     let params = {
-        method: method,
+        method: method, // POST, GET, POST, PUT, DELETE, etc.
         headers: headers === false ? {
             "Content-Type": "application/json; charset=utf-8",
         } : headers,
@@ -108,15 +108,17 @@ function go(url, method, data = {}, headers = false) {
     } else {
         params.headers["X-CSRF-TOKEN"] = config.csrf.value;
     }
+    console.log("sending", url, params)
     return fetch(url, params)
         .then(response => {
             const r = response;
             if (r.ok) {
                 return r.json().then(json => Promise.resolve(json));
             } else {
-                return r.text().then(text => Promise.reject({ /* datos del error */ }));
+                return r.text().then(text => Promise.reject(/*snip*/));
             }
         });
+}
 }
 ~~~
 
@@ -275,7 +277,7 @@ public String getUser(@RequestParam (required=false) String uname) {
 @ResponseBody // <-- "lo que devuelvo es la respuesta, tal cual"
 public String getUser(@RequestParam (required=false) String uname) {
     User u = buscaUsuarioOLanzaExcepcion(uname);
-    return "user"; // devuelve la cadena 'OK': gasta menos recursos
+    return "ok"; // devuelve la cadena 'OK': gasta menos recursos
 }
 ~~~
 
@@ -377,6 +379,28 @@ public class Message implements Transferable<Message.Transfer> {
 ~~~
 
 \normalsize
+
+## Fechas en Java y JS
+
+- Usad [LocalDateTime](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/LocalDateTime.html#now()) para instantes temporales en **Java**. Mucho más fácil de trabajar que con el viejo `Date`.
+
+- Usad `new Date()` para instantes temporales en **JS**.
+
+- Usad formato ISO para pasar de una a otra:
+
+~~~{.java}
+  // carga `t` con una fecha como cadena en formato ISO
+  LocalDateTime t = LocalDateTime.parse("2007-12-03T10:15:30");
+  // genera la representación ISO de `t` ("2007-12-03T10:15:30")
+  String iso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(t);
+~~~
+
+~~~{.js}
+  // carga `t` con una fecha como cadena en formato ISO
+  let t = new Date("2007-12-03T10:15:30");
+  // genera la representación ISO de `t` ("2007-12-03T09:15:30.000Z")
+  console.log(t.toISOString());
+~~~
 
 # Websockets
 
@@ -544,7 +568,7 @@ receipt:77
 
 ## Suscripción desde un cliente
 
-* Ya incorporado a `iwclient.js`, que es parte de la plantilla
+* Ya incorporado a `iw.js`, que es parte de la plantilla
 
 ~~~{.javascript}
 document.addEventListener("DOMContentLoaded", () => {
@@ -729,9 +753,9 @@ Ficheros implicados, lado servidor:
 
 Y en el lado cliente:
 
-- header.html: objeto 'config', y carga stomp.js + iwclient.js
+- header.html: objeto 'config', y carga stomp.js + iw.js
 - stomp.js: librería para protocolo STOMP del lado de cliente
-- iwclient.js: 
+- iw.js: 
   + establece comunicación STOMP con servidor
   + configura objeto 'ws', donde se configura lo que pasa cuando llegan mensajes
   + define una función 'go' para hacer peticiones 'fetch' sencillas enviando y recibiendo JSON
