@@ -13,6 +13,9 @@
         <div class="container">
             <form class="form-signin" method="post" th:action="@{/login}">
                 <h2 class="form-signin-heading">Please sign in</h2>
+                <p th:if="${#request.getQueryString() == 'error'}" class="error">
+                    Error en nombre de usuario o contraseña
+                </p>
                 <p>
                     <label for="username" class="visually-hidden">Username</label>
                     <input type="text" id="username" name="username" class="form-control" placeholder="Username" required="required">
