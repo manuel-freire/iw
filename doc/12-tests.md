@@ -1,6 +1,6 @@
 % Probando tu aplicación web
 % (manuel.freire@fdi.ucm.es)
-% 2021.04.12
+% 2022.03.21
 
 ## Objetivo
 
@@ -16,7 +16,7 @@
     + enlaces, formularios, validación ...
     + flujo, autenticación, historias ...
 - De **usabilidad**: con humanos, viendo a ver qué problemas o fricción encuentran para realizar tareas
-- De **compatibilidad**: viendo a ver qué plataformas son compatibles o no
+- De **compatibilidad**: viendo a ver con qué plataformas son compatibles o no
     + servidor: versiones de java, sistemas operativos y versiones, ...
     + cliente: navegadores, dispositivos, ...
 - De **seguridad**: buscando posibles vulnerabilidades
@@ -64,7 +64,7 @@ Estructura tu código para que sea fácil de probar, siguiendo filosofía 	TDD (
 
 . . .
 
-Es decir, aunque no acabes automatizando pruebas, el mero hecho de **estructurar tu código para que pueda ser probado** hace que sea mucho más mantenible, y por tanto mejor
+Es decir, aunque no acabes automatizando pruebas, el mero hecho de **estructurar tu código para que pueda ser probado** hace que sea mucho más mantenible, y por tanto mejor.
 
 # Tabla de contenidos
 
@@ -77,7 +77,7 @@ Es decir, aunque no acabes automatizando pruebas, el mero hecho de **estructurar
 	- alternativas: selenium
 	- uso de Karate 
 
-# Pruebas con JUnit en Maven
+# Pruebas con JUnit 5 en Maven
 
 - Para probar la clase X, que estará en `src/`**main**`/ruta/de/paquete/X.java`
     + creas una clase llamada XTest, en `src/`**test**`/ruta/de/paquete/XTest.java`
@@ -110,7 +110,7 @@ public void shouldFailBecauseTimeout() throws InterruptedException {
 
 ~~~~
 
-# probando clases aisladas con JUnit
+# probando clases aisladas con JUnit 5
     
 ~~~~ {.java}
 // en src/main/java/es/ucm/fdi/iw/model/CGroup.java
@@ -196,8 +196,8 @@ public class ApiControllerTest {
 
 * Usan thymeleaf para vistas, pero no saben nada de JS ni navegadores
 * Para probar JS, necesitaríamos elegir qué motor emular:
-	- IE: Chakra
-	- Chrome: V8
+	- IE: Chakra (hasta Edge)
+	- Chrome, Edge, Brave: V8
 	- Firefox: Spidermonkey
 	- Java: Nashorn (JDK) / Rhino (Mozilla)
 * Y los navegadores en sí también hacen cosas distintas
@@ -219,34 +219,30 @@ public class ApiControllerTest {
 
 # Añadiendo Karate
 
-1. modificad el pom para incorporar cambios a la plantilla
-	- nuevas librerías: junit, mockito, karate-core + karate-junit5
-	- sección build: cambios en configuración de pruebas
-2. añadid pruebas en carpeta `test/java/`, con estructura
+1. incorporad las nuevas clases de tests de la plantilla (bajo `src/test`):
 
 \small
 
 ~~~{.text}
 test/java/
-		karate-config.js			// json para configurar karate "interno"
-		logback.xml					// configuracion de logging para pruebas
-		karate/	                    // para agrupar pruebas "internas"
-			KarateTests.java		// lanza todos los tests de karate
-			login/					// agrupa pruebas sobre 1 funcionalidad
-				login1.feature		// cuenta una historia ejecutable
-				login2.feature		// otra historia ejecutable
-				LoginRunner.java	// para explicar a karate cómo probarlas
-	karate-ui/                  // para agrupar pruebas externas de karate
-		login.feature			// una prueba externa
-		message.feature	        // otra prueba externa
+		karate-config.js			// json para configurar karate
+		logback-test.xml			// configuracion de logging para pruebas
+		internal/                   // para agrupar pruebas "internas"
+			InternalTests.java		// integración con JUnit
+			api/					// agrupa pruebas sobre 1 funcionalidad
+				users.feature		// llama a una api de pruebas con usuarios
+				UsersRunner.java	// integración con JUnit
+		external/                   // para agrupar pruebas "externas"
+			ExternalRunner.java		// integración con JUnit
+			login.feature			// prueba logins
+			ws.feature				// otra historia ejecutable
 ~~~
 
 \normal
 
 3. para lanzar las pruebas, hay que usar
 	- `mvn spring-boot:run` -- porque karate usa un navegador para hablar con vuestro servidor, que tiene que estar funcionando
-	- `mvn test -Dtest=KarateTests` -- para lanzar las pruebas de `karate`, con `HttpClient` como navegador
-	- `mvn exec:java` -- para lanzar pruebas externas, con Chrome/Chromium como navegador
+	- `mvn test -Dtest=InternalRunner` ó `mvn test -Dtest=ExternalRunner` -- para lanzar las pruebas de `karate`, ya sean internas (usando HttpClient como navegador) ó externas (usando, por ejemplo, chrome)
 
 # Un archivo .feature
 
@@ -279,7 +275,7 @@ Feature: Hello World
 	- `*` - detalles de petición (`method`, `param`, `form field`, ...), \
 	o de lo que tiene que pasar (`status`, `assert`, `match`), \
 	o de lo que quieres apuntar cuando mires los resultados (`print`)
-	- También puedes usar `Given`, `And`, `When` y `Then` en lugar de `*` - pero son azúcar sintáctica
+	- También puedes usar `Given`, `And`, `When` y `Then` en lugar de `*`, o incluso omitirlos por completo: son sólo *azúcar sintáctica*
 * `Background:` - trasfondo común a todos los escenarios (piensa en `@BeforeEach`)
 
 Esta sintaxis viene de [Gherkin/Cucumber](https://cucumber.io/docs/gherkin/reference/), y constituye un DSL (_Domain-Specific Language_) mucho más legible que el equivalente en java. 
@@ -353,28 +349,23 @@ String csrf = Pattern.compile("\"_csrf\" value=\"([^\"]*)\"")
 - - - 
 
 También puedes usar unas pruebas desde otras, con \
-`call read(pruebaAEjecutar)`
+`call read(pruebaAEjecutar@labelDeEscenario)`
 
-Y puedes parsear HTML vía [JSoup](https://jsoup.org/), con selectores CSS, usando \
-`util.selectHtml(documento, selectorCss)` 
--- pero tienes que importarlo vía \
-`def util = Java.type('karate.KarateTests')`
+Y puedes acceder al HTML, o al contenido de texto:
+`And match text('#eg01DivId') == 'el contenido en texto de ese selector'`
 
 ~~~{.txt}
 
 Background:
 	* url baseUrl
-	# ejecuta una tras otra todas las acciones del escenario
-	* call read('login1.feature')
-	* def util = Java.type('karate.KarateTests')
+	* call read('login.feature@login_como_a')
 
 Scenario: user page
     * path 'user/1'
     * method get
     * print response
     * status 200
-    * def userName = util.selectHtml(response, "h4>span")
-    * assert userName == 'a'
+    * assert text('h4>span') == 'a'
 
 ~~~
 
@@ -396,8 +387,7 @@ Scenario: user page
 
 # Diferencias con Karate "interno"
 
-* Se ejecuta vía un programa separado: no son pruebas JUnit\
-`mvn java:exec` - ver [pom.xml](https://github.com/manuel-freire/iw/blob/a97e6112d102704edc10b4a35fbe467a3f1edcc8/plantilla/pom.xml#L209)
+* Requiere que el servidor ya esté lanzado (¡puede usarse para probar servidores de 3eros!)
 * Da acceso al dom tras modificaciones de JS, permite probar websockets
 * Documentado en [karate-core](https://github.com/intuit/karate/tree/master/karate-core)
 * Nuevos verbos/acciones:
