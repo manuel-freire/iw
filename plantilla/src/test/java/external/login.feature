@@ -1,11 +1,15 @@
 Feature: login en servidor
 
-  Scenario: login malo en github
-    Given driver 'https://github.com/login'
-    And input('#login_field', 'dummy')
-    And input('#password', 'world')
-    When submit().click("input[name=commit]")
-    Then match html('.flash-error') contains 'Incorrect username or password.'
+#
+#  Este test funciona, pero no es de buena educación martillear una API externa
+#
+#  Scenario: login malo en github
+#    Given driver 'https://github.com/login'
+#    And input('#login_field', 'dummy')
+#    And input('#password', 'world')
+#    When submit().click("input[name=commit]")
+#    Then match html('.flash-error') contains 'Incorrect username or password.'
+#
 
   Scenario: login malo en plantilla
     Given driver baseUrl + '/user/2'
@@ -22,12 +26,6 @@ Feature: login en servidor
     When submit().click(".form-signin button")
     Then waitForUrl(baseUrl + '/user/2')
 
-  @logout
-  Scenario: logout after login
-    Given driver baseUrl + '/user/2'
-    When submit().click("{button}logout")
-    Then waitForUrl(baseUrl + '/login')
-
   @login_a
   Scenario: login correcto como a
     Given driver baseUrl + '/login'
@@ -37,6 +35,10 @@ Feature: login en servidor
     Then waitForUrl(baseUrl + '/admin')
 
   Scenario: logout after login
-    Given driver baseUrl + '/user/2'
+    Given driver baseUrl + '/login'
+    And input('#username', 'a')
+    And input('#password', 'aa')
+    When submit().click(".form-signin button")
+    Then waitForUrl(baseUrl + '/admin')
     When submit().click("{button}logout")
     Then waitForUrl(baseUrl + '/login')

@@ -8,7 +8,9 @@ Feature: envío de mensajes
     And click("button[id=sendmsg]")
     And delay(500)
 
-    When call read('login.feature@logout')
     And call read('login.feature@login_b')
+    # los mensajes se cargan via ajax, y tardan un poquito
+    And delay(500)
+
     Then match html('#mensajes') contains mensaje
     And driver.screenshot()
