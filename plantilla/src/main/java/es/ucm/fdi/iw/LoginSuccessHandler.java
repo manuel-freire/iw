@@ -67,13 +67,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		session.setAttribute("u", u);
 
 		// add 'url' and 'ws' session variables
+		// example URLS:                            Root URL
+		//     http://localhost:8080/               //localhost:8080/
+		//     http://localhost:8080/abc/           //localhost:8080/abc/
+		//     https://vmXY.containers.fdi.ucm.es/  //vmXY.containers.fdi.ucm.es/
+		//
 		String url = request.getRequestURL().toString()
-			.replaceFirst("/[^/]*$", "") 	    // .../foo		 => ...
-			.replaceFirst("[^/]*", "");			// http[s]:		 => //...
+			.replaceFirst("/[^/]*$", "")        // ...foo/bar        => ...foo/
+			.replaceFirst("[^/]*", "");         // http[s]://...foo/ => //...foo/
+		String ws = "ws:" + url + "/ws";        // //...foo/         => ws://...foo/ws
 		session.setAttribute("url", url);
-		String ws = url
-			.replaceFirst("[^:]*", "ws");       // http[s]://... => ws://...
-		session.setAttribute("ws", ws + "/ws");
+		session.setAttribute("ws", ws);
 
 		// redirects to 'admin' or 'user/{id}', depending on the user
 		String nextUrl = u.hasRole(User.Role.ADMIN) ? 
