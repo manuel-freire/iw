@@ -1,6 +1,6 @@
 % Introducción a las tecnologías web
 % (manuel.freire@fdi.ucm.es)
-% 2022.02.25
+% 2023.01.23
 
 ## Objetivo y contenido
 

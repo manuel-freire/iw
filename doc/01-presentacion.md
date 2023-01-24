@@ -1,6 +1,6 @@
 % Presentación de la asignatura
 % (manuel.freire@fdi.ucm.es)
-% 2022.02.25
+% 2023.01.23
 
 ## Objetivo
 
@@ -12,7 +12,7 @@
 - manuel.freire@fdi.ucm.es
 - despacho 325
 - tutorías 
-    + lunes de 11 a 12h, y de 17 a 18h
+    + martes de 16 a 17h, y jueves de 10 a 11h
     + *envía un email antes para confirmar, con \[IW] en el subject*
     + en general, flexible en fechas y horas
 - tutorías grupales vía *google meet* a demanda
@@ -276,6 +276,7 @@ Lenguaje *X* mejor que *Y*...
 - physionet: gestiona tu gabinete de **fisioterapia** online, con puntos de entrada tanto para los especialistas como para los usuarios del servicio.
 - ucmh: seguimiento de **salud mental** online para personal y alumnos de la UCM
 - multigym: alquila o reserva **espacios deportivos** online acorde con tus necesidades y posibilidades
+
 
 # Un buen proyecto
 
