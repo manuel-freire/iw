@@ -18,3 +18,10 @@
     border-top: 1px solid gray;
     border-bottom: 1px solid gray;
 }
+
+img.preview {
+    object-fit: cover;
+    width: 10%;
+    height: 100px;
+    border-radius: 10px;
+}

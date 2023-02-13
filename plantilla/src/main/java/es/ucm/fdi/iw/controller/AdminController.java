@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  *  Site administration.
  *
- *  Access to this end-point is authenticated.
+ *  Access to this end-point is authenticated - see SecurityConfig
  */
 @Controller
 @RequestMapping("admin")
