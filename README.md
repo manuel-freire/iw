@@ -4,7 +4,7 @@ Material para la asignatura de Ingeniería Web, edición 2022-23, de la Facultad
 
 ## Contenido
 
-* en [/plantilla](https://github.com/manuel-freire/iw1/tree/master/plantilla) está la plantilla recomendada para los proyectos de este año. Sobre un proyecto "desde cero", por ejemplo el visto en el tutorial, añade:
+* en [/plantilla](https://github.com/manuel-freire/iw/tree/main/plantilla) está la plantilla recomendada para los proyectos de este año. Sobre un proyecto "desde cero", por ejemplo el visto en el tutorial, añade:
 
     - Perfiles para mantener una BD H2 en memoria o en disco
     - Seguridad con múltiples roles definidos, y persistiendo usuarios vía BD
@@ -15,9 +15,9 @@ Material para la asignatura de Ingeniería Web, edición 2022-23, de la Facultad
     - WebSockets con STOMP funcionando
     - Demostraciones de AJAX en funcionamiento para consultar APIs externas y gestionar imágenes
 
-* en [/doc/](https://github.com/manuel-freire/iw/tree/master/doc) tienes las transparencias, en Markdown. Puedes leerlas tal cual están (es texto, y además GitHub tiene un intérprete embebido), o convertirlas a PDF u otro formato usando, por ejemplo, [Pandoc](https://pandoc.org). Tengo un [script](https://github.com/manuel-freire/fdi-utils) en python llamado `markdown-to-beamer` que es el que uso para generar las transparencias que subo a Campus Virtual y uso en clase. Muchas transparencias no están **actualizadas a edición 2021-22**; en general, las actualizo poco antes de las clases correspondientes.
+* en [/doc/]([https://github.com/manuel-freire/iw/tree/main/doc) tienes las transparencias, en Markdown. Puedes leerlas tal cual están (es texto, y además GitHub tiene un intérprete embebido), o convertirlas a PDF u otro formato usando, por ejemplo, [Pandoc](https://pandoc.org). Tengo un [script](https://github.com/manuel-freire/fdi-utils) en python llamado `markdown-to-beamer` que es el que uso para generar las transparencias que subo a Campus Virtual y uso en clase. Muchas transparencias no están **actualizadas la última edicion**; en general, las actualizo poco antes de las clases correspondientes.
 
-* (**desactualizado**) en [/demo](https://github.com/manuel-freire/iw/tree/master/demo) está el proyecto de demostración explicado en el [tutorial](https://github.com/manuel-freire/iw/blob/master/doc/05-tutorial.md)
+* (**desactualizado**) en [/demo](https://github.com/manuel-freire/iw/tree/main/demo) está el proyecto de demostración explicado en el [tutorial](https://github.com/manuel-freire/iw/blob/main/doc/05-tutorial.md)
 
 ## Historia
 
