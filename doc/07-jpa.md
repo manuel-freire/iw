@@ -1,6 +1,6 @@
 % JPA
 % (manuel.freire@fdi.ucm.es)
-% 2022.02.21
+% 2023.02.21
 
 ## Objetivo
 
@@ -31,6 +31,8 @@ spring.jpa.show-sql: true
 # allow multi-line import.sql statements, from https://stackoverflow.com/a/15090964/15472
 spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
 
+spring.thymeleaf.cache: false
+es.ucm.fdi.base-path: /tmp/iw
 ~~~ 
 
 \normal
@@ -60,8 +62,8 @@ INSERT INTO user(id,enabled,login,password,roles) VALUES (
     + @Id en un atributo a usar como clave (recomiendo que sea "long" y use @GeneratedValue)
     + constructor de clase público vacío (o no hay constructores, o hay uno vacío)
     + getters y setters para todo
-        - hasta este curso, *anotaciones JPA en los getters*
-        - desde este año, *anotaciones JPA en atributos*, y Lombok `@Data` genera getters y setters
+	+ anotaciones JPA en atributos (podríais ponerlas en getters y setters, pero es más feo)
+	+ getters y setters para todo (generados por Lombok `@Data`)
 
 - - -
 
@@ -493,18 +495,22 @@ ID  NAME        TYPE
 
 ## Cómo usar una BD "en memoria"
 
-Ya la estás usando
+Ya la estás usando: en application.properties, tienes
 
 ~~~~ {.properties}
-    # esto lo tienes en tu application-default.properties
-    jdbc:h2:mem:iw;create=true
+    spring.datasource.url=jdbc:h2:mem:iwdb
 ~~~~ 
 
 ## Cómo usar una BD "en disco"
 
 ~~~~ {.properties}
-    # esto lo tienes en tu application-externaldb.properties
-    jdbc:h2:file:/tmp/iw;create=true
+    # variante para windows
+    spring.datasource.url=jdbc:h2:file:C:/hlocal/iwdb
+~~~~
+
+~~~~ {.properties}
+    # variante para linux
+    spring.datasource.url=jdbc:h2:file:/tmp/iwdb
 ~~~~ 
 
 Y el fichero con la BD se guarda en `/tmp/iw`
@@ -514,17 +520,43 @@ Y el fichero con la BD se guarda en `/tmp/iw`
 en src/main/resources/application-externaldb.properties...
 
 ~~~~ {.properties}
-    jdbc:hsqldb:hsql://localhost/iwdb 
+    spring.datasource.url=jdbc:h2:tcp://localhost:9092
 ~~~~ 
 
-Pero antes, lanza el servidor, usando
+Pero **antes** de probarlo, lanza el servidor, usando
 
 ~~~~ {.sh}
-    java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.5.0/hsqldb-2.5.0.jar \
-        org.hsqldb.server.Server
+    java -cp ~/.m2/repository/com/h2database/h2/2.1.214/h2-2.1.214.jar \
+        org.h2.tools.Server -web -tcp
 ~~~~ 
 
 ver http://www.h2database.com/html/tutorial.html#using_server
+
+## Modos de acceso a la BD
+
+~~~~ {.properties}
+  # no lee import.sql, no comprueba que las tablas correspondan al modelo
+  spring.jpa.hibernate.ddl-auto=none
+
+  # no lee import.sql, SI comprueba que tablas y modelo coinciden
+  spring.jpa.hibernate.ddl-auto=validate
+
+  # no lee import.sql, si tabla y modelo no coinciden, INTENTA ARREGLAR
+  spring.jpa.hibernate.ddl-auto=update
+
+  # SÍ lee import.sql, CREA tablas para que coincidan con modelo
+  spring.jpa.hibernate.ddl-auto=create
+
+  # Como el anterior, pero además luego borra tablas
+  spring.jpa.hibernate.ddl-auto=create-drop
+~~~~
+
+## Pasando de create-drop a validate
+
+1. configura para usar fichero o servidor externo con `ddl-auto=create`
+2. lanza 1 vez la aplicación, y ciérrala luego
+3. modifica connfiguración para usar `ddl-auto=validate`
+4. ya no cambies la configuración. ¡Y tampoco cambies tu modelo!
 
 ## Instrucciones útiles en H2
 
