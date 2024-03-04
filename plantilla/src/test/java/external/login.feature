@@ -3,12 +3,12 @@ Feature: login en servidor
 #
 #  Este test funciona, pero no es de buena educación martillear una API externa
 #
-#  Scenario: login malo en github
-#    Given driver 'https://github.com/login'
-#    And input('#login_field', 'dummy')
-#    And input('#password', 'world')
-#    When submit().click("input[name=commit]")
-#    Then match html('.flash-error') contains 'Incorrect username or password.'
+Scenario: login malo en github
+    Given driver 'https://github.com/login'
+    And input('#login_field', 'dummy')
+    And input('#password', 'world')
+    When submit().click("input[name=commit]")
+    Then match html('.flash-error') contains 'Incorrect username or password.'
 #
 
   Scenario: login malo en plantilla
