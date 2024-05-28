@@ -2,12 +2,11 @@ package es.ucm.fdi.iw;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -18,49 +17,47 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * https://spring.io/guides/topicals/spring-security-architecture/, it is not
  * a bad idea to also use method security (via @Secured annotations in methods) 
  */
+@Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
 	@Autowired
 	private Environment env;
-
-	@Override
-    public void configure(WebSecurity web) throws Exception {
-		String debugProperty = env.getProperty("es.ucm.fdi.debug");
-		if (debugProperty != null && Boolean.parseBoolean(debugProperty.toLowerCase())) {
-			// allows access to h2 console iff running under debug mode
-			web.ignoring().antMatchers("/h2/**");
-		}
-    }
 
 	/**
 	 * Main security configuration.
 	 * 
 	 * The first rule that matches will be followed - so if a rule decides to grant access
 	 * to a resource, a later rule cannot deny that access, and vice-versa.
-	 * 
-	 * To disable security entirely, just add an .antMatchers("**").permitAll() 
-	 * as a first rule. Note that this may break an application that expects to have
-	 * login information available.
 	 */
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-	    http
-			.csrf()
-				.ignoringAntMatchers("/api/**")
-				.and()
-	        .authorizeRequests()
-	            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
-				.antMatchers("/api/**").permitAll()            // <-- public api access
-				.antMatchers("/admin/**").hasRole("ADMIN")	   // <-- administration
-	            .antMatchers("/user/**").hasRole("USER")	   // <-- logged-in users
-	            .anyRequest().authenticated()
-	            .and()
-			.formLogin()
-				.loginPage("/login")
-				.permitAll().successHandler(loginSuccessHandler); // <-- called when login Ok; can redirect
-	}
-	
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((requests) -> {
+				String debugProperty = env.getProperty("es.ucm.fdi.debug");
+				if (debugProperty != null && Boolean.parseBoolean(debugProperty.toLowerCase())) {
+					// allows access to h2 console iff running under debug mode
+					requests.requestMatchers("/h2/**").permitAll();
+				}
+                requests.requestMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+				        .requestMatchers("/admin/**").hasRole("ADMIN")
+	                    .requestMatchers("/user/**").hasRole("USER")
+                        .anyRequest().authenticated();
+            })
+			.csrf((csrf) -> csrf
+				.ignoringRequestMatchers("/api/**")
+			)
+            .formLogin((form) -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .permitAll()
+                .successHandler(loginSuccessHandler)
+            )
+            .logout((logout) -> logout.permitAll());
+
+        return http.build();
+    }
+
 	/**
 	 * Declares a PasswordEncoder bean.
 	 * 
@@ -82,19 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public IwUserDetailsService springDataUserDetailsService() {
 		return new IwUserDetailsService();
-	} 
-	
-	/**
-	 * Declares an AuthenticationManager bean.
-	 * 
-	 * This can be used to auto-login into the site after creating new users, for example.
-	 */
-	 @Bean
-	 @Override
-	 public AuthenticationManager authenticationManagerBean() throws Exception {
-	     return super.authenticationManagerBean();
-	 }
+	}
 	 
-	 @Autowired
-	 private LoginSuccessHandler loginSuccessHandler;
+	@Autowired
+	private LoginSuccessHandler loginSuccessHandler;
 }
