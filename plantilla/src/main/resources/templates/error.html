@@ -78,16 +78,16 @@
                 <table class="errTable">
                     <tr>
                         <td>req.url</td>
-                        <td th:text="${#request.requestURL}"></td>
+                        <td th:text="${requestURL}"></td>
                     </tr>
                     <tr>
                         <td>req.uri</td>
-                        <td th:text="${#request.requestURI}">
+                        <td th:text="${requestURI}">
                         </td>
                     </tr>
                     <tr>
                         <td>req.getHeader("User-Agent")</td>
-                        <td th:text="${#request.getHeader('User-Agent')}"></td>
+                        <td th:text="${userAgentHeader}"></td>
                     </tr>
                 </table>
 
