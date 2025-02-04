@@ -5,19 +5,30 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.8</version>
+		<version>3.4.0</version> <!-- si subes a 3.4.1, hay problemas; no lo hagas todavía -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>es.ucm.fdi.iw</groupId>
-	<artifactId>plantilla</artifactId>                      <!-- cambia esto -->
-	<version>0.0.1-SNAPSHOT</version>     
-	<name>plantilla</name>                                  <!-- cambia esto -->
-	<description>Demo project for Spring Boot</description> <!-- cambia esto -->
+	<groupId>es.ucm.fdi.iw</groupId>		<!-- *no* cambies esto -->
+	<artifactId>plantilla</artifactId>		<!-- cambia esto -->
+	<version>0.0.1-SNAPSHOT</version>		
+	<name>plantilla</name>				<!-- cambia esto -->
+	<description>Plantilla para IW</description>	<!-- cambia esto -->
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
 	<properties>
-		<java.version>11</java.version>
-		<maven.compiler.version>3.8.1</maven.compiler.version>
-        <maven.surefire.version>2.22.2</maven.surefire.version>        
-        <karate.version>1.1.0</karate.version>
+		<java.version>21</java.version>
+	        <karate.version>1.4.1</karate.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,15 +45,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
 
 		<dependency>
@@ -53,7 +60,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -102,24 +108,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven.surefire.version}</version>
-				<configuration>
-					<argLine>-Dfile.encoding=UTF-8</argLine>
-				</configuration>
-			</plugin>          
 		</plugins>
 	</build>
 

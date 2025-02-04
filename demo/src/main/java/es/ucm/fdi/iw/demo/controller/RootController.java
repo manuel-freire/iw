@@ -21,8 +21,13 @@ public class RootController {
     private static final String INTENTOS = "i";
     private final Random random = new Random();
     
-    @GetMapping("/")            
-    public String index(
+    @GetMapping("/")
+    public String index() {
+	return "index";
+    }
+
+    @GetMapping("/game")            
+    public String game(
     		HttpSession session,
             Model model,
             @RequestParam(required = false) Integer entero) {

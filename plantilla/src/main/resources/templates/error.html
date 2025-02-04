@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <th:block th:replace="fragments/head :: header" />
+    <th:block th:replace="~{fragments/head :: header}" />
     <title th:text="|IW: Error ${status}|">IW: Error</title>
 </head>
 
 <body>
-    <nav th:replace="fragments/nav.html :: nav">
+    <nav th:replace="~{fragments/nav.html :: nav}">
         Nav goes here
     </nav>
 
@@ -57,7 +57,7 @@
 
                 <h4>Variables definidas en sesión</h4>
                 <table class="errTable">
-                    <tr th:each="v: ${session}">
+                    <tr th:each="v: ${sess}">
                         <td><span class="errKey" th:text="${v.key}"></span>
                             <td th:text="${v.value}">
                 </table>
@@ -78,16 +78,16 @@
                 <table class="errTable">
                     <tr>
                         <td>req.url</td>
-                        <td th:text="${#request.requestURL}"></td>
+                        <td th:text="${req.requestURL}"></td>
                     </tr>
                     <tr>
                         <td>req.uri</td>
-                        <td th:text="${#request.requestURI}">
+                        <td th:text="${req.requestURI}">
                         </td>
                     </tr>
                     <tr>
                         <td>req.getHeader("User-Agent")</td>
-                        <td th:text="${#request.getHeader('User-Agent')}"></td>
+                        <td th:text="${req.getHeader('User-Agent')}"></td>
                     </tr>
                 </table>
 
@@ -98,7 +98,7 @@
     </div>
     <!-- end container div -->
 
-    <footer th:replace="fragments/footer.html :: footer">
+    <footer th:replace="~{fragments/footer.html :: footer}">
         Footer goes here
     </footer>
 </body>

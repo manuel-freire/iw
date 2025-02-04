@@ -8,8 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletContext;
-import java.text.SimpleDateFormat;
+import jakarta.servlet.ServletContext;
 
 /**
  * This code will execute when the application first starts.

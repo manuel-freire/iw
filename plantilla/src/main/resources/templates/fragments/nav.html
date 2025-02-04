@@ -13,7 +13,7 @@
             <div class="container-fluid">
                 <!-- nombre del sitio; es un enlace que lleva a la página ppal -->
                 <a class="navbar-brand" th:href="@{/}" href="/">
-                    <img th:src="@{/img/logo.png}" src="/img/logo.png" alt="logo IW" width="32" height="32" class="d-inline-block align-text-top"> IW 2021-22
+                    <img th:src="@{/img/logo.png}" src="/img/logo.png" alt="logo IW" width="32" height="32" class="d-inline-block align-text-top"> IW 2024-25
                 </a>
                 <!-- menu hamburguesa si no cabe todo -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,15 +21,15 @@
             </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto">
-                        <th:block th:if="${session.u}">
+                        <th:block th:if="${u}">
                             <li class="nav-item mx-3">
-                                <a class="nav-link" th:if="${session.u.hasRole('ADMIN')}" th:href="@{/admin/}">Administrar</a>
+                                <a class="nav-link" th:if="${u.hasRole('ADMIN')}" th:href="@{/admin/}">Administrar</a>
                             </li>
 
                             <li class="nav-item mx-2">
-                                <a class="nav-link" th:href="@{/user/{id}(id=${session.u.id})}">
-                                    <img class="iwthumb rounded" th:src="@{/user/{id}/pic(id=${session.u.id})}">
-                                    <span th:text="${session.u.username}">Pepe</span>
+                                <a class="nav-link" th:href="@{/user/{id}(id=${u.id})}">
+                                    <img class="iwthumb rounded" th:src="@{/user/{id}/pic(id=${u.id})}">
+                                    <span th:text="${u.username}">Pepe</span>
                                 </a>
                             </li>
                             <li class="nav-item align-self-center me-4">
@@ -43,7 +43,7 @@
                                 </form>
                             </li>
                         </th:block>
-                        <th:block th:unless="${session.u}">
+                        <th:block th:unless="${u}">
                             <li class="nav-item mx-2">
                                 <a class="nav-link" th:href="@{/login}" href="/login">Login</a>
                             </li>

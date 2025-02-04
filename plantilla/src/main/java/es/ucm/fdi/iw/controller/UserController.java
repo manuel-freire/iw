@@ -27,15 +27,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.*;
 import java.security.SecureRandom;
@@ -68,7 +68,14 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-    /**
+    @ModelAttribute
+    public void populateModel(HttpSession session, Model model) {        
+        for (String name : new String[] {"u", "url", "ws"}) {
+            model.addAttribute(name, session.getAttribute(name));
+        }
+    }
+
+	/**
      * Exception to use when denying access to unauthorized users.
      * 
      * In general, admins are always authorized, but users cannot modify
@@ -149,7 +156,10 @@ public class UserController {
 		
 		if (edited.getPassword() != null) {
             if ( ! edited.getPassword().equals(pass2)) {
-                // FIXME: complain
+                log.warn("Passwords do not match - returning to user form");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				model.addAttribute("user", target);
+        		return "user";
             } else {
                 // save encoded version of password
                 target.setPassword(encodePassword(edited.getPassword()));
@@ -232,7 +242,15 @@ public class UserController {
 		}
 		return "{\"status\":\"photo uploaded correctly\"}";
     }
-    
+
+	@GetMapping("error")
+	public String error(Model model, HttpSession session, HttpServletRequest request) {
+		model.addAttribute("sess", session);
+		model.addAttribute("req", request);
+		return "error";
+	}
+
+
     /**
      * Returns JSON with all received messages
      */

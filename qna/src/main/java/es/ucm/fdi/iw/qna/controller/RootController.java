@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import es.ucm.fdi.iw.qna.model.*;
 
