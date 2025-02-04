@@ -1,6 +1,6 @@
 % Introducción a html
 % (manuel.freire@fdi.ucm.es)
-% 2023.01.24
+% 2025.01.27
 
 ## Objetivo
 
@@ -109,7 +109,7 @@
     * equivalentes, pero no intercambiables: cada oveja con su pareja
     * tu página no será "html5 válido" si los usa ...
     * ... a no ser que uses un guión (`<p-atata>`), y te apuntes a 
-    [lo último](https://html.spec.whatwg.org/multipage/custom-elements.html#customized-built-in-element)
+    [lo último](https://html.spec.whatwg.org/#custom-element)
 - Atributos desconocidos: se ignoran (pero disponibles desde JS)
     * mejor usar `data-` atributos: estándares, y más JS-adaptados
 
@@ -250,7 +250,7 @@
     - code-point: unidad atómica de información. \
     Texto = una sucesión de puntos de código
     - code-space: colección de unidades de codificación
-    - code-unit: fragmento de punto de código en una codificación dada. 💩 requiere:
+    - code-unit: fragmento de punto de código en una codificación dada. [poop](/img/poop.png) requiere:
         - 3 unidades de codificación UTF-8 (3 bytes)
         - 1 unidad de codificación UTF-16 (2 bytes)
     - grafema: secuencia de 1 o más puntos de código que se muestran como una unidad gráfica
@@ -267,7 +267,7 @@
     - ISO-8859-5 (Latin/Cyrillic) covers Russian and other Cyrillic-alphabet languages.
 * [UTF-8](https://en.wikipedia.org/wiki/UTF-8)
     - unos 138k caracteres (v13). Algunos ocupan más bytes, otros menos. La mayoría, 1
-    - actualizado periódicamente - ¡fuente de [emojis 🥳](https://unicode.org/emoji/charts/full-emoji-list.html)!
+    - actualizado periódicamente - ¡fuente de [emojis](https://unicode.org/emoji/charts/full-emoji-list.html)!
 
 - - -
 

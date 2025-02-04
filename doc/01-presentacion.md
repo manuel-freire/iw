@@ -1,6 +1,6 @@
 % Presentación de la asignatura
 % (manuel.freire@fdi.ucm.es)
-% 2023.01.23
+% 2025.01.20
 
 ## Objetivo
 
@@ -12,7 +12,7 @@
 - manuel.freire@fdi.ucm.es
 - despacho 325
 - tutorías 
-    + martes de 16 a 17h, y jueves de 10 a 11h
+    + martes 10-11h y 17-18h 
     + *envía un email antes para confirmar, con \[IW] en el subject*
     + en general, flexible en fechas y horas
 - tutorías grupales vía *google meet* a demanda
@@ -26,14 +26,14 @@
 
 ~~~~ {.html}
     <!-- mal -->
-    from:    unaCuentaNoUcm@algunsitio.com
+    from:    cuenta.no.ucm314@algunsitio.com
     subject: entrega
     ...
 ~~~~ 
 
 ~~~~ {.html}
     <!-- mejor -->
-    from:    unaCuentaUcm@ucm.es
+    from:    cuenta.ucm@ucm.es
     subject: [IW] problemas con entrega 3
     ...
 ~~~~ 
@@ -61,7 +61,7 @@ introduction to JS and CSS
     + Propuesta + 3 prototipos en grupo
     + Último prototipo usado en examen final individual
 
-# Proyectos
+# Evaluación por proyectos
 
 - Entre 4 y 5 integrantes
     + Posible individual, pero requiere *muy* buena excusa
@@ -69,12 +69,15 @@ introduction to JS and CSS
 
 - Entregas del proyecto: 40%
     + entregas intermedias obligatorias, pero *no cuentan para nota*
-    + entrega final cuenta 40%
+    + entrega final en grupo = toda la nota de este apartado
+    + posible subir esta nota con mejoras post-examen
 
-- Examen final: 60%
+- Examen final sobre el proyecto: 50% (60% en 2ª convocatoria)
     + requiere entrega final aprobada
     + **individual** y **en laboratorio**; específico para cada grupo
     + consiste en pequeños cambios sobre el código de tu proyecto
+
+- Participación en clase: 10% (Sólo en convocatoria ordinaria; asistencia y kahoots)
 
 # Por semanas
 
@@ -119,7 +122,7 @@ AW
 + Usa XAMP como pila tecnológica: Apache, PHP, MySQL: 3 servidores
 + Pila de más bajo nivel (PHP viene sin *enrutador* ni noción de seguridad)
 + Nota por proyectos + porcentajes participación
-+ Más guiada
++ Más guiada en tipo de página y alcance
 + No menciona leguajes de *templates*
 + No incorpora *websockets*
 
@@ -128,13 +131,13 @@ IW
 + Usa Java + Spring MVC como pila; instalación fácil (si tienes JVM)
 + Pila de más alto nivel (Spring MVC, Spring Security, Maven)
 + Nota por proyectos + examen individual sobre el mismo
-+ Más libre
++ Más libre en tipología y alcance
 + MVC más claro, Thymeleaf como lenguaje de templates dedicado
 + WebSockets obligatorios
 
 # El mundo web
 
-![github.com/kamranahmedse/developer-roadmap](img/intro-dev-roadmap.png "github.com/kamranahmedse/developer-roadmap"){ height=90% }
+![github.com/kamranahmedse/developer-roadmap](img/intro-dev-roadmap.png "github.com/kamranahmedse/developer-roadmap de 2019; las versiones más nuevas también son interesantes"){ height=90% }
 
 # Frontend
 
@@ -145,7 +148,7 @@ IW
 + Vista: CSS mínimo 
     - aplicando estilos a elementos sencillos
     - algo del modelo de contenedores y layout
-    - admisible usar Bootstrap 4 para conseguir diseño "responsive"
+    - admisible usar Bootstrap 5 para conseguir diseño "responsive"
 + Controlador: JS mínimo:
     - asociando eventos a nodos DOM
     - validación de formularios 
@@ -169,8 +172,8 @@ IW
     - gestionar seguridad
     - y manejar eventos en tiempo real via WebSockets
 
-(Mayor nivel de abstracción permite hacer aplicaciones 
-más complejas y ricas que las de AW *y se espera que las hagais*)
+(Mayor nivel de abstracción: permite hacer aplicaciones 
+más complejas y ricas que las de AW **porque se espera que las hagais**)
     
 # DevOps
 
@@ -184,6 +187,26 @@ más complejas y ricas que las de AW *y se espera que las hagais*)
 + Contenedor Docker FDI
     + entorno de referencia para ejecución de las prácticas
     + ideal para ir poblando la BD / colaborar
+    + permite usar seguridad TLS (https)
+
+# Cosas adicionales que podríamos ver (pero no veremos)
+
++ Cachés, de dos tipos
+    + HTTP, para evitar re-generar vistas
+    + generales, para evitar repetir operaciones caras (por ejemplo, consultas complejas a la BBDD)
++ Autenticación compleja y/o federada
+    + JWT, OAuth, OpenID, SAML...
++ Gateways de aplicación 
+    + permiten controlar tasas de reintento, 
+    + seguridad en un único punto de acceso más fácil que en múltiples
++ Motores de búsqueda
+    + Solr ó ElasticSearch permiten búsquedas de texto en colecciones grandes de documentos
++ Escalabilidad, monitorización y telemetría
+    + microservicios
+    + colas de mensajería para comunicar servicios
+    + desplegado en nube
+    + orquestación de servicios
+    + ...
 
 # Entregas
 
@@ -201,12 +224,9 @@ más complejas y ricas que las de AW *y se espera que las hagais*)
 
  - - -
 
+![www.tiobe.com/tiobe-index/, enero 2025](img/2025-01-20-tiobe.png "www.tiobe.com/tiobe-index/"){ width=100% }
 
-![www.tiobe.com/tiobe-index/, enero 2020](img/tiobe-2020-01.png "www.tiobe.com/tiobe-index/"){ width=100% }
-
- - - - 
-
-![www.tiobe.com/tiobe-index/, febrero 2021](img/tiobe-2021-02.png "www.tiobe.com/tiobe-index/"){ width=100% }
+Este gráfico representa todo tipo de programación, y no es representativo del ecosistema web. Pero sí, Java ya no es lo que era, y python se ha disparado.
 
 # Tecnologías según SO dev survey
 
@@ -289,6 +309,11 @@ Lenguaje *X* mejor que *Y*...
 
     orientativo: unas 6 vistas / tablas en la BD (login / usuario inclusive)
 - es **útil** para alguien
+
+# Próximos pasos
+
+- miércoles: introducción al entorno, propuestas de proyecto, algo de teoría
+- lunes que viene: formación de grupos en torno a proyectos
 
 # Fin
 

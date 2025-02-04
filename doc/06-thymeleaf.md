@@ -1,6 +1,6 @@
 % Thymeleaf
 % (manuel.freire@fdi.ucm.es)
-% 2023.02.07
+% 2025.02.03
 
 ## Objetivo
 
@@ -28,7 +28,6 @@ echo "<section>\n"
 <h1> bienvenido, <span th:text="${nombre}">Luis</span></h1>
 </section>
 ~~~
-
 - - - 
 
 (novedad en Thymeleaf 3.0+)
@@ -44,7 +43,6 @@ echo "<section>\n"
 <h1> bienvenido, [[${nombre}]]></h1>
 </section>
 ~~~
-
 
 ## Lenguajes de plantillas
 
@@ -78,9 +76,9 @@ echo "<section>\n"
     </thead>
     <tbody>  <!-- th:each repite elemento -->
         <tr th:each="prod: ${allProducts}">
-            <td th:text="${prod.name}">Oranges</td>
-            <td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">
-                0.99
+        <td th:text="${prod.name}">Oranges</td>
+        <td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">
+            0.99
         </td>
         </tr>
     </tbody>
@@ -95,7 +93,6 @@ echo "<section>\n"
 - javascript - similar a text, pero con elementos js-específicos
 - css - también similar a text, pero con elementos de css
 - raw (= crudo) - no hace nada
-
 - - - 
 
 (cambios en v3.0+)
@@ -250,7 +247,7 @@ Nuevo en Thymeleaf 3+: posible usar fragmentos en muchos más sitios
 \small
 
 ~~~{.html}
-<head th:replace="base :: common_header(~{::title},~{::link})">
+<head th:replace="~{base :: common_header(~{::title},~{::link})}">
   <title>Awesome - Main</title>
   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
   <link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}">
@@ -293,7 +290,7 @@ si usas **`<th:block>`**, la etiqueta en sí *desaparece* del html resultante:
 ~~~{.html}
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><th:block th:replace="fragments/head :: header"/> 
+<head><th:block th:replace="~{fragments/head :: header}"/> 
 ...
 ~~~
 

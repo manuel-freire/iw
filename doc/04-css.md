@@ -1,6 +1,6 @@
 % Introducción a css
 % (manuel.freire@fdi.ucm.es)
-% 2022.01.31
+% 2025.01.27
 
 ## Objetivo
 
@@ -369,7 +369,7 @@ El [estándar de selectores](https://www.w3.org/TR/selectors) tiene también muc
 
 Un juego serio para practicar selectores: [CSS Diner](https://flukeout.github.io/)
 
-![https://flukeout.github.io/](img/css-diner "whttps://flukeout.github.io/"){ height=90% }
+![https://flukeout.github.io/](img/css-diner.png "whttps://flukeout.github.io/"){ height=90% }
 
 ## Prioridad de selectores
 
@@ -1064,7 +1064,7 @@ div.sidebar { grid-area: sidebar; }
 
 ## Layout: breakpoints
 
-![https://flukeout.github.io/](img/b5-breakpoints.png "https://getbootstrap.com/docs/5.2/layout/breakpoints/"){ height=60% }
+![https://flukeout.github.io/](img/b5-breakpoints.png "https://getbootstrap.com/docs/5.3/layout/breakpoints/"){ height=60% }
 
 Si pides `md` pero no hay suficientes píxeles, entonces tu solicitud no se tiene en cuenta, y se pasa a "columna única".
 
@@ -1091,14 +1091,14 @@ Si pides `md` pero no hay suficientes píxeles, entonces tu solicitud no se tien
 - `row` = soy una fila, y voy a contener columnas (`col`)
 - `col-sm-4` = quiero ocupar 1/3 del ancho, pero me colapso si llego a  `sm`
 - `col-auto` = dame lo que ocupo, y nada más
-- detalles: [https://getbootstrap.com/docs/5.2/layout/grid](https://getbootstrap.com/docs/5.2/layout/grid)
+- detalles: [https://getbootstrap.com/docs/5.3/layout/grid](https://getbootstrap.com/docs/5.3/layout/grid)
 - este ejemplo en [https://jsfiddle.net/mfreire/s3tbmj5g/](https://jsfiddle.net/mfreire/s3tbmj5g/)
 
 - - - 
 
 ## Formularios
 
-ver [https://getbootstrap.com/docs/5.2/forms/validation/](https://getbootstrap.com/docs/5.2/forms/validation/)
+ver [https://getbootstrap.com/docs/5.3/forms/validation/](https://getbootstrap.com/docs/5.3/forms/validation/)
 
 \small
 
@@ -1144,7 +1144,7 @@ Etiquetar cosas es importante - y uno de los requisitos principales de **ARIA** 
 
 ## Componentes: navbar
 
-Permite montar una barra de navegación (ver [docs/5.2/components/navbar](https://getbootstrap.com/docs/5.2/components/navbar/)) con 
+Permite montar una barra de navegación (ver [docs/5.3/components/navbar](https://getbootstrap.com/docs/5.3/components/navbar/)) con 
 
   - título/logo (`navbar-brand`)
   - enlaces (`nav-item` + `nav-link`)
@@ -1161,7 +1161,7 @@ La misma barra, cuando hay poco espacio:
 
 ## Componentes: accordion
 
-Permite mostrar/ocultar detalles. Ver [docs/5.2/components/accordion](https://getbootstrap.com/docs/5.2/components/accordion/)
+Permite mostrar/ocultar detalles. Ver [docs/5.3/components/accordion](https://getbootstrap.com/docs/5.3/components/accordion/)
 
 \small
 
@@ -1192,7 +1192,7 @@ Permite mostrar/ocultar detalles. Ver [docs/5.2/components/accordion](https://ge
 
 ## Componentes: card
 
-Para mostrar información en formato postal (= tamaño fijo), generalmente usado para poner muchos juntos. Ver [docs/5.2/components/card](https://getbootstrap.com/docs/5.2/components/card/)
+Para mostrar información en formato postal (= tamaño fijo), generalmente usado para poner muchos juntos. Ver [docs/5.3/components/card](https://getbootstrap.com/docs/5.3/components/card/)
 
 ~~~{.html}
 <div class="card" style="width: 18rem;">
@@ -1216,7 +1216,7 @@ Para mostrar información en formato postal (= tamaño fijo), generalmente usado
 
 ## Componentes: modales
 
-Para mostrar un diálogo emergente que no te deja hacer nada hasta que lo rellenas. Útil para, por ejemplo, pedir detalles sobre algo sin incluir un formulario siempre visible. Más en [docs/5.2/components/modal](https://getbootstrap.com/docs/5.2/components/modal/)
+Para mostrar un diálogo emergente que no te deja hacer nada hasta que lo rellenas. Útil para, por ejemplo, pedir detalles sobre algo sin incluir un formulario siempre visible. Más en [docs/5.3/components/modal](https://getbootstrap.com/docs/5.3/components/modal/)
 
 \small
 
@@ -1250,7 +1250,7 @@ Para mostrar un diálogo emergente que no te deja hacer nada hasta que lo rellen
 
 ## Componentes: nav&tab
 
-Para mostrar pestañas y pasar de una a otra. Detalles en [docs/5.2/components/navs-tabs](https://getbootstrap.com/docs/5.2/components/navs-tabs/)
+Para mostrar pestañas y pasar de una a otra. Detalles en [docs/5.3/components/navs-tabs](https://getbootstrap.com/docs/5.3/components/navs-tabs/)
 
 ~~~{.html}
 <ul class="nav nav-tabs">
@@ -1273,7 +1273,7 @@ Para mostrar pestañas y pasar de una a otra. Detalles en [docs/5.2/components/n
 
 ## Componentes: badge
 
-Para mostrar etiquetas pequeñas y, posiblemente, llamar la atención del usuario. Detalles en [docs/5.2/components/badge](https://getbootstrap.com/docs/5.2/components/badge/)
+Para mostrar etiquetas pequeñas y, posiblemente, llamar la atención del usuario. Detalles en [docs/5.3/components/badge](https://getbootstrap.com/docs/5.3/components/badge/)
 
 ~~~{.html}
 <button type="button" class="btn btn-primary position-relative">
@@ -1297,7 +1297,7 @@ Para mostrar etiquetas pequeñas y, posiblemente, llamar la atención del usuari
 
 ## Componentes: tooltips
 
-El atributo `title` sirve para poner tooltips. Pero para que queden más bonitos, puedes usar `data-bs-toggle="tooltip"`, y ya puestos elegir dónde colocarlos (usando *popper.js*, integrado en tu `bootstrap.bundle.js`). Detalles en [docs/5.2/components/tooltips](https://getbootstrap.com/docs/5.2/components/tooltips/)
+El atributo `title` sirve para poner tooltips. Pero para que queden más bonitos, puedes usar `data-bs-toggle="tooltip"`, y ya puestos elegir dónde colocarlos (usando *popper.js*, integrado en tu `bootstrap.bundle.js`). Detalles en [docs/5.3/components/tooltips](https://getbootstrap.com/docs/5.3/components/tooltips/)
 
 ~~~{.html}
 <button type="button" class="btn btn-secondary"

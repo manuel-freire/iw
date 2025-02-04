@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 /**
@@ -25,7 +26,9 @@ public class RootController {
     }
 
 	@GetMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, HttpServletRequest request) {
+        boolean error = request.getQueryString() != null && request.getQueryString().indexOf("error") != -1;
+        model.addAttribute("loginError", error);
         return "login";
     }
 

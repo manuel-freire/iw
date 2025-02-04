@@ -1,6 +1,6 @@
 % Introducción a las tecnologías web
 % (manuel.freire@fdi.ucm.es)
-% 2023.01.23
+% 2025.01.21
 
 ## Objetivo y contenido
 
@@ -234,6 +234,12 @@ también previsto fin de soporte de navegador en *marzo de 2020*
 ![https://en.wikipedia.org/wiki/Transport_Layer_Security](img/tls-support-2020-01.png){ height=70% }
 
 Datos de la wikipedia en enero de 2020. En general, el estado de la seguridad pone los pelos de punta.
+
+ - - - 
+
+![https://en.wikipedia.org/wiki/Transport_Layer_Security](img/tls-support-2024-01.png){ height=70% }
+
+Algo ha mejorado (datos de septiembre de 2023).
 
 ## Coste de TCP + TLS
 
