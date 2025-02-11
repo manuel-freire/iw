@@ -49,19 +49,20 @@ public class SecurityConfig {
 				.ignoringRequestMatchers("/h2/**")
 			);
 			http.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/h2/**")
+				.requestMatchers("/h2/**").permitAll()  // <-- no login for h2 console
 			);
+      http.headers(header->header.frameOptions(frameOptions->frameOptions.sameOrigin()));
 		}
 
-        http
+    http
 			.csrf(csrf -> csrf
 				.ignoringRequestMatchers("/api/**")
 			)
-            .authorizeHttpRequests(authorize -> authorize
+      .authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
 				.requestMatchers("/api/**").permitAll()            // <-- public api access
 				.requestMatchers("/admin/**").hasRole("ADMIN")	   // <-- administration
-				.requestMatchers("/user/**").hasRole("USER")	   // <-- logged-in users
+				.requestMatchers("/user/**").hasRole("USER")	     // <-- logged-in users
 				.anyRequest().authenticated()
             )
             .formLogin(formLogin -> formLogin
