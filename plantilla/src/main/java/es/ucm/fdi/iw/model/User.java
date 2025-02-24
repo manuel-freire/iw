@@ -47,6 +47,8 @@ public class User implements Transferable<User.Transfer> {
     private String firstName;
     private String lastName;
 
+    private String colorFavorito;
+
     private boolean enabled;
     private String roles; // split by ',' to separate roles
 

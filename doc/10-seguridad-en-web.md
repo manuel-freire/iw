@@ -1,6 +1,6 @@
 % Seguridad en aplicaciones Web Java
 % (manuel.freire@fdi.ucm.es)
-% 2022.03.07
+% 2025.02.24
 
 # Introducción
 
@@ -40,7 +40,7 @@
     + si entran, que no se lo lleven _todo_
 
 * Evita exponer datos sensibles
-    + [contraseñas: ~11752 M cuentas comprometidas](https://haveibeenpwned.com/)\footnote{marzo 2022; cambia con frecuencia}
+    + [contraseñas: ~14kM cuentas comprometidas](https://haveibeenpwned.com/)\footnote{febrero 2025, ~1kM por año}
     + tarjetas / información de pago
     + otra información personal delicada\footnote{datos demográficos, amistades, ...}
 
@@ -93,15 +93,12 @@
 
 - - - 
 
-
 * Notación: $h(a\:||\:b)$ significa $h$($a$ **concatenado_con** $b$)
 
 * Para que $h$ sirva como hash **criptográfico**, debe ser difícil\footnote{por ejemplo, con probabilidades de acertar del orden de $2^{-128};$ astronómicamente difícil porque es del orden del número de átomos en el universo visible}
     + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $h(b_1)$ (pre-imagen)
     + encontrar $b_2 \:|\: h(b_1) = h(b_2)$ dado $b_1$ (segunda pre-imagen)
     + encontrar cualquier colisión, en general (resistencia fuerte)
-
-- - - 
 
 ## Contraseñas: Condimento
 
@@ -118,7 +115,6 @@
         - si un final coincide, vuelvo a recorrer esas cadenas desde el principio; \
             con alta probabilidad, hay un eslabón que cumple $b = h(a)$ \
             **aceleración con un factor $n$ durante $2^{10}$ iteraciones**
-
 
 (referencias crucigrama: [XKCD](http://xkcd.com/1286/), [crucigrama al respecto](http://zed0.co.uk/crossword/) ) 
 
@@ -226,7 +222,7 @@ Ejemplo de inyección SQL para saltarse comprobaciones
 
 ~~~{.java}
 sql = "SELECT * FROM Student " +
-    "WHERE login='" + login + "' AND pass='" + login + "';";
+    "WHERE login='" + login + "' AND pass='" + pass + "';";
 ~~~
 
 . . .
@@ -362,6 +358,8 @@ model.addAttribute("message", "1 + Math.sqrt(2)");
 var message =/*[[${message}]]*/ 'defaultanyvalue';
 //            |              |
 //            \--------------+-- sin ' ' entre comentario y corchetes
+
+// OJO: recuerda escape.alf.nu!
 ~~~
 
 ## Evitando inyección de HTML/JS desde terceras páginas
@@ -387,14 +385,23 @@ var message =/*[[${message}]]*/ 'defaultanyvalue';
 
 ~~~~ {.html}
 <div>
-    // si eso lo lee el admin, está logeado, y el "endpoint" existe...
-    <script>$.post("cambiarPasswd", {u: "admin", p: "muahaha"});</script>
+    // si eso lo lee el admin de otroservidor, y está logeado...
+    <script>   
+    fetch("https://otroservidor/changePass", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            user: "admin",
+            pass: "muahaha"
+        })
+    });
+    </script>
 </div>
 ~~~~
 
 ## Evitando CSRF
 
-* Uso de tókenes de sesión
+* Uso de *tókenes de sesión*
     + se genera en cada sesión, distinto para cada usuario, no-adivinable
     + se incluye en cada petición CSRF (que __debe__ ser tipo POST)
     + si token ausente o no válido, alerta: puede ser petición CSRF
@@ -422,30 +429,35 @@ static boolean isTokenValid(HttpSession session, String token) {
 
 Uso del token en una consulta POST:
 
+\small
+
 ~~~~ {.java}
-        /**
-         * Delete a user; return status indicating success or failure
-         */
-        @RequestMapping(value = "/delUser", method = RequestMethod.POST)
-        @ResponseBody
-        @Transactional // needed to allow DB change
-        public ResponseEntity<String> delUser(
-                @RequestParam("id") long id,
-                        @RequestParam("csrf") String token, 
-                        HttpSession session) {
-                if ( ! isAdmin(session) || ! isTokenValid(session, token)) {
-                        return new ResponseEntity<String>("Error: bad auth", 
-                                        HttpStatus.FORBIDDEN);
-                } else if (entityManager.createNamedQuery("delUser")
-                                .setParameter("idParam", id).executeUpdate() == 1) {
-                        return new ResponseEntity<String>("Ok: user " + id + " removed", 
-                                        HttpStatus.OK);
-                } else {
-                        return new ResponseEntity<String>("Error: no such user", 
-                                        HttpStatus.BAD_REQUEST);
-                }
-        }       
+/**
+ * Delete a user; return status indicating success or failure
+ */
+@RequestMapping(value = "/delUser", method = RequestMethod.POST)
+@ResponseBody
+@Transactional // needed to allow DB change
+public ResponseEntity<String> delUser(
+        @RequestParam("id") long id,
+                @RequestParam("csrf") String token, 
+                HttpSession session) {
+        if ( ! isAdmin(session) || ! isTokenValid(session, token)) {
+                return new ResponseEntity<String>("Error: bad auth", 
+                                HttpStatus.FORBIDDEN);
+        } else if (entityManager.createNamedQuery("delUser")
+                        .setParameter("idParam", id).executeUpdate() == 1) {
+                return new ResponseEntity<String>("Ok: removed " + id, 
+                                HttpStatus.OK);
+        } else {
+                return new ResponseEntity<String>("Error: no such user", 
+                                HttpStatus.BAD_REQUEST);
+        }
+}       
+
 ~~~~
+
+\normalfont
 
 - - - 
 
@@ -462,12 +474,23 @@ En el formulario (si no usas Spring Security):
 
 O en la petición AJAX:
 
+\small
+
 ~~~~ {.html}
-    <script>
-        $.post("cambiarPasswd", 
-            {u: "admin", p: "algomuycomplicado", csrf: "${csrf_token}"});
+    <script>   
+    fetch("https://otroservidor/changePass", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            user: "admin",
+            pass: "algomuycomplicado",
+            csrf: csrf_token
+        })
+    });
     </script>
 ~~~~
+
+\normalfont
 
 ## Evitando CSRF con Spring Security & Thymeleaf
 
@@ -495,6 +518,7 @@ function go(url, method, data = {}, headers = false) {
     }
     console.log("sending", url, params)
     return fetch(url, params) // ...
+}
 ~~~~
 
 ## Vectores internos: ficheros
