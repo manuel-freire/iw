@@ -13,9 +13,66 @@
         <div class="container">
             <h1 class="mt-5">Administración</h1>
         </div>
+        <div class="container">
+            <h1 class="mt-5">Usuarios</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre & Apellidos</th>
+                        <th>Roles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td th:text="${user.firstName + ' ' + user.lastName}">Nombre</td>
+                        <td>
+                            <ul>
+                                <li th:text="${user.roles}">Role</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <form th:action="@{'/admin/toggle/' + ${user.id}}"
+                                th:method="post">
+                                <button
+                                    th:if="${user.enabled}" 
+                                    type="submit" class="toggle btn btn-danger">Deshabilitar</button> 
+                                <button
+                                    th:unless="${user.enabled}" 
+                                    type="submit" class="toggle btn btn-primary">Habilitar</button> 
+                            </form>
+                        </td>
+                    </tr>
+
+            </th:each>
+        </div>
+
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
+<script>
+    const toggles = document.querySelectorAll('.toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const form = e.target.parentElement;
+            go(form.action, 'POST').then((d) => {
+                if (d.enabled) {
+                    e.target.classList.remove('btn-primary');
+                    e.target.classList.add('btn-danger');
+                    e.target.textContent = 'Deshabilitar';
+                } else {
+                    e.target.classList.remove('btn-danger');
+                    e.target.classList.add('btn-primary');
+                    e.target.textContent = 'Habilitar';
+                } 
+                console.log(d);
+            });
+        });
+    });
+</script>
 </body>
 
 </html>
