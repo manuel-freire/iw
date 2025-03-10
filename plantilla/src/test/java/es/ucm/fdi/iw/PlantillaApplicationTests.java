@@ -1,11 +1,10 @@
-package es.ucm.fdi.iw.plantilla;
+package es.ucm.fdi.iw;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -19,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 class PlantillaApplicationTests {
 
-    @LocalServerPort private int port;
 	@Autowired private WebApplicationContext wac;	
 	private MockMvc mockMvc;	
 	
@@ -36,11 +34,21 @@ class PlantillaApplicationTests {
 
 	@Test
 	public void aSimpleTest() throws Exception {
-	    MvcResult mvcResult = this.mockMvc.perform(get("/api/status/test"))
+	    MvcResult mvcResult = this.mockMvc.perform(get("/api/status/leñe"))
 	      .andDo(print()).andExpect(status().isOk())
-	      .andExpect(jsonPath("$.code").value("test"))
+	      .andExpect(jsonPath("$.code").value("leñe"))
 	      .andReturn();	     
-	    Assertions.assertEquals("application/json;charset=UTF-8", 
+	    Assertions.assertEquals("application/json", 
+	      mvcResult.getResponse().getContentType());
+	}
+
+	@Test
+	public void countUsers() throws Exception {
+	    MvcResult mvcResult = this.mockMvc.perform(get("/api/users/count"))
+	      .andDo(print()).andExpect(status().isOk())
+	      .andExpect(jsonPath("$.count").value(2))
+	      .andReturn();	     
+	    Assertions.assertEquals("application/json", 
 	      mvcResult.getResponse().getContentType());
 	}
 }
