@@ -16,6 +16,7 @@ Scenario: login malo en github
     And input('#username', 'dummy')
     And input('#password', 'world')
     When submit().click(".form-signin button")
+    Then karate.stop(9000)
     Then match html('.error') contains 'Error en nombre de usuario o contraseña'
 
   @login_b

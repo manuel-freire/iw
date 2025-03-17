@@ -31,6 +31,7 @@ from typing import Union
 from pathlib import Path
 import argparse
 
+
 # see https://stackoverflow.com/a/68817065/15472
 def zip_dir(dir: Union[Path, str], filename: Union[Path, str]):
     """Zip the provided directory without navigating to that directory using `pathlib` module"""
@@ -62,13 +63,17 @@ def main(credentials_file, db_file_root, data_file_root):
 
   print("Building deployment jar file... ")
   try:
+      # shell=True works in windows/fails in Linux; and vice-versa
+      is_win = sys.platform.startswith("win")
       subprocess.run(["mvn",
                       "package", 
-                      "-DskipTests=true"], shell=False, check=True)
-      jar = glob.glob("target/*.jar")[0]
-      print(f"Deployment jar file is ready: {jar}")
-  except:
-      print("Error: Could not build jar file. Exiting.")
+                      "-DskipTests=true"], shell=is_win, check=True)
+      jar_path = glob.glob("target/*.jar")[0]
+      jar_name = Path(jar_path).name
+      print(f"Deployment jar file is ready: {jar_path} ({jar_name})")
+  except Exception as e:
+      print(f"Error: Could not build jar file. Exiting: {e}")
+      sys.exit(1)
 
   print(f"Loading credentials from `{credentials_file}` ... ")
   try:
@@ -102,21 +107,30 @@ def main(credentials_file, db_file_root, data_file_root):
           c.put("iwdata.zip")
           c.run(f"unzip iwdata.zip -d {data_file_root} && rm iwdata.zip")
           print("Uploading jar file ... ")            
-          c.put(jar)
+          c.put(jar_path)
           print(f"All files uploaded. Killing previous servers ...")
           c.run("tmux kill-server || true")
           print(f"creating a launch script (`run.sh`) for the web application ...")
-          c.run(f"echo 'SPRING_PROFILES_ACTIVE=container java -jar $(basename {jar})' > run.sh && chmod +x run.sh")
+          c.run(f"echo 'SPRING_PROFILES_ACTIVE=container java -jar {jar_name}' > run.sh && chmod +x run.sh")
           print(f"... and deploying in new tmux session `iw`; connect via `tmux a -t iw` to see logs")
           c.run(f"tmux new-session -d -s iw ./run.sh")
-          print("Deployment complete, check logs for errors.")
+          target_prefix = credentials['target'].split(".")[0]
+          target_suffix = credentials['jumphost']
+          print(f"Deployment is now being completed at the server:\n"
+                f" - Visit https://{target_prefix}.{target_suffix} (after a minute or so) to access your site\n"
+                f" - To see progress/check logs, visit visit https://guacamole.fdi.ucm.es as `{target_prefix}` with password `{credentials['target_pass']}`\n"
+                f"   and open logs via  `tmux a -t iw`; disconnecting with Ctrl+b + d\n"
+                f" - If you need to kill the server, run `tmux kill-server`")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=\
         "Upload all components of a Spring Boot application to a remote server")
-    parser.add_argument("--credentials", "-c", type=str, default="credentials.json", help="Path to credentials")
-    parser.add_argument("--db_file_root", "-d", type=str, default="iwdb", help="Root name of database files (see application.properties' spring.datasource.url)")
-    parser.add_argument("--data_file_root", "-f", type=str, default="iwdata", help="Folder with data files (see application.properties' es.ucm.fdi.base-path)")
+    parser.add_argument("--credentials", "-c", type=str, default="credentials.json", 
+                        help="Path to credentials")
+    parser.add_argument("--db_file_root", "-d", type=str, default="iwdb", 
+                        help="Root name of database files (see application.properties' spring.datasource.url)")
+    parser.add_argument("--data_file_root", "-f", type=str, default="iwdata", 
+                        help="Folder with data files (see application.properties' es.ucm.fdi.base-path)")
     args = parser.parse_args()
     try:
       main(args.credentials, args.db_file_root, args.data_file_root)

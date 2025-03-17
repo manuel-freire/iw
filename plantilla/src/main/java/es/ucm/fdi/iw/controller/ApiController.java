@@ -39,7 +39,7 @@ public class ApiController {
      */
 	@GetMapping("/status/{message}")
     public Map<String,String> check(@PathVariable String message) {
-        return Map.of("code", message);
+        return Map.of("coder", message);
     }
 
     /**
