@@ -118,7 +118,7 @@ def main(credentials_file, db_file_root, data_file_root):
           target_suffix = credentials['jumphost']
           print(f"Deployment is now being completed at the server:\n"
                 f" - Visit https://{target_prefix}.{target_suffix} (after a minute or so) to access your site\n"
-                f" - To see progress/check logs, visit visit https://guacamole.fdi.ucm.es as `{target_prefix}` with password `{credentials['target_pass']}`\n"
+                f" - To see progress/check logs, visit https://guacamole.{credentials['jumphost']} as `{target_prefix}` with password `{credentials['target_pass']}`\n"
                 f"   and open logs via  `tmux a -t iw`; disconnecting with Ctrl+b + d\n"
                 f" - If you need to kill the server, run `tmux kill-server`")
 
