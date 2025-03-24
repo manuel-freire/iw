@@ -79,6 +79,7 @@ public class AdminController {
     TypedQuery<Message> query = entityManager.createQuery("select m from Message m", Message.class);
     query.setMaxResults(5);
     query.setFirstResult(0); // para paginar: cambias el 1er resultado
+    // devuelve resultado
     return query.getResultList().stream().map(Transferable::toTransfer)
         .collect(Collectors.toList());
   }
