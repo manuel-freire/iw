@@ -4,8 +4,8 @@
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
     <title>IW: Admin</title>
-    <script th:src="@{js/simple-datatables-10.min.js}"></script>
-    <link th:rel="stylesheet" href="@{css/simple-datatables-10.css}">
+    <link rel="stylesheet" th:href="@{/css/simple-datatables-10.css}" href="/css/simple-datatables-10.css"
+        type="text/css" />
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -36,61 +36,73 @@
                             </ul>
                         </td>
                         <td>
-                            <form th:action="@{'/admin/toggle/' + ${user.id}}"
-                                th:method="post">
-                                <button
-                                    th:if="${user.enabled}" 
-                                    type="submit" class="toggle btn btn-danger">Deshabilitar</button> 
-                                <button
-                                    th:unless="${user.enabled}" 
-                                    type="submit" class="toggle btn btn-primary">Habilitar</button> 
+                            <form th:action="@{'/admin/toggle/' + ${user.id}}" th:method="post">
+                                <button th:if="${user.enabled}" type="submit"
+                                    class="toggle btn btn-danger">Deshabilitar</button>
+                                <button th:unless="${user.enabled}" type="submit"
+                                    class="toggle btn btn-primary">Habilitar</button>
                             </form>
                         </td>
                     </tr>
-            </th:each>
+                </tbody>
+            </table>
+        </div>
 
-            <h2>Últimos 10 mensajes del sistema</h2>
-            <button id="refresh" class="btn btn-primary">Actualizar vía AJAX</button>
+        <div class="container">
+
+            <h2>Últimos 5 mensajes del sistema</h2>
             <table id="messages"></table> <!-- will be filled with JSON data-->
+            <button id="refresh" class="btn btn-primary">Actualizar vía AJAX</button>
+
         </div>
 
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
-<script>
-    const toggles = document.querySelectorAll('.toggle');
-    toggles.forEach(toggle => {
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            const form = e.target.parentElement;
-            go(form.action, 'POST').then((d) => {
-                if (d.enabled) {
-                    e.target.classList.remove('btn-primary');
-                    e.target.classList.add('btn-danger');
-                    e.target.textContent = 'Deshabilitar';
-                } else {
-                    e.target.classList.remove('btn-danger');
-                    e.target.classList.add('btn-primary');
-                    e.target.textContent = 'Habilitar';
-                } 
-                console.log(d);
+    <script>
+        const toggles = document.querySelectorAll('.toggle');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const form = e.target.parentElement;
+                go(form.action, 'POST').then((d) => {
+                    if (d.enabled) {
+                        e.target.classList.remove('btn-primary');
+                        e.target.classList.add('btn-danger');
+                        e.target.textContent = 'Deshabilitar';
+                    } else {
+                        e.target.classList.remove('btn-danger');
+                        e.target.classList.add('btn-primary');
+                        e.target.textContent = 'Habilitar';
+                    }
+                    console.log(d);
+                });
             });
         });
-    });
 
-    function refreshMessages() {
-      go('/admin/all-messages', 'GET').then((d) => {
-        window.dt = new DataTable('#all-messages', {
-          data: {
-            headings: ['from', 'to', 'sent', 'text'], data: d
-          },
-        });       
-      });
-    }
-    document.getElementById('refresh').addEventListener('click', refreshMessages);
-    refreshMessages();
 
-</script>
+    </script>
+
+    <script type="module">
+        import { DataTable } from "../js/simple-datatables-10.js"
+        let dt = null;
+        function refreshMessages() {
+            go('/admin/all-messages', 'GET').then((d) => {
+                if (dt) {
+                    dt.destroy();
+                    document.querySelector("#messages").innerHTML = '';
+                }
+                dt = new DataTable('#messages', {
+                    data: {
+                        headings: ['from', 'to', 'text'],
+                        data: d
+                    },
+                });
+            });
+        }
+        document.getElementById('refresh').addEventListener('click', refreshMessages);
+        refreshMessages();
+    </script>
 </body>
 
 </html>

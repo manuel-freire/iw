@@ -22,6 +22,7 @@ import es.ucm.fdi.iw.model.Message;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -75,8 +76,10 @@ public class AdminController {
   @Transactional // para no recibir resultados inconsistentes
   @ResponseBody // para indicar que no devuelve vista, sino un objeto (jsonizado)
   public List<Message.Transfer> retrieveMessages(HttpSession session) {
-    return entityManager.createQuery("select m from Message m", Message.class)
-        .getResultList().stream().map(Transferable::toTransfer)
+    TypedQuery<Message> query = entityManager.createQuery("select m from Message m", Message.class);
+    query.setMaxResults(5);
+    query.setFirstResult(0); // para paginar: cambias el 1er resultado
+    return query.getResultList().stream().map(Transferable::toTransfer)
         .collect(Collectors.toList());
   }
 
