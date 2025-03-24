@@ -4,6 +4,8 @@
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
     <title>IW: Admin</title>
+    <script th:src="@{js/simple-datatables-10.min.js}"></script>
+    <link th:rel="stylesheet" href="@{css/simple-datatables-10.css}">
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -45,8 +47,11 @@
                             </form>
                         </td>
                     </tr>
-
             </th:each>
+
+            <h2>Últimos 10 mensajes del sistema</h2>
+            <button id="refresh" class="btn btn-primary">Actualizar vía AJAX</button>
+            <table id="messages"></table> <!-- will be filled with JSON data-->
         </div>
 
     </main>
@@ -72,6 +77,19 @@
             });
         });
     });
+
+    function refreshMessages() {
+      go('/admin/all-messages', 'GET').then((d) => {
+        window.dt = new DataTable('#all-messages', {
+          data: {
+            headings: ['from', 'to', 'sent', 'text'], data: d
+          },
+        });       
+      });
+    }
+    document.getElementById('refresh').addEventListener('click', refreshMessages);
+    refreshMessages();
+
 </script>
 </body>
 
