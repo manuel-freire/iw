@@ -19,7 +19,8 @@
                     value: "[[${_csrf.token}]]"
                 },
                 admin: "[[${u != null && u.hasRole('ADMIN')} ? true : false]]",
-                userId: +"[[${u != null} ? ${u.id} : -1]]"
+                userId: +"[[${u != null} ? ${u.id} : -1]]",
+                topics: "[[${topics}?:'']]",
             };
             config.admin = config.admin == "true"; // ensure boolean
         </script>

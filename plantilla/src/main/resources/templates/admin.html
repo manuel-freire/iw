@@ -23,12 +23,14 @@
                         <th>Id</th>
                         <th>Nombre & Apellidos</th>
                         <th>Roles</th>
+                        <th>Grupos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="user : ${users}">
                         <td th:text="${user.id}">1</td>
+                        <td th:text="${user.username}">paco</td>
                         <td th:text="${user.firstName + ' ' + user.lastName}">Nombre</td>
                         <td>
                             <ul>
@@ -36,6 +38,11 @@
                             </ul>
                         </td>
                         <td>
+                          <ul>
+                              <li th:text="${user.groups}">Role</li>
+                          </ul>
+                      </td>
+                      <td>
                             <form th:action="@{'/admin/toggle/' + ${user.id}}" th:method="post">
                                 <button th:if="${user.enabled}" type="submit"
                                     class="toggle btn btn-danger">Deshabilitar</button>

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.Lorem;
 import es.ucm.fdi.iw.model.Message;
 import es.ucm.fdi.iw.model.Transferable;
@@ -44,7 +45,7 @@ public class AdminController {
 
   @ModelAttribute
   public void populateModel(HttpSession session, Model model) {
-    for (String name : new String[] { "u", "url", "ws" }) {
+    for (String name : new String[] { "u", "url", "ws", "topics"}) {
       model.addAttribute(name, session.getAttribute(name));
     }
   }
@@ -84,21 +85,40 @@ public class AdminController {
         .collect(Collectors.toList());
   }
 
-  @PostMapping("/populate")
+  @RequestMapping("/populate")
   @ResponseBody
   @Transactional
   public String populate(Model model) {
-    for (int i = 0; i < 10; i++) {
+
+    // create some groups
+    Topic g1 = new Topic();
+    g1.setName("g1");
+    g1.setKey(UserController.generateRandomBase64Token(6));
+    entityManager.persist(g1);
+    Topic g2 = new Topic();
+    g2.setName("g2");
+    g2.setKey(UserController.generateRandomBase64Token(6));
+    entityManager.persist(g2);
+
+    // create some users & assign to groups
+    for (int i = 0; i < 15; i++) {
       User u = new User();
       u.setUsername("user" + i);
       u.setPassword(passwordEncoder
-          .encode(UserController
-              .generateRandomBase64Token(9)));
+          .encode("aa"));
+            //UserController.generateRandomBase64Token(9)));
       u.setEnabled(true);
       u.setRoles(User.Role.USER.toString());
       u.setFirstName(Lorem.nombreAlAzar());
       u.setLastName(Lorem.apellidoAlAzar());
       entityManager.persist(u);
+      if (i%2 == 0) {
+        g1.getMembers().add(u);
+        // u.getTopics().add(g1); NO FUNCIONA: propietario es g, no u
+      }
+      if (i%3 == 0) {
+        g2.getMembers().add(u);
+      }
     }
     return "{\"admin\": \"populated\"}";
   }

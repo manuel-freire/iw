@@ -75,7 +75,7 @@
                 </table>
 
                 <h4>Otras</h4>
-                <table class="errTable">
+                <table class="errTable" th:if="${req != null}">
                     <tr>
                         <td>req.url</td>
                         <td th:text="${req.requestURL}"></td>
