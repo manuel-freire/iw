@@ -77,6 +77,13 @@
 			<scope>test</scope>
 		</dependency>
 
+    <!-- karate-js: sólo necesario si quieres interpretar JS en tu servidor -->
+    <dependency>
+      <groupId>io.karatelabs.js</groupId>
+      <artifactId>karate-js</artifactId>
+      <version>0.1.1</version>
+    </dependency>
+
 		<!-- pruebas con Karate https://github.com/karatelabs/karate -->
 		<dependency>
 			<groupId>com.intuit.karate</groupId>
