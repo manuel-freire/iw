@@ -97,6 +97,12 @@
                         headings: ['from', 'to', 'text'],
                         data: d
                     },
+                    searchable: true,
+                    paging: false
+                });
+                dt.on("datatable.selectrow", (rowIndex, event, focused) => {
+                    event.preventDefault();
+                    console.log("click en fila: ", dataTable.data[rowIndex]);
                 });
             });
         }
