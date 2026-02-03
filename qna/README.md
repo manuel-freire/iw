@@ -15,7 +15,7 @@ Para el entorno Java+Maven, necesitaremos:
 
 ### Windows 10/11
 
-En los laboratorios de la FDI tenemos limitada la instalación de recursos a nivel de sistema. Esto dificulta el uso de los instaladores java que vienen en la última versión oficial; en cualquier caso, el profesor recomienda usar la versión abierta ([OpenJDK](https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_windows-x64_bin.zip)) en lugar de la [versión Oracle](https://www.oracle.com/java/technologies/downloads/#jdk17-windows).
+En los laboratorios de la FDI tenemos limitada la instalación de recursos a nivel de sistema. Esto dificulta el uso de los instaladores java que vienen en la última versión oficial; en cualquier caso, el profesor recomienda usar la versión abierta ([OpenJDK](https://download.java.net/java/GA/jdk21/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_windows-x64_bin.zip)) en lugar de la [versión Oracle](https://www.oracle.com/java/technologies/downloads/#jdk17-windows).
 
 En ordenadores de clase, uso
 
@@ -359,3 +359,17 @@ La parte más complicada es el controlador -- que se parece bastante al de "adiv
     }
 }
 ~~~
+
+
+## Cambios para el curso 2025-26
+
+* QNA implementa Kahoot paso a paso
+1. hola mundo
+2. elevator pitch
+3. vistas descritas
+4. vistas estáticas
+5. modelo y lógica de admin
+6. pruebas v1
+7. toda la lógica, sin WS
+8. WS
+9. pruebas v2
