@@ -1,30 +1,41 @@
-# iw
+🎧 Rythmix
 
-Material para la asignatura de Ingeniería Web, edición 2022-23, de la Facultad de Informática UCM
+Rythmix es una aplicación web interactiva centrada en la música y el juego colaborativo.
+El objetivo es poner a prueba tu oído, tu memoria musical y tu creatividad a través de distintos modos de juego diseñados para jugar solo o en grupo.
 
-## Contenido
+🎮 Modos de juego
 
-* en [/plantilla](https://github.com/manuel-freire/iw/tree/main/plantilla) está la plantilla recomendada para los proyectos de este año. Sobre un proyecto "desde cero", por ejemplo el visto en el tutorial, añade:
+🎵 Adivina la canción
+Escucha un fragmento musical y demuestra que sabes reconocer la canción antes que nadie.
 
-    - Perfiles para mantener una BD H2 en memoria o en disco
-    - Seguridad con múltiples roles definidos, y persistiendo usuarios vía BD
-    - Controladores con métodos para
-        * crear usuarios programáticamente
-        * subir y bajar ficheros de forma segura
-    - Una clase auxiliar para configurar a dónde se suben los ficheros que se suben
-    - WebSockets con STOMP funcionando
-    - Demostraciones de AJAX en funcionamiento para consultar APIs externas y gestionar imágenes
+🎲 Canción sorpresa
+Cada jugador aporta una parte y el resultado final es… impredecible.
 
-* en [/doc/]([https://github.com/manuel-freire/iw/tree/main/doc) tienes las transparencias, en Markdown. Puedes leerlas tal cual están (es texto, y además GitHub tiene un intérprete embebido), o convertirlas a PDF u otro formato usando, por ejemplo, [Pandoc](https://pandoc.org). Tengo un [script](https://github.com/manuel-freire/fdi-utils) en python llamado `markdown-to-beamer` que es el que uso para generar las transparencias que subo a Campus Virtual y uso en clase. Muchas transparencias no están **actualizadas la última edicion**; en general, las actualizo poco antes de las clases correspondientes.
+▶️ Continuación de canción
+Escucha el inicio de una canción e intenta continuarla correctamente.
 
-* (**desactualizado**) en [/demo](https://github.com/manuel-freire/iw/tree/main/demo) está el proyecto de demostración explicado en el [tutorial](https://github.com/manuel-freire/iw/blob/main/doc/05-tutorial.md)
+🧩 Cómo funciona
 
-## Historia
+Los jugadores acceden a un lobby donde pueden:
 
-Puedes consultar también plantillas de años pasados:
+Crear una sala de juego
 
-   - En el [2020-21](https://github.com/manuel-freire/iw/tree/version-del-curso-2020-21), usábamos Eclipse STS en lugar de VS Code como entorno recomendado
-   - En el [2019-20](https://github.com/manuel-freire/iw/tree/version-del-curso-2019-20), usábamos HyperSQL en lugar de H2. Las clases de modelo eran más verbosas, porque las anotaciones de entidad estaban en los métodos (y no en los atributos), y no usábamos Lombok.
-   - En el [2018-19](https://github.com/manuel-freire/iw1819), los websockets no eran obligatorios, y no usaban todavía STOMP
-   - Cursos [2016-17 y 2017-18](https://github.com/manuel-freire/iw-1718)
-   - Curso [2015-16](https://github.com/manuel-freire/iw-1516), utilizando por primera vez Spring Boot
+Unirse a una sala existente
+
+Jugar de forma interactiva y dinámica
+
+El sistema está pensado para ampliarse fácilmente con nuevos modos de juego y funcionalidades sociales.
+
+🛠️ Tecnologías utilizadas
+
+Spring Boot (backend)
+
+Thymeleaf (renderizado de vistas)
+
+Bootstrap 5 (interfaz)
+
+H2 (base de datos en desarrollo)
+
+📚 Contexto académico
+
+Este proyecto ha sido desarrollado como parte de la asignatura Ingeniería Web (IW), aplicando el patrón MVC, control de acceso con Spring Security y buenas prácticas de desarrollo web
