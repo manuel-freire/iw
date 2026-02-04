@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -36,4 +37,44 @@ public class RootController {
     public String index(Model model) {
         return "index";
     }
+
+    @GetMapping("/about")
+    public String about(Model model) {
+        return "about";
+    }
+
+    @GetMapping("/authors")
+    public String authors(Model model) {
+        return "authors";
+    }
+
+    @GetMapping("/games")
+    public String games() {
+        return "games";
+    }
+
+    @GetMapping("/lobby/{mode}")
+    public String lobby(@PathVariable String mode, Model model) {
+        String gameName;
+
+        switch (mode) {
+            case "adivina":
+                gameName = "🎵 Adivina la canción";
+                break;
+            case "sorpresa":
+                gameName = "🎲 Canción sorpresa";
+                break;
+            case "continuacion":
+                gameName = "▶️ Continuación de canción";
+                break;
+            default:
+                gameName = "Juego";
+        }
+
+        model.addAttribute("gameName", gameName);
+        model.addAttribute("gameMode", mode);
+
+        return "lobby";
+    }
+
 }

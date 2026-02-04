@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Rythmix · Juegos</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container my-5">
+
+            <!-- Título -->
+            <h1 class="text-center mb-5">Juegos</h1>
+
+            <!-- Modo 1 -->
+            <a th:href="@{/lobby/guess}" class="text-decoration-none">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body py-4">
+                        <h2 class="card-title">🎵 Adivina la canción</h2>
+                        <p class="card-text text-muted">
+                            Escucha un fragmento y adivina qué canción es.
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Modo 2 -->
+            <a th:href="@{/lobby/gartic}" class="text-decoration-none">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body py-4">
+                        <h2 class="card-title">🎲 Canción sorpresa</h2>
+                        <p class="card-text text-muted">
+                            Cada uno toca una parte y ya se verá que hay de resultado.
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Modo 3 -->
+            <a th:href="@{/lobby/continue}" class="text-decoration-none">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body py-4">
+                        <h2 class="card-title">▶️ Continuación de canción</h2>
+                        <p class="card-text text-muted">
+                            Escucha el inicio e intenta continuar la letra o melodía.
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>

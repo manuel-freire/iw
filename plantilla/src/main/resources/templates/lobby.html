@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Rythmix · Lobby</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+<header th:replace="~{fragments/nav.html :: nav}"></header>
+
+<main class="flex-shrink-0">
+    <div class="container my-5 text-center">
+
+        <!-- Nombre del juego -->
+        <h1 class="mb-5" th:text="${gameName}">Nombre del juego</h1>
+
+        <!-- Opciones -->
+        <div class="row justify-content-center g-4">
+
+            <!-- Crear sala -->
+            <div class="col-md-5">
+                <a th:href="@{/lobby/{mode}/create(mode=${gameMode})}"
+                   class="text-decoration-none">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body py-5">
+                            <h2 class="card-title">➕ Crear una sala</h2>
+                            <p class="text-muted mt-3">
+                                Crea una nueva sala y espera a que se unan otros jugadores.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Unirse a sala -->
+            <div class="col-md-5">
+                <a th:href="@{/lobby/{mode}/join(mode=${gameMode})}"
+                   class="text-decoration-none">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body py-5">
+                            <h2 class="card-title">👥 Unirse a una sala</h2>
+                            <p class="text-muted mt-3">
+                                Únete a una sala existente introduciendo un código.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+</html>

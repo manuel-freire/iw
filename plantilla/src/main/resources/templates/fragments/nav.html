@@ -13,13 +13,26 @@
             <div class="container-fluid">
                 <!-- nombre del sitio; es un enlace que lleva a la página ppal -->
                 <a class="navbar-brand" th:href="@{/}" href="/">
-                    <img th:src="@{/img/logo.png}" src="/img/logo.png" alt="logo IW" width="32" height="32" class="d-inline-block align-text-top"> IW 2024-25
+                    <img th:src="@{/img/logo.png}" src="/img/logo.png" alt="logo IW" width="32" height="32" class="d-inline-block align-text-top"> Rythmix
                 </a>
                 <!-- menu hamburguesa si no cabe todo -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" th:href="@{/}">Inicio</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" th:href="@{/games}">Juegos</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" th:href="@{/about}">Sobre nosotros</a>
+                        </li>
+                    </ul>
+
                     <ul class="navbar-nav ms-auto">
                         <th:block th:if="${u}">
                             <li class="nav-item mx-3">
@@ -57,14 +70,14 @@
                                 <form class="d-flex" th:action="@{/login}" method="post">
                                     <input type="hidden" name="username" value="a">
                                     <input type="hidden" name="password" value="aa">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">a</button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">admin</button>
                                 </form>
                             </li>
                             <li class="nav-item debug align-self-center" th:if="${application.debug}">
                                 <form class="d-flex" th:action="@{/login}" method="post">
                                     <input type="hidden" name="username" value="b">
                                     <input type="hidden" name="password" value="aa">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">b</button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">user</button>
                                 </form>
                             </li>
                         </th:block>
