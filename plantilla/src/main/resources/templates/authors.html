@@ -3,20 +3,134 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>Autores</title>
+    <title>Authors</title>
+    <!-- Optional: Add custom styles for author cards -->
+    <style>
+        .author-card {
+            transition: transform 0.3s ease;
+        }
+        .author-img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+        .author-bio {
+            text-align: justify;
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column h-100">
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
     <main class="flex-shrink-0">
-        <div class="container">
-            <h1 class="mt-5">Rishi</h1>
-            <p>Hola</p>
-        </div>
+        <div class="container py-5">
+            <!-- Page Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold">Authors</h1>
+            </div>
+
+            <!-- Author 1 -->
+            <div class="card author-card shadow-sm mb-5 border-0">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
+                        <img th:src="@{/img/TimofeyMatveev.jpeg}" 
+                             src="/img/TimofeyMatveev.jpeg" 
+                             alt="Imagen Aqui" 
+                             class="author-img rounded-circle img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h2 class="card-title fw-bold">Timofey Matveev</h2>
+                                </div>
+                            </div>
+                            <div class="social-links">
+                                <a href="https://github.com/TimotyEnder" class="me-3" target="_blank">
+                                 GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Author 1 -->
+            <div class="card author-card shadow-sm mb-5 border-0">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
+                        <img th:src="@{/images/authors/author1.jpg}" 
+                             src="/images/authors/author1.jpg" 
+                             alt="Imagen Aqui" 
+                             class="author-img rounded-circle img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h2 class="card-title fw-bold">Rishi Pursnani Mirpuri</h2>
+                                </div>
+                            </div>
+                            <div class="social-links">
+                                <a href="https://github.com/TimotyEnder" class="me-3" target="_blank">
+                                 GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Author 1 -->
+            <div class="card author-card shadow-sm mb-5 border-0">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
+                        <img th:src="@{/images/authors/author1.jpg}" 
+                             src="/images/authors/author1.jpg" 
+                             alt="Imagen Aqui" 
+                             class="author-img rounded-circle img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h2 class="card-title fw-bold">Victor Sandu Stavita</h2>
+                                </div>
+                            </div>
+                            <div class="social-links">
+                                <a href="https://github.com/TimotyEnder" class="me-3" target="_blank">
+                                     GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Author 1 -->
+            <div class="card author-card shadow-sm mb-5 border-0">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
+                        <img th:src="@{/images/authors/author1.jpg}" 
+                             src="/images/authors/author1.jpg" 
+                             alt="Imagen Aqui" 
+                             class="author-img rounded-circle img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h2 class="card-title fw-bold">Amaury Antonio Valle Lopez</h2>
+                                </div>
+                            </div>
+                            <div class="social-links">
+                                <a href="https://github.com/TimotyEnder" class="me-3" target="_blank">
+                                    GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <th:block th:replace="~{fragments/footer.html :: footer}" /> 
     </main>
-
-    <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
-
 </html>
