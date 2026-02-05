@@ -20,8 +20,8 @@
 
             <!-- Crear sala -->
             <div class="col-md-5">
-                <a th:href="@{/lobby/{mode}/create(mode=${gameMode})}"
-                   class="text-decoration-none">
+                <a th:href="@{/lobby/{mode}/{action}(mode=${gameMode}, action='create')}"
+                    class="text-decoration-none">
                     <div class="card shadow-sm h-100">
                         <div class="card-body py-5">
                             <h2 class="card-title">➕ Crear una sala</h2>
@@ -35,8 +35,8 @@
 
             <!-- Unirse a sala -->
             <div class="col-md-5">
-                <a th:href="@{/lobby/{mode}/join(mode=${gameMode})}"
-                   class="text-decoration-none">
+                <a th:href="@{/lobby/{mode}/{action}(mode=${gameMode}, action='join')}"
+                    class="text-decoration-none">
                     <div class="card shadow-sm h-100">
                         <div class="card-body py-5">
                             <h2 class="card-title">👥 Unirse a una sala</h2>

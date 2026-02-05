@@ -77,4 +77,20 @@ public class RootController {
         return "lobby";
     }
 
+    @GetMapping("/lobby/{mode}/{action}")
+    public String lobbyAction(
+            @PathVariable String mode,
+            @PathVariable String action,
+            Model model) {
+
+        if (!action.equals("create") && !action.equals("join")) {
+            return "redirect:/lobby/" + mode;
+        }
+        
+        if (mode.equals("gartic")) {
+            return "gartic";
+        }
+
+        return "redirect:/lobby/" + mode;
+    }
 }
