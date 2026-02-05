@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Rythmix · Gartic Song</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+<header th:replace="~{fragments/nav.html :: nav}"></header>
+
+<main class="flex-shrink-0">
+    <div class="container my-5 text-center">
+
+        <h1 class="mb-4">🎵 Gartic Song</h1>
+
+        <p class="text-muted fs-5">
+            En esta pantalla se desarrollará un juego inspirado en la mecánica de Gartic Phone,
+            pero adaptado al ámbito musical. Los jugadores utilizarán instrumentos musicales para
+            interpretar, transformar y continuar una cadena musical de forma colaborativa.
+        </p>
+
+        <p class="text-muted">
+            Esta sección servirá como base para la futura implementación del juego.
+        </p>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
