@@ -53,6 +53,11 @@ public class RootController {
         return "games";
     }
 
+    @GetMapping("/guess")
+    public String guess() {
+        return "guess";
+    }
+
     @GetMapping("/lobby/{mode}")
     public String lobby(@PathVariable String mode, Model model) {
         String view = "lobby";
