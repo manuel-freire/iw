@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Rythmix · Adivina la canción</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container my-5">
+
+            <!-- Título la vista -->
+            <h1 class="text-center mb-4">Mis canciones favoritas</h1>
+
+            <!-- Lista de las canciones favoritas -->
+            <div class="card mb-2 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col"></div>
+                        <div class="col text-center">
+                            <strong>Canción 1</strong>
+                        </div>
+                        <div class="col d-flex justify-content-end gap-2">
+                            <button class="btn btn-outline-info">
+                                Ir hacia atrás
+                            </button>
+                            <button class="btn btn-primary">
+                                Reproducir
+                            </button>
+                            <button class="btn btn-outline-info">
+                                Ir hacia adelante
+                            </button>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+             <div class="card mb-2 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col"></div>
+                        <div class="col text-center">
+                            <strong>Canción 2</strong>
+                        </div>
+                        <div class="col d-flex justify-content-end gap-2">
+                            <button class="btn btn-outline-info">
+                                Ir hacia atrás
+                            </button>
+                            <button class="btn btn-primary">
+                                Reproducir
+                            </button>
+                            <button class="btn btn-outline-info">
+                                Ir hacia adelante
+                            </button>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+             <div class="card mb-2 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col"></div>
+                        <div class="col text-center">
+                            <strong>Canción 3</strong>
+                        </div>
+                        <div class="col d-flex justify-content-end gap-2">
+                            <button class="btn btn-outline-info">
+                                Ir hacia atrás
+                            </button>
+                            <button class="btn btn-primary">
+                                Reproducir
+                            </button>
+                            <button class="btn btn-outline-info">
+                                Ir hacia adelante
+                            </button>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+             <div class="card mb-2 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col text-center">
+                            <strong>. . .</strong>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
