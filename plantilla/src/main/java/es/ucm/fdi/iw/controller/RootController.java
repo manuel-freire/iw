@@ -90,6 +90,10 @@ public class RootController {
         if (mode.equals("gartic")) {
             return "gartic";
         }
+        
+        if (mode.equals("continue")) {
+            return "continue";
+        }
 
         return "redirect:/lobby/" + mode;
     }
