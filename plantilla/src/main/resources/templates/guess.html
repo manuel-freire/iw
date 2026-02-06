@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Rythmix · Adivina la canción</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container my-5">
+
+            <!-- Título del modo de juego-->
+            <h1 class="text-center mb-4">Adivina la canción</h1>
+
+            <!-- Información de la canción a reproducir -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Información de la canción</h5>
+                    <p class="card-text text-center">
+                        Por ejemplo: artista, duración, género o año de publicación
+                    </p>
+                </div>
+            </div>
+
+            <!-- Instrumentos a reproducir de la canción -->
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+
+                    <div class="row mb-2 text-center">
+                        <div class="col">
+                            <strong>Instrumento 1</strong>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 text-center">
+                        <div class="col">
+                            <strong >Instrumento 2</strong>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2 text-center">
+                        <div class="col">
+                            <strong>Instrumento 3</strong>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Controles de la canción -->
+            <div class="d-flex justify-content-center gap-5 mb-3">
+                <button type="button" class="btn btn-outline-info ">
+                    Ir hacia atrás
+                </button>
+
+                <button type="button" class="btn btn-primary">
+                    Reproducir canción
+                </button>
+
+                <button type="button" class="btn btn-outline-info">
+                    Ir hacia adelante
+                </button>
+            </div>
+
+            <!-- Selección de la respuesta -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-3">Selecciona la canción</h2>
+
+                    <div class="text-center">
+                        <p> Aqui irá un buscador de las posibles canciones a seleccionar para adivinar la canción actual</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
