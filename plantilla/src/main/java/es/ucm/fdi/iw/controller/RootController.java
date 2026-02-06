@@ -55,11 +55,13 @@ public class RootController {
 
     @GetMapping("/lobby/{mode}")
     public String lobby(@PathVariable String mode, Model model) {
+        String view = "lobby";
         String gameName;
 
         switch (mode) {
             case "adivina":
                 gameName = "🎵 Adivina la canción";
+                view = "guess";
                 break;
             case "sorpresa":
                 gameName = "🎲 Canción sorpresa";
@@ -74,7 +76,7 @@ public class RootController {
         model.addAttribute("gameName", gameName);
         model.addAttribute("gameMode", mode);
 
-        return "lobby";
+        return view;
     }
 
     @GetMapping("/lobby/{mode}/{action}")
