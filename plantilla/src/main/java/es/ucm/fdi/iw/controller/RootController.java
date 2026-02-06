@@ -56,6 +56,7 @@ public class RootController {
      @GetMapping("/favoriteSongs")
     public String favoriteSongs() {
         return "favoriteSongs";
+    }
       
     @GetMapping("/guess")
     public String guess() {
