@@ -2,6 +2,7 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <th:block th:replace="~{fragments/head :: header}" />
     <title>Rythmix · Juegos</title>
 </head>
@@ -15,10 +16,13 @@
             <h1 class="text-center mb-5">Juegos</h1>
 
             <!-- Modo 1 -->
-            <a th:href="@{/lobby/guess}" class="text-decoration-none">
+            <a th:href="@{/guess}" class="text-decoration-none">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body py-4">
-                        <h2 class="card-title">🎵 Adivina la canción</h2>
+                        <h2 class="card-title">
+                            <i class="bi bi-music-note-beamed me-2"></i>
+                            Adivina la canción
+                        </h2>
                         <p class="card-text text-muted">
                             Escucha un fragmento y adivina qué canción es.
                         </p>
@@ -30,7 +34,10 @@
             <a th:href="@{/lobby/gartic}" class="text-decoration-none">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body py-4">
-                        <h2 class="card-title">🎲 Canción sorpresa</h2>
+                        <h2 class="card-title">
+                            <i class="bi bi-dice-5 me-2"></i> 
+                            Canción sorpresa
+                        </h2>
                         <p class="card-text text-muted">
                             Cada uno toca una parte y ya se verá que hay de resultado.
                         </p>
@@ -42,7 +49,10 @@
             <a th:href="@{/lobby/continue}" class="text-decoration-none">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body py-4">
-                        <h2 class="card-title">▶️ Continuación de canción</h2>
+                        <h2 class="card-title">
+                            <i class="bi bi-play-fill me-2"></i>
+                            Continuación de canción
+                        </h2>
                         <p class="card-text text-muted">
                             Escucha el inicio e intenta continuar la letra o melodía.
                         </p>
