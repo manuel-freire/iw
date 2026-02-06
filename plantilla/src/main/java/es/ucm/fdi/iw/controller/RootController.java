@@ -93,4 +93,9 @@ public class RootController {
 
         return "redirect:/lobby/" + mode;
     }
+
+    @GetMapping("/leaderboard")
+    public String leaderboard(Model model) {
+        return "leaderboard";
+    }
 }
