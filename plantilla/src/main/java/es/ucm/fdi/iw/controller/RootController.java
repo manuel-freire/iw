@@ -64,7 +64,7 @@ public class RootController {
         String gameName;
 
         switch (mode) {
-            case "adivina":
+            case "guess":
                 gameName = "🎵 Adivina la canción";
                 view = "guess";
                 break;
