@@ -56,6 +56,10 @@ public class RootController {
      @GetMapping("/favoriteSongs")
     public String favoriteSongs() {
         return "favoriteSongs";
+      
+    @GetMapping("/guess")
+    public String guess() {
+        return "guess";
     }
 
     @GetMapping("/lobby/{mode}")
@@ -97,7 +101,16 @@ public class RootController {
         if (mode.equals("gartic")) {
             return "gartic";
         }
+        
+        if (mode.equals("continue")) {
+            return "continue";
+        }
 
         return "redirect:/lobby/" + mode;
+    }
+
+    @GetMapping("/leaderboard")
+    public String leaderboard(Model model) {
+        return "leaderboard";
     }
 }

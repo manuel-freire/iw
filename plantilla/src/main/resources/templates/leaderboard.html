@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>IW: Welcome</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+       <div class="container my-5 text-center">
+
+        <h1 class="mb-5">Mejores Canciones</h1>
+
+        <div class="gy-3">
+            <div class="card mb-3">
+                <div class="card-body row align-items-center py-5">
+                    <div class="col col-8">
+                        <span class="fs-3">Título de la canción</span>
+                    </div>
+                    <div class="col col-2">                        
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary" title="Play">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Pause">
+                                <i class="bi bi-pause-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Stop">
+                                <i class="bi bi-stop-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col col-2">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger" title="Me gusta">
+                                <i class="bi bi-hand-thumbs-up-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" disabled>
+                                123
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body row align-items-center py-5">
+                    <div class="col col-8">
+                        <span class="fs-3">Título de la canción</span>
+                    </div>
+                    <div class="col col-2">                        
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary" title="Play">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Pause">
+                                <i class="bi bi-pause-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Stop">
+                                <i class="bi bi-stop-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col col-2">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger" title="Me gusta">
+                                <i class="bi bi-hand-thumbs-up-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" disabled>
+                                50
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body row align-items-center py-5">
+                    <div class="col col-8">
+                        <span class="fs-3">Título de la canción</span>
+                    </div>
+                    <div class="col col-2">                        
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary" title="Play">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Pause">
+                                <i class="bi bi-pause-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Stop">
+                                <i class="bi bi-stop-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col col-2">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger" title="Me gusta">
+                                <i class="bi bi-hand-thumbs-up-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" disabled>
+                                4
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
