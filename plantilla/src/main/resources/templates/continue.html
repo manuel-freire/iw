@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Rythmix · Continúa la canción</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+<header th:replace="~{fragments/nav.html :: nav}"></header>
+
+<main class="flex-shrink-0">
+    <div class="container my-5 text-center">
+
+        <h1 class="mb-4">▶️ Continúa la canción</h1>
+
+        <p class="text-muted fs-5">
+            En esta página estará la pantalla de juego del juego de continúa la canción, contendrá una sección con la parte existente
+            de la cación, y una sección de edición donde el jugador puede componer su propuesta de continuación para la 
+            canción
+        </p>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
