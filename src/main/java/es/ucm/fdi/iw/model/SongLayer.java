@@ -3,27 +3,31 @@ package es.ucm.fdi.iw.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 @Entity
 @Data
 @NoArgsConstructor
-public class DailyGame {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"song_id", "idx"}))
+public class SongLayer {
+
+  public enum LayerType { DRUMS, BASS, MELODY, FULL }
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
   @SequenceGenerator(name = "gen", sequenceName = "gen")
   private long id;
 
-  @Column(nullable = false, unique = true)
-  private LocalDate game_day;
-
   @ManyToOne(optional = false)
   @JoinColumn(name = "song_id")
   private Song song;
 
-  private int maxLayers = 4;
-  private int maxTries = 2;
+  @Column(name = "idx", nullable = false)
+  private int idx;
 
-  private boolean active = true; // para deshabilitarlo en caso de acabar los intentos
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private LayerType label;
+
+  @Column(name = "audio_url", nullable = false)
+  private String audioUrl;
 }

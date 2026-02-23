@@ -1,18 +1,8 @@
 package es.ucm.fdi.iw.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.SequenceGenerator;
-
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -36,6 +26,5 @@ public class Song {
 
     private int difficulty; //hay que ver que niveles de dificultad hay
 
-    private String audioUrl; // esto a lo mejor ni hace falta, por ahora lo dejamos
-
+    private String audioUrl; //opcional
 }
