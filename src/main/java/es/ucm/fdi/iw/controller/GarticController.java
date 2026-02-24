@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.ucm.fdi.iw.auxiliar.GameUtils;
 import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
 import es.ucm.fdi.iw.model.User;
@@ -62,7 +63,8 @@ public class GarticController {
         GarticGame game = new GarticGame();
 
         //TODO reemplazar esto con una funcion bien que revise que el codigo no sea repetido etc.
-        String lobbyCode = new Random().ints(6, 0, 26).mapToObj(i -> String.valueOf((char)('A' + i))).collect(Collectors.joining());
+        //String lobbyCode = new Random().ints(6, 0, 26).mapToObj(i -> String.valueOf((char)('A' + i))).collect(Collectors.joining());
+        String lobbyCode = GameUtils.generateRandomCode(6);
 
         game.setLobbyCode(lobbyCode);
         game.setOwner(u);

@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface MIDIGameRepository extends JpaRepository<MIDIGame, Long>  {
     Optional<MIDIGame> findByLobbyCode(String lobbyCode);
+
+    boolean exexistsByLobbyCode(String lobbyCode);
 }
