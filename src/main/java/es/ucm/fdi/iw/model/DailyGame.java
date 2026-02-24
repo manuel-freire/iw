@@ -16,7 +16,7 @@ public class DailyGame {
   private long id;
 
   @Column(nullable = false, unique = true)
-  private LocalDate game_day;
+  private LocalDate gameDay;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "song_id")
