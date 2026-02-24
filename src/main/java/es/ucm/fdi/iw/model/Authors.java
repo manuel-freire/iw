@@ -19,4 +19,5 @@ public class Authors {
     private String firstName;
     private String lastName;
     private String gitHubUrl;
+    private String imageFileName;
 }
