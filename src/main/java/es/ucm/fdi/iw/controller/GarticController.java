@@ -61,11 +61,13 @@ public class GarticController {
             return "lobby";
         }
         GarticGame game = new GarticGame();
+        
+        String lobbyCode;
+        do{
+            lobbyCode = GameUtils.generateRandomCode(6);
+        }while(midiGameRepository.existsByLobbyCode(lobbyCode));
 
-        //TODO reemplazar esto con una funcion bien que revise que el codigo no sea repetido etc.
-        //String lobbyCode = new Random().ints(6, 0, 26).mapToObj(i -> String.valueOf((char)('A' + i))).collect(Collectors.joining());
-        String lobbyCode = GameUtils.generateRandomCode(6);
-
+        
         game.setLobbyCode(lobbyCode);
         game.setOwner(u);
         game.addPlayer(u);
