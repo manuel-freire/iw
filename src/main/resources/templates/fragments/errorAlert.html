@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Error alert fragment - rest is empty</title>
+</head>
+
+<body>
+    <div th:fragment="errorAlert" th:if="${showError}" class="alert alert-danger" role="alert">
+        <h4 class="alert-heading" th:text="#{${errorTitleKey}}">Error</h4>
+        <p th:text="#{${errorBodyKey}}"></p>
+    </div>
+</body>
+
+</html>
+

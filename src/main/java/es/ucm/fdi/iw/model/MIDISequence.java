@@ -7,22 +7,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class Song {
-
+public class MIDISequence {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
     private long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String artist;
-
-    private String genre;
-
-    private int releaseYear;
-
-    private int difficulty; //hay que ver que niveles de dificultad hay
+    @ManyToOne
+    private MIDIGame game;
 }

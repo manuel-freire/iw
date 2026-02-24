@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title th:text="#{games.pageTitle}"></title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <h1 class="mb-5" th:text="${gameName}">Nombre del juego</h1>
+        <ul>
+            <li th:each="item : ${playerList}" th:text="${item.getUsername()}"></li>
+        </ul>
+
+        <div th:if="${isOwner}">
+            <a class="btn btn-primary" th:href="@{./gamescreen}">Iniciar partida</a>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+</html>

@@ -72,7 +72,8 @@ public class SecurityConfig {
 					"/lobby/**",
 					"/leaderboard", 
 					"/guess/**", 
-					"/favoriteSongs"
+					"/favoriteSongs",
+					"/gartic/**"
 					).permitAll()
 				.requestMatchers("/api/**").permitAll()            // <-- public api access
 				.requestMatchers("/admin/**").hasRole("ADMIN")	   // <-- administration
