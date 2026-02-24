@@ -1,31 +1,34 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const themeToggle = document.getElementById("themeToggle");
-    const themeIcon = document.getElementById("themeIcon");
-    const themeText = document.getElementById("themeText");
-    const htmlElement = document.documentElement;
+  const themeToggle = document.getElementById("themeToggle");
+  const themeIcon = document.getElementById("themeIcon");
+  const themeText = document.getElementById("themeText");
+  const htmlElement = document.documentElement;
 
-    const savedTheme = localStorage.getItem("theme") || "light";
-    htmlElement.setAttribute("data-bs-theme", savedTheme);
-    updateButton(savedTheme);
+  const currentTheme = htmlElement.getAttribute("data-bs-theme") || "light";
+  updateButton(currentTheme);
 
-    themeToggle.addEventListener("click", function () {
-        const currentTheme = htmlElement.getAttribute("data-bs-theme");
-        const newTheme = currentTheme === "light" ? "dark" : "light";
+  if (!themeToggle) return;
 
-        htmlElement.setAttribute("data-bs-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
-        updateButton(newTheme);
-    });
+  themeToggle.addEventListener("click", function () {
+    const current = htmlElement.getAttribute("data-bs-theme") || "light";
+    const next = current === "light" ? "dark" : "light";
 
-    function updateButton(theme) {
-        if (theme === "dark") {
-            themeIcon.classList.remove("bi-moon");
-            themeIcon.classList.add("bi-sun");
-            themeText.textContent = "Light";
-        } else {
-            themeIcon.classList.remove("bi-sun");
-            themeIcon.classList.add("bi-moon");
-            themeText.textContent = "Dark";
-        }
+    htmlElement.setAttribute("data-bs-theme", next);
+    localStorage.setItem("theme", next);
+    updateButton(next);
+  });
+
+  function updateButton(theme) {
+    if (!themeIcon || !themeText) return;
+
+    if (theme === "dark") {
+      themeIcon.classList.remove("bi-moon");
+      themeIcon.classList.add("bi-sun");
+      themeText.textContent = "Light";
+    } else {
+      themeIcon.classList.remove("bi-sun");
+      themeIcon.classList.add("bi-moon");
+      themeText.textContent = "Dark";
     }
+  }
 });
