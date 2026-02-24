@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="light">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>IW 2024-25</title>
     <th:block th:fragment="header">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- External theme JavaScript -->
-        <script th:src="@{/js/theme.js}" src="js/theme.js"></script>
+        <script>
+            (() => {
+                const savedTheme = localStorage.getItem("theme") || "light";
+                document.documentElement.setAttribute("data-bs-theme", savedTheme);
+            })();
+        </script>
+
+
         <link rel="stylesheet" th:href="@{/css/bootstrap-5.3.3.css}" href="css/bootstrap-5.3.3.css" type="text/css" />
+        <link rel="stylesheet" th:href="@{/css/custom.css}" href="/css/custom.css" type="text/css" />
         <link rel="icon" th:href="@{/img/favicon.ico}" href="/img/favicon.ico" type="image/x-icon">
         
+        <!-- External theme JavaScript -->
+        <script th:src="@{/js/theme.js}" src="/js/theme.js" defer></script>
+
         <!-- Config object with Thymeleaf variables -->
         <script type="text/javascript">
             const config = {

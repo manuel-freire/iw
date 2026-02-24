@@ -83,7 +83,7 @@ h1, h2, h3, h4, h5, h6, .display-4 {
     --btn-outline-secondary-border: #6c757d;
 }
 
-[data-theme="dark"] {
+[data-bs-theme="dark"] {
     --bg-color: #1a1a1a;
     --text-color: #f8f9fa;
     --navbar-bg: #2d2d2d;
@@ -148,7 +148,7 @@ a {
     transition: all 0.3s ease;
 }
 
-[data-theme="dark"] #themeToggle {
+[data-bs-theme="dark"] #themeToggle {
     background-color: var(--navbar-bg);
     border-color: var(--border-color);
     color: var(--text-color);

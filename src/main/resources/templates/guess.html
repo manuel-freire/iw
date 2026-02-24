@@ -26,6 +26,13 @@
           <span th:text="${msg}"></span>
         </div>
 
+        <!-- Si no hay sesión -->
+        <div th:if="${loginWarning}"
+             class="alert alert-warning text-center d-flex justify-content-center align-items-center gap-2">
+          <i class="bi bi-person-x-fill"></i>
+          <span>Inicia sesión para jugar al daily.</span>
+        </div>
+
         <!-- Info canción (sin revelar título) -->
         <div class="card mb-4 shadow-sm">
           <div class="card-body">
@@ -33,7 +40,7 @@
 
             <p class="card-text text-center">
               <span th:text="#{guess.year}"></span>:
-              <strong th:text="${song.year}"></strong>
+              <strong th:text="${song.releaseYear}"></strong>
               <span th:text="#{guess.dotSeparator}"></span>
               <span th:text="#{guess.genre}"></span>:
               <strong th:text="${song.genre}"></strong>
@@ -41,9 +48,10 @@
 
             <p class="text-muted text-center mb-0">
               <span th:text="#{guess.layers}"></span>:
-              <strong th:text="${layerIndex + 1}"></strong>/<strong
-                th:text="${maxLayer + 1}"
-              ></strong>
+              <strong th:text="${layerIndex + 1}"></strong>/<strong th:text="${maxLayer + 1}"></strong>
+              <span th:text="#{guess.dotSeparator}"></span>
+              Intentos:
+              <strong th:text="${tries}"></strong>/<strong th:text="${maxTries}"></strong>
             </p>
           </div>
         </div>
@@ -54,9 +62,8 @@
             <div class="text-center mb-3">
               <h2 class="mb-2 fs-5" th:text="#{guess.currentLayer}"></h2>
 
-              <span
-                class="badge bg-secondary fs-6 d-inline-flex align-items-center gap-2"
-              >
+              <span class="badge bg-secondary fs-6 d-inline-flex align-items-center gap-2">
+                <!-- Icono según capa (idx) -->
                 <th:block th:switch="${layerIndex}">
                   <i th:case="0" class="bi bi-disc"></i>
                   <i th:case="1" class="bi bi-speaker"></i>
@@ -64,15 +71,12 @@
                   <i th:case="*" class="bi bi-mic-fill"></i>
                 </th:block>
 
-                <span th:text="${currentLayer.name}"></span>
+                <!-- Antes era currentLayer.name; ahora es enum label -->
+                <span th:text="${currentLayer.label}"></span>
               </span>
             </div>
 
-            <audio
-              id="player"
-              preload="metadata"
-              th:src="@{${currentLayer.audioUrl}}"
-            ></audio>
+            <audio id="player" preload="metadata" th:src="@{${currentLayer.audioUrl}}"></audio>
 
             <!-- Barra progreso -->
             <div class="px-2">
@@ -92,13 +96,12 @@
             </div>
 
             <!-- Controles -->
-            <div
-              class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap"
-            >
+            <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap">
               <button
                 id="btnPlay"
                 type="button"
                 class="btn btn-primary px-5 d-inline-flex align-items-center gap-2"
+                th:disabled="${finished or !logged}"
               >
                 <i id="playIcon" class="bi bi-play-fill"></i>
                 <span id="playText" th:text="#{guess.play}"></span>
@@ -109,7 +112,7 @@
                 <button
                   type="submit"
                   class="btn btn-outline-info px-4 d-inline-flex align-items-center gap-2"
-                  th:disabled="${layerIndex == maxLayer}"
+                  th:disabled="${layerIndex == maxLayer or finished or !logged}"
                 >
                   <span th:text="#{guess.next}"></span>
                   <i class="bi bi-skip-forward-fill"></i>
@@ -135,14 +138,8 @@
               class="row g-2 justify-content-center"
             >
               <div class="col-12 col-md-6">
-                <select class="form-select" name="answer" required>
-                  <option
-                    value=""
-                    disabled
-                    selected
-                    th:text="#{guess.selectPlaceholder}"
-                  ></option>
-
+                <select class="form-select" name="answer" required th:disabled="${finished or !logged}">
+                  <option value="" disabled selected th:text="#{guess.selectPlaceholder}"></option>
                   <option
                     th:each="s : ${songList}"
                     th:value="${s.id}"
@@ -156,14 +153,17 @@
                   class="btn btn-success"
                   type="submit"
                   th:text="#{guess.submit}"
+                  th:disabled="${finished or !logged}"
                 ></button>
               </div>
             </form>
 
-            <p
-              class="text-muted text-center mt-3 mb-0"
-              th:text="#{guess.demoNote}"
-            ></p>
+            <p class="text-muted text-center mt-3 mb-0" th:text="#{guess.demoNote}"></p>
+
+            <div th:if="${finished}" class="alert alert-secondary text-center mt-3 mb-0">
+              <span th:if="${success}">✅ Daily completado.</span>
+              <span th:unless="${success}">⏳ Daily terminado por intentos.</span>
+            </div>
           </div>
         </div>
       </div>
@@ -189,7 +189,6 @@
           return `${m}:${String(s).padStart(2, "0")}`;
         };
 
-        // Nota: aquí no usamos i18n directo en JS; el texto inicial ya viene del HTML.
         const setPlayLabel = (playing) => {
           if (playing) {
             playIcon.className = "bi bi-pause-fill";
@@ -212,7 +211,7 @@
           setPlayLabel(false);
         });
 
-        btnPlay.addEventListener("click", async () => {
+        btnPlay?.addEventListener("click", async () => {
           try {
             if (audio.paused) {
               await audio.play();
@@ -242,7 +241,7 @@
         seek.addEventListener("input", () => {
           if (!isFinite(audio.duration) || audio.duration <= 0) return;
           const pct = Number(seek.value) / 100;
-          audio.currentTime = pct * audio.duration;
+          audio.currentTime = (pct * audio.duration);
         });
       })();
     </script>

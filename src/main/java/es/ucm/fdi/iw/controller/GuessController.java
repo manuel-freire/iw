@@ -1,168 +1,253 @@
 package es.ucm.fdi.iw.controller;
 
-import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.*;
+import es.ucm.fdi.iw.repository.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpSession;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Controller
 @RequestMapping("/guess")
 public class GuessController {
-    
-    private static final Logger log = LogManager.getLogger(GuessController.class);
-    
-    @ModelAttribute
-    public void populateModel(HttpSession session, Model model) {
-        User u = (User) session.getAttribute("u");
-        model.addAttribute("u", u);
-        model.addAttribute("logged", u != null);
+
+  private final SongRepository songRepo;
+  private final SongLayerRepository layerRepo;
+  private final DailyGameRepository dailyRepo;
+  private final AttemptRepository attemptRepo;
+  private final ScoreRepository scoreRepo;
+
+  public GuessController(SongRepository songRepo,
+                         SongLayerRepository layerRepo,
+                         DailyGameRepository dailyRepo,
+                         AttemptRepository attemptRepo,
+                         ScoreRepository scoreRepo) {
+    this.songRepo = songRepo;
+    this.layerRepo = layerRepo;
+    this.dailyRepo = dailyRepo;
+    this.attemptRepo = attemptRepo;
+    this.scoreRepo = scoreRepo;
+  }
+
+  @ModelAttribute
+  public void populateModel(HttpSession session, Model model) {
+    User u = (User) session.getAttribute("u");
+    model.addAttribute("u", u);
+    model.addAttribute("logged", u != null);
+  }
+
+  // ---------------- GET /guess ----------------
+  @GetMapping
+  @Transactional(readOnly = true)
+  public String page(HttpSession session, Model model) {
+
+    DailyGame dg = getOrCreateDaily(LocalDate.now());
+    Song song = dg.getSong();
+    List<SongLayer> layers = layerRepo.findBySongOrderByIdxAsc(song);
+
+    if (layers.isEmpty()) {
+      model.addAttribute("msg", "No hay capas para la canción del día. Revisa import.sql 🙂");
+      return "guess";
     }
 
-    private static List<Layer> layersFor(String songFolder) {
-        return List.of(
-            new Layer("Batería", "/music/" + songFolder + "/01_drums.mp3"),
-            new Layer("Batería + Bajo", "/music/" + songFolder + "/02_drums_bass.mp3"),
-            new Layer("Batería + Bajo + Melodía", "/music/" + songFolder + "/03_drums_bass_melody.mp3"),
-            new Layer("Completa (con voz)", "/music/" + songFolder + "/04_full.mp3")
-        );
+    User u = (User) session.getAttribute("u");
+
+    Attempt at = null;
+    if (u != null) {
+      at = attemptRepo.findByUserAndDailyGame(u, dg).orElse(null);
     }
 
+    int layerIndex = (at == null) ? 0 : at.getCurrentLayer();
+    int tries = (at == null) ? 0 : at.getTries();
+    boolean success = (at != null && at.isSuccess());
+    boolean finished = success || tries >= dg.getMaxTries();
 
-    private static final Map<String, Song> SONGS = Map.of(
-        "song1", new Song("song1", "Get Lucky", "Daft Punk", "2013", "Pop", layersFor("song1")),
-        "song2", new Song("song2", "Levitating", "Dua Lipa", "2020", "Pop", layersFor("song2")),
-        "song3", new Song("song3", "Billie jean", "Michael jackson", "1982", "Pop", layersFor("song3")),
-        "song4", new Song("song4", "Blinding lights", "The Weeknd", "2020", "R&B/Soul", layersFor("song4")),
-        "song5", new Song("song5", "Take on me", "a-ha", "1985", "Synth pop", layersFor("song5"))
-    );
+    layerIndex = clamp(layerIndex, 0, layers.size() - 1);
 
-    @GetMapping
-    public String page(HttpSession session, Model model) {
-        String songId = (String) session.getAttribute("guessSongId");
-        Integer layerIndex = (Integer) session.getAttribute("guessLayerIndex");
+    model.addAttribute("dailyGame", dg);
+    model.addAttribute("song", song);
+    model.addAttribute("layerIndex", layerIndex);
+    model.addAttribute("currentLayer", layers.get(layerIndex));
+    model.addAttribute("maxLayer", layers.size() - 1);
+    model.addAttribute("tries", tries);
+    model.addAttribute("maxTries", dg.getMaxTries());
+    model.addAttribute("finished", finished);
+    model.addAttribute("success", success);
 
-        if (songId == null || !SONGS.containsKey(songId)) {
-            songId = randomSongId();
-            layerIndex = 0;
-        }
-
-        if (layerIndex == null) layerIndex = 0;
-
-        Song s = SONGS.get(songId);
-        layerIndex = clamp(layerIndex, 0, s.layers().size() - 1);
-
-        session.setAttribute("guessSongId", songId);
-        session.setAttribute("guessLayerIndex", layerIndex);
-
-        model.addAttribute("song", s);
-        model.addAttribute("songList", SONGS.values());
-        model.addAttribute("layerIndex", layerIndex);
-        model.addAttribute("currentLayer", s.layers().get(layerIndex));
-        model.addAttribute("maxLayer", s.layers().size() - 1);
-
-        Object msg = session.getAttribute("guessMsg");
-        if (msg != null) {
-            model.addAttribute("msg", msg.toString());
-            session.removeAttribute("guessMsg");
-        }
-    
-        return "guess";
+    Object msg = session.getAttribute("guessMsg");
+    if (msg != null) {
+      model.addAttribute("msg", msg.toString());
+      session.removeAttribute("guessMsg");
     }
 
-    @PostMapping("/nav")
-    public String nav(@RequestParam String dir, HttpSession session) {
-        String songId = (String) session.getAttribute("guessSongId");
-        Integer layerIndex = (Integer) session.getAttribute("guessLayerIndex");
-
-        if (songId == null || !SONGS.containsKey(songId)) songId = "song1";
-        if (layerIndex == null) layerIndex = 0;
-
-        Song s = SONGS.get(songId);
-        int max = s.layers().size() - 1;
-
-        if ("prev".equals(dir)) layerIndex--;
-        if ("next".equals(dir)) layerIndex++;
-
-        layerIndex = clamp(layerIndex, 0, max);
-        session.setAttribute("guessLayerIndex", layerIndex);
-
-        return "redirect:/guess";
+    if (u == null) {
+      model.addAttribute("loginWarning", true);
     }
 
-    @PostMapping("/submit")
-    public String submit(@RequestParam String answer, HttpSession session) {
+    model.addAttribute("songList", songRepo.findAll());
+    return "guess";
+  }
 
-        String songId = (String) session.getAttribute("guessSongId");
-        Integer layerIndex = (Integer) session.getAttribute("guessLayerIndex");
+  // ---------------- POST /guess/nav ----------------
+  @PostMapping("/nav")
+  @Transactional
+  public String nav(@RequestParam String dir, HttpSession session) {
 
-        if (songId == null || !SONGS.containsKey(songId)) songId = "song1";
-        if (layerIndex == null) layerIndex = 0;
-
-        Song s = SONGS.get(songId);
-        int max = s.layers().size() - 1;
-
-        boolean ok = answer.equals(s.id());
-
-        if (ok) {
-            String nextSongId = randomSongIdDifferentFrom(songId);
-
-            session.setAttribute("guessSongId", nextSongId);
-            session.setAttribute("guessLayerIndex", 0);
-            session.setAttribute("guessMsg", "Correcto! Nueva canción desbloqueada");
-        }
-        else {
-            int newIndex = Math.min(layerIndex + 1, max);
-            session.setAttribute("guessLayerIndex", newIndex);
-
-            if (newIndex == max) {
-                session.setAttribute("guessMsg", "Fallaste. Última capa desbloqueada");
-            } else {
-                session.setAttribute("guessMsg", "Fallaste. Siguiente capa desbloqueada");
-            }
-        }
-
-        return "redirect:/guess";
+    User u = (User) session.getAttribute("u");
+    if (u == null) {
+      session.setAttribute("guessMsg", "Inicia sesión para jugar.");
+      return "redirect:/login";
     }
 
+    DailyGame dg = getOrCreateDaily(LocalDate.now());
+    List<SongLayer> layers = layerRepo.findBySongOrderByIdxAsc(dg.getSong());
+    int max = Math.max(0, layers.size() - 1);
 
-    private static int clamp(int v, int min, int max) {
-        return Math.max(min, Math.min(max, v));
+    Attempt at = attemptRepo.findByUserAndDailyGame(u, dg)
+        .orElseGet(() -> createAttempt(u, dg));
+
+    if (at.isSuccess() || at.getTries() >= dg.getMaxTries()) {
+      session.setAttribute("guessMsg", "Ya terminaste el daily de hoy.");
+      return "redirect:/guess";
     }
 
-    private static String normalize(String s) {
-        return s == null ? "" : s.trim().toLowerCase();
+    int layerIndex = at.getCurrentLayer();
+    if ("prev".equals(dir)) layerIndex--;
+    if ("next".equals(dir)) layerIndex++;
+
+    layerIndex = clamp(layerIndex, 0, max);
+    at.setCurrentLayer(layerIndex);
+    attemptRepo.save(at);
+
+    return "redirect:/guess";
+  }
+
+  // ---------------- POST /guess/submit ----------------
+  @PostMapping("/submit")
+  @Transactional
+  public String submit(@RequestParam String answer, HttpSession session) {
+
+    User u = (User) session.getAttribute("u");
+    if (u == null) {
+      session.setAttribute("guessMsg", "Inicia sesión para jugar.");
+      return "redirect:/login";
     }
 
-    private static String randomSongId() {
-        var keys = SONGS.keySet().toArray(new String[0]);
-        return keys[ThreadLocalRandom.current().nextInt(keys.length)];
+    DailyGame dg = getOrCreateDaily(LocalDate.now());
+    Song song = dg.getSong();
+    List<SongLayer> layers = layerRepo.findBySongOrderByIdxAsc(song);
+    int maxLayer = Math.max(0, layers.size() - 1);
+
+    Attempt at = attemptRepo.findByUserAndDailyGame(u, dg)
+        .orElseGet(() -> createAttempt(u, dg));
+
+    if (at.isSuccess() || at.getTries() >= dg.getMaxTries()) {
+      session.setAttribute("guessMsg", "Ya terminaste el daily de hoy.");
+      return "redirect:/guess";
     }
 
-    private static String randomSongIdDifferentFrom(String currentId) {
-    var keys = SONGS.keySet().toArray(new String[0]);
+    at.setGuess(answer);
 
-    if (keys.length <= 1) {
-        return currentId;
+    boolean ok = String.valueOf(song.getId()).equals(answer.trim());
+    if (ok) {
+      at.setSuccess(true);
+
+      int points = calcPoints(dg, at, maxLayer);
+      updateScore(u, ok, points);
+
+      session.setAttribute("guessMsg", "✅ Correcto! +" + points + " puntos");
+    } else {
+      at.setTries(at.getTries() + 1);
+
+      int newLayer = Math.min(at.getCurrentLayer() + 1, maxLayer);
+      at.setCurrentLayer(newLayer);
+
+      updateScore(u, false, 0);
+
+      if (at.getTries() >= dg.getMaxTries()) {
+        session.setAttribute("guessMsg", "❌ Sin intentos. Era: " + song.getTitle() + " - " + song.getArtist());
+      } else if (newLayer == maxLayer) {
+        session.setAttribute("guessMsg", "Fallaste. Última capa desbloqueada");
+      } else {
+        session.setAttribute("guessMsg", "Fallaste. Siguiente capa desbloqueada");
+      }
     }
 
-    String next;
-    do {
-        next = keys[java.util.concurrent.ThreadLocalRandom.current()
-                .nextInt(keys.length)];
-    } while (next.equals(currentId));
+    attemptRepo.save(at);
+    return "redirect:/guess";
+  }
 
-    return next;
-}
+  // ---------------- helpers ----------------
 
+  private Attempt createAttempt(User u, DailyGame dg) {
+    Attempt at = new Attempt();
+    at.setUser(u);
+    at.setDailyGame(dg);
+    at.setCurrentLayer(0);
+    at.setTries(0);
+    at.setSuccess(false);
+    at.setCreatedAt(LocalDateTime.now());
+    return attemptRepo.save(at);
+  }
 
-    public record Layer(String name, String audioUrl) {}
-    public record Song(String id, String title, String artist, String year, String genre, List<Layer> layers) {}
+  private DailyGame getOrCreateDaily(LocalDate today) {
+    return dailyRepo.findByGameDay(today).orElseGet(() -> {
+      List<Song> songs = songRepo.findAll();
+      if (songs.isEmpty()) {
+        throw new IllegalStateException("No hay canciones en BD");
+      }
+      Song chosen = songs.get(ThreadLocalRandom.current().nextInt(songs.size()));
+
+      DailyGame dg = new DailyGame();
+      dg.setGameDay(today);
+      dg.setSong(chosen);
+      // maxLayers/maxTries ya tienen defaults en la clase
+      dg.setActive(true);
+      return dailyRepo.save(dg);
+    });
+  }
+
+  private void updateScore(User u, boolean won, int points) {
+    Score sc = scoreRepo.findByUser(u).orElseGet(() -> {
+      Score s = new Score();
+      s.setUser(u);
+      return s;
+    });
+
+    sc.setGamesPlayed(sc.getGamesPlayed() + 1);
+
+    if (won) {
+      sc.setGamesWon(sc.getGamesWon() + 1);
+      sc.setTotalPoints(sc.getTotalPoints() + points);
+      sc.setCurrentStreak(sc.getCurrentStreak() + 1);
+      sc.setBestStreak(Math.max(sc.getBestStreak(), sc.getCurrentStreak()));
+    } else {
+      sc.setCurrentStreak(0);
+    }
+
+    scoreRepo.save(sc);
+  }
+
+  private int calcPoints(DailyGame dg, Attempt at, int maxLayer) {
+    // ejemplo simple: más puntos si aciertas con menos capas y menos intentos
+    int layerPenalty = at.getCurrentLayer();      // 0..max
+    int tryPenalty = at.getTries() * 2;           // más duro por fallar
+    int base = 10;
+    return Math.max(1, base - layerPenalty - tryPenalty);
+  }
+
+  private static int clamp(int v, int min, int max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  private static String normalize(String s) {
+    return s == null ? "" : s.trim().toLowerCase();
+  }
 }
