@@ -18,112 +18,33 @@
                 <h1 class="display-4 fw-bold" th:text="#{authors.title}"></h1>
             </div>
 
-            <!-- Author 1 -->
-            <div class="card author-card shadow-sm mb-5 border-0">
-                <div class="row g-0">
-                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
-                        <img th:src="@{/img/TimofeyMatveev.jpeg}"
-                             src="/img/TimofeyMatveev.jpeg"
-                             th:alt="#{authors.imageAlt}"
-                             alt="Imagen Aqui"
-                             class="author-img rounded-circle img-fluid">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h2 class="card-title fw-bold">Timofey Matveev</h2>
-                                </div>
-                            </div>
-                            <div class="social-links">
-                                <a href="https://github.com/TimotyEnder" class="me-3" target="_blank"
-                                   th:text="#{authors.github}">
-                                    GitHub
-                                </a>
-                            </div>
+            <!-- Authors Loop - CHANGED THIS LINE -->
+            <div th:each="author : ${authorList}">
+                <div class="card author-card shadow-sm mb-5 border-0">              
+                    <div class="row g-0">
+                        <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
+                            <img th:src="@{'/img/' + ${author.imageFileName}}"
+                                 src="/img/TimofeyMatveev.jpeg"
+                                 th:alt="#{authors.imageAlt}"
+                                 alt="Imagen Aqui"
+                                 class="author-img rounded-circle img-fluid">
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Author 2 -->
-            <div class="card author-card shadow-sm mb-5 border-0">
-                <div class="row g-0">
-                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
-                        <img th:src="@{/img/RishiPursnaniMirpuri.jpg}"
-                             src="/images/authors/author1.jpg"
-                             th:alt="#{authors.imageAlt}"
-                             alt="Imagen Aqui"
-                             class="author-img rounded-circle img-fluid">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h2 class="card-title fw-bold">Rishi Pursnani Mirpuri</h2>
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h2 class="card-title fw-bold" th:text="${author.firstName + ' ' + author.lastName}">Timofey Matveev</h2>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="social-links">
-                                <a href="https://github.com/VaC306" class="me-3" target="_blank"
-                                   th:text="#{authors.github}">
-                                    GitHub
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Author 3 -->
-            <div class="card author-card shadow-sm mb-5 border-0">
-                <div class="row g-0">
-                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
-                        <img th:src="@{/img/VictorSanduStavita.jpg}"
-                             src="/images/authors/author1.jpg"
-                             th:alt="#{authors.imageAlt}"
-                             alt="Imagen Aqui"
-                             class="author-img rounded-circle img-fluid">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h2 class="card-title fw-bold">Victor Sandu Stavita</h2>
+                                <div class="social-links">
+                                    <a th:href="${author.gitHubUrl}" 
+                                       href="https://github.com/TimotyEnder" 
+                                       class="me-3" 
+                                       target="_blank"
+                                       th:text="#{authors.github}">
+                                        GitHub
+                                    </a>
                                 </div>
-                            </div>
-                            <div class="social-links">
-                                <a href="https://github.com/VictorSS7" class="me-3" target="_blank"
-                                   th:text="#{authors.github}">
-                                    GitHub
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Author 4 -->
-            <div class="card author-card shadow-sm mb-5 border-0">
-                <div class="row g-0">
-                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
-                        <img th:src="@{/img/AmauryValleLopez.jpg}"
-                             src="/images/authors/author1.jpg"
-                             th:alt="#{authors.imageAlt}"
-                             alt="Imagen Aqui"
-                             class="author-img rounded-circle img-fluid">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h2 class="card-title fw-bold">Amaury Antonio Valle Lopez</h2>
-                                </div>
-                            </div>
-                            <div class="social-links">
-                                <a href="https://github.com/amauryav-ucm" class="me-3" target="_blank"
-                                   th:text="#{authors.github}">
-                                    GitHub
-                                </a>
                             </div>
                         </div>
                     </div>

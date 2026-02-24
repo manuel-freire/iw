@@ -112,3 +112,19 @@ VALUES (503, 5, 2, 'MELODY', '/music/song5/03_drums_bass_melody.mp3');
 
 INSERT INTO SONG_LAYER (id, song_id, idx, label, audio_url)
 VALUES (504, 5, 3, 'FULL', '/music/song5/04_full.mp3');
+
+--------------------------------------------------
+-- AUTHORS
+--------------------------------------------------
+
+INSERT INTO AUTHORS (id, first_name, last_name, git_hub_url, image_file_name)
+VALUES (1001, 'Timofey', 'Matveev', 'https://github.com/TimotyEnder', 'TimofeyMatveev.jpeg');
+
+INSERT INTO AUTHORS (id, first_name, last_name, git_hub_url, image_file_name)
+VALUES (1002, 'Rishi', 'Pursnani Mirpuri', 'https://github.com/VaC306', 'RishiPursnaniMirpuri.jpg');
+
+INSERT INTO AUTHORS (id, first_name, last_name, git_hub_url, image_file_name)
+VALUES (1003, 'Victor', 'Sandu Stavita', 'https://github.com/VictorSS7', 'VictorSanduStavita.jpg');
+
+INSERT INTO AUTHORS (id, first_name, last_name, git_hub_url, image_file_name)
+VALUES (1004, 'Amaury Antonio', 'Valle Lopez', 'https://github.com/amauryav-ucm', 'AmauryValleLopez.jpg');

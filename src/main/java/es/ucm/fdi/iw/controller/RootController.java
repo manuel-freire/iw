@@ -43,10 +43,10 @@ public class RootController {
         return "about";
     }
 
-    @GetMapping("/authors")
+    /*@GetMapping("/authors")
     public String authors(Model model) {
         return "authors";
-    }
+    }*/
 
     @GetMapping("/games")
     public String games() {
