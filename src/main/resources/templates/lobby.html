@@ -16,33 +16,47 @@
         <!-- Nombre del juego (dinámico, viene del controller) -->
         <h1 class="mb-5" th:text="${gameName}">Nombre del juego</h1>
 
+        <div th:replace="~{fragments/errorAlert.html :: errorAlert}"></div>
+
         <!-- Opciones -->
         <div class="row justify-content-center g-4">
 
             <!-- Crear sala -->
             <div class="col-md-5">
-                <a th:href="@{/lobby/{mode}/{action}(mode=${gameMode}, action='create')}"
-                    class="text-decoration-none">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body py-5">
+                <div class="card shadow-sm h-100 text-decoration-none">
+                    <div class="card-body py-5 d-flex flex-column">
+                        <div>
                             <h2 class="card-title" th:text="#{lobby.createTitle}"></h2>
                             <p class="text-muted mt-3" th:text="#{lobby.createDesc}"></p>
                         </div>
+                        <div class="mt-auto">
+                            <form method="post" th:action="@{/{mode}/lobby/create(mode=${gameMode})}">
+                                <button type="submit" class="btn btn-primary" th:text="#{lobby.createTitle}"></button>
+                            </form>
+                        </div>
                     </div>
-                </a>
+                </div>
             </div>
 
             <!-- Unirse a sala -->
             <div class="col-md-5">
-                <a th:href="@{/lobby/{mode}/{action}(mode=${gameMode}, action='join')}"
-                    class="text-decoration-none">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body py-5">
+                <div class="card shadow-sm h-100 text-decoration-none">
+                    <div class="card-body py-5 d-flex flex-column">
+                        <div>
                             <h2 class="card-title" th:text="#{lobby.joinTitle}"></h2>
                             <p class="text-muted mt-3" th:text="#{lobby.joinDesc}"></p>
                         </div>
+                        <div class="mt-auto">
+                            <form method="post" th:action="@{/{mode}/lobby/join(mode=${gameMode})}">                            
+                                <div class="mb-3 row">
+                                    <input type="text" class="form-control w-50 mx-auto text-center" name="lobbyCode" id="lobbyCode" th:placeholder="#{lobby.lobbyCodeLabel}">
+                                </div>
+                                <button type="submit" class="btn btn-primary" th:text="#{lobby.joinTitle}"></button>
+                            </form>
+                        </div>
+                        
                     </div>
-                </a>
+                </div>
             </div>
 
         </div>
