@@ -25,10 +25,14 @@ document.addEventListener("DOMContentLoaded", function () {
       themeIcon.classList.remove("bi-moon");
       themeIcon.classList.add("bi-sun");
       themeText.textContent = "Light";
+      themeToggle.classList.add("btn-dark-theme");
+      themeToggle.classList.remove("btn-light-theme");
     } else {
       themeIcon.classList.remove("bi-sun");
       themeIcon.classList.add("bi-moon");
       themeText.textContent = "Dark";
+      themeToggle.classList.remove("btn-dark-theme");
+     themeToggle.classList.add("btn-light-theme");
     }
   }
 });
