@@ -28,6 +28,9 @@ public class MIDIGame {
     )
     private List<User> players = new ArrayList<>();
 
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MIDISequence> sequences;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;

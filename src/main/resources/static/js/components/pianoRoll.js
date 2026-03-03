@@ -448,3 +448,57 @@ document.addEventListener("DOMContentLoaded", (e) => {
         .then(() => createSynth())
         .then(() => addStaticTrack(staticTrack));
 });
+
+async function getSequence() {
+    const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/get`)
+    const sequence = await res.json();
+    return sequence
+}
+
+async function logSequence() {
+    const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/get`)
+    const sequence = await res.json();
+    console.log(sequence)
+}
+
+async function dummySequence(){
+    sequence = await getSequence()
+    console.log(sequence);
+    track = {
+        instrument: 128,
+        notes:[]
+    }
+    for(note of staticTrack){
+        track.notes.push({pitch: note.pitch, time: note.time})
+    }
+    sequence.tracks.push(track)
+
+    const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', "X-CSRF-TOKEN": config.csrf.value },
+        body: JSON.stringify(sequence)
+    });
+
+    return await res.json()
+}
+
+async function saveSequence(){
+    sequence = await getSequence()
+    newTrack = {
+        instrument: inst,
+        notes: []
+    }
+    for(el of seq.tracks[dynamicTrackNumber]){
+        if(el.cmd == "note"){
+            newTrack.notes.push({pitch: el.pitch, time: el.start})
+        }
+    }
+    sequence.tracks.push(newTrack)
+    const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', "X-CSRF-TOKEN": config.csrf.value },
+        body: JSON.stringify(sequence)
+    });
+
+    return await res.json()
+}
