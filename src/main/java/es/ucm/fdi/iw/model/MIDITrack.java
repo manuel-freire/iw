@@ -55,7 +55,7 @@ public class MIDITrack implements Transferable<MIDITrack.Transfer> {
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(this.id, this.instrument, this.id, this.notes);
+        return new Transfer(this.id, this.instrument, this.sequence.getId(), this.notes);
     }
 
 }

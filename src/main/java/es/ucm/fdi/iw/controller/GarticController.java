@@ -133,7 +133,21 @@ public class GarticController {
     // encargaran de mostrar la pantalla apropiada en /lobby/{lobbyCode} de acuerdo
     // al estado de la partida
     @GetMapping("/lobby/{lobbyCode}/gamescreen")
-    public String showGameScreen(HttpSession session, @PathVariable String lobbyCode) {
+    public String showGameScreen(HttpSession session, @PathVariable String lobbyCode, Model model) {
+        User u = (User) session.getAttribute("u");
+        if (u == null) {
+            model.addAttribute("showError", true);
+            model.addAttribute("errorTitleKey", "lobby.error.notlogged.title");
+            model.addAttribute("errorBodyKey", "lobby.error.notlogged.body");
+            return "lobby";
+        }
+        Optional<MIDIGame> optGame = midiGameRepository.findByLobbyCode(lobbyCode);
+        if (optGame.isEmpty()) {
+            model.addAttribute("showError", true);
+            model.addAttribute("errorTitleKey", "lobby.error.notfound.title");
+            model.addAttribute("errorBodyKey", "lobby.error.notfound.body");
+            return "lobby";
+        }
         return "gartic";
     }
 

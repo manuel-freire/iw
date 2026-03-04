@@ -295,9 +295,6 @@ const notes = [
     { pitch: 83, note: "B", octave: 5, isBlack: false },
 ];
 
-let timeline = Array.from({ length: beats }, () => new Set());
-console.log(timeline);
-
 async function buildPianoRoll(notes) {
     notes.forEach((n) => {
         roll = document.createElement("div");
@@ -330,7 +327,6 @@ async function addNoteListeners() {
             sequenceChanged = true;
             key.classList.toggle("active");
             if (key.classList.contains("active")) {
-                timeline[key.dataset.time].add(key.dataset.pitch);
                 addNote(
                     key.dataset.pitch,
                     (4 * parseInt(key.dataset.time)) / beats,
@@ -338,7 +334,6 @@ async function addNoteListeners() {
                     seq.currentInstrument[dynamicTrackNumber],
                 );
             } else {
-                timeline[key.dataset.time].delete(key.dataset.pitch);
                 removeNote(
                     key.dataset.pitch,
                     (4 * parseInt(key.dataset.time)) / beats,
@@ -445,9 +440,19 @@ document.addEventListener("DOMContentLoaded", (e) => {
     buildPianoRoll(notes)
         .then(() => createSequence())
         .then(() => addNoteListeners())
-        .then(() => createSynth())
-        .then(() => addStaticTrack(staticTrack));
+        .then(() => createSynth()).then(()=>getSequence()).then((sequence)=>fillSequence(sequence))
 });
+
+async function fillSequence(sequence){
+    console.log(sequence)
+    for(t of sequence.tracks){
+        let trackNo = seq.addTrack()
+        for(n of t.notes){
+            console.log(n, t.instrument)
+            addNote(n.pitch, n.time, trackNo, t.instrument)
+        }
+    }
+}
 
 async function getSequence() {
     const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/get`)
@@ -502,3 +507,8 @@ async function saveSequence(){
 
     return await res.json()
 }
+
+document.querySelector("#tmpSaveButton").addEventListener("click", async e=>{
+    let res = await saveSequence();
+    window.location.reload();
+})
