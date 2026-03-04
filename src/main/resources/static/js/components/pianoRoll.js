@@ -434,6 +434,25 @@ document.querySelector("#stop").addEventListener("click", () => {
     loop = false;
     synth.stop();
 });
+document.querySelector("#clear").addEventListener("click", () => {
+    if (synth) {
+        synth.stop();
+    }
+    
+    // 2. Clear the timeline array
+    timeline = Array.from({ length: beats }, () => new Set());
+    
+    // 3. Remove all notes from the dynamic track in the sequence
+    if (seq && seq.tracks[dynamicTrackNumber]) {
+        seq.tracks[dynamicTrackNumber] = [];  // Empty the track
+    }
+    
+    // 4. Remove visual active class from all note elements
+    document.querySelectorAll(".note.active").forEach(note => {
+        note.classList.remove("active");
+    });
+
+});
 
 document.addEventListener("DOMContentLoaded", (e) => {
     document.getElementById("tempo").value = bpm;
