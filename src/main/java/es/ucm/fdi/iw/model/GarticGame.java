@@ -24,4 +24,6 @@ public class GarticGame extends MIDIGame {
     @MapKeyColumn(name = "player_id")
     @Column(name = "seq_id")
     private Map<Long, Long> trackAssignments = new HashMap<>();
+    private int currentRound;
+    private int totalRounds; 
 }

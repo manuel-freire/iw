@@ -81,6 +81,8 @@ public class GarticController {
         game.setLobbyCode(lobbyCode);
         game.setOwner(u);
         game.addPlayer(u);
+        game.setCurrentRound(0);
+        game.setTotalRounds(4);
         midiGameRepository.save(game);
 
         session.setAttribute("currentGame", game);
@@ -148,6 +150,10 @@ public class GarticController {
             model.addAttribute("errorBodyKey", "lobby.error.notfound.body");
             return "lobby";
         }
+        GarticGame game = (GarticGame)optGame.get();
+        model.addAttribute("currentRound", game.getCurrentRound());
+        model.addAttribute("totalRounds", game.getTotalRounds());
+        model.addAttribute("finished", game.getCurrentRound() == game.getTotalRounds());
         return "gartic";
     }
 
@@ -158,7 +164,6 @@ public class GarticController {
         GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
         for (User u : game.getPlayers()) {
-            System.out.println("CREATING SEQUENCE");
             MIDISequence seq = new MIDISequence();
             seq.setGame(game);
             game.getSequences().add(seq);

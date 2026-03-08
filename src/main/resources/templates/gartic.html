@@ -23,53 +23,46 @@
             <span th:text="#{gartic.title}"></span>
         </h1>
 
-        <form>
-            <div class="row">
-                <label class="col-2 col-form-label" for="tempo">Tempo</label>
-                <div class="col-3">                    
-                    <input class="form-control" type="number" id="tempo">
-                </div>
-                <label class="col-2 col-form-label" for="inst">Instrumento</label>
-                <div class="col-3">                    
-                    <select id="inst" class="form-select">
-                        <option value="0">Piano de cola acústico</option>
-                        <option value="25">Guitarra acústica (acero)</option>
-                        <option value="31">aaaaaa</option>
-                        <option value="33">Bajo eléctrico (finger)</option>
-                        <option value="48">Conjunto de cuerdas</option>
-                        <option value="56">Trompeta</option>
-                        <option value="73">Flauta</option>
-                        <option value="52">Coro (voces “aahs”)</option>
-                        <option value="81">Sintetizador lead (diente de sierra)</option>
-                        <option value="89">Pad de sintetizador (cálido)</option>
-                    </select>
-                </div>
-                <div class="col-2">
-                    <button type="button" id="btnForm" class="btn btn-primary float-end">OK</button>
-                </div>
-            </div>
-            
-            
-            
-        </form>
+    
         <div id="pianoRoll" class="h-scroll">
 
         </div>
         <div class="my-3">
-            <button id="loop" type="button" class="btn btn-primary" title="Loop">
+            <input id="progress" type="range">
+            <div>
+            <button id="loop" type="button" class="btn btn-secondary" title="Loop">
                 <i class="bi bi-arrow-repeat"></i>
             </button>
             <button id="play" type="button" class="btn btn-primary" title="Play">
                 <i class="bi bi-play-fill"></i>
             </button>
+            <button id="pause" type="button" class="btn btn-primary" title="Pause">
+                <i class="bi bi-pause-fill"></i>
+            </button>
             <button id="stop" type="button" class="btn btn-primary" title="Stop">
                 <i class="bi bi-stop-fill"></i>
-            </button>
+            </button></div>
         </div>
-        <div>
+        <div th:if="${finished == false}">
             <button type="button" id="tmpSaveButton" class="btn btn-primary">
                 Enviar
             </button>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="exampleModalBody" class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
         </div>
     </div>
 </main>
@@ -77,5 +70,13 @@
 <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
 <script th:src="@{/js/abcjs-basic.js}" src="/js/abcjs-basic-min.js" ></script>
-<script th:src="@{/js/components/pianoRoll.js}" src="/js/components/pianoRoll.js" defer></script>
+<script th:src="@{/js/components/piano-roll.js}" src="/js/components/piano-roll.js" defer></script>
+<script th:src="@{/js/components/game-screen.js}" src="/js/components/game-screen.js" defer></script>
+<script type="text/javascript">
+    const gameModel ={
+        currentRound: parseInt("[[${currentRound}?:'0']]"),
+        totalRounds: parseInt("[[${totalRounds}?:'0']]"),
+        finished: ("[[${finished}?:'false']]" === "true")
+    }
+</script>
 </html>
