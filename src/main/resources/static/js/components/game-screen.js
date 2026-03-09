@@ -201,7 +201,10 @@ if (!gameModel.finished) {
 }
 let pianoRoll = new PianoRoll(params);
 
+let controls = { playButton: "#play", stopButton: "#stop", progressBar: "#progress", loopButton: "#loop", pauseButton: "#pause" };
+
 if (!gameModel.finished) {
+    controls.clearButton = "#clear"
     pianoRoll.createVisualElement("#pianoRoll", round.notes);
     document.querySelector("#exampleModalLabel").textContent = `Ronda ${gameModel.currentRound + 1} de ${gameModel.totalRounds}`;
     document.querySelector("#exampleModalBody").textContent = `Crea una pista de ${round.instrumentName} para la canción!`;
@@ -213,5 +216,5 @@ if (!gameModel.finished) {
     });
 }
 
-pianoRoll.bindControls({ playButton: "#play", stopButton: "#stop", progressBar: "#progress", loopButton: "#loop", pauseButton: "#pause" });
+pianoRoll.bindControls(controls);
 setupTracks();

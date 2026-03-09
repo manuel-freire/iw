@@ -95,6 +95,14 @@ class PianoRoll {
         this.synth.stop();
     }
 
+    clearTrack() {
+        this.stop();
+        this.sequence.tracks[this.editableTrackIdx] = [];
+        document.querySelectorAll(".note.active").forEach((note) => {
+            note.classList.remove("active");
+        });
+    }
+
     createVisualElement(selector, keys) {
         const nCols = this.measures * this.beatsPerMeasure;
         for (const k of keys) {
@@ -142,7 +150,7 @@ class PianoRoll {
         if (selectors.playButton) document.querySelector(selectors.playButton).addEventListener("click", () => this.play());
         if (selectors.stopButton) document.querySelector(selectors.stopButton).addEventListener("click", () => this.stop());
         if (selectors.pauseButton) document.querySelector(selectors.pauseButton).addEventListener("click", () => this.pause());
-
+        if (selectors.clearButton) document.querySelector(selectors.clearButton).addEventListener("click", () => this.clearTrack());
         if (selectors.progressBar) {
             this.progressBar = document.querySelector(selectors.progressBar);
             this.progressBar.min = 0;
