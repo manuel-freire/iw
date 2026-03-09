@@ -202,3 +202,16 @@ body, .navbar, .card, a, button, .nav-link, .navbar-brand, .footer {
                 border-color 0.3s ease;
 }
 
+/* Light theme */
+[data-bs-theme="light"] #themeToggle.btn-outline-secondary:hover {
+  background-color: #4c4c4d;
+  border-color: #525253;
+  color: #000;
+}
+
+/* Dark theme */
+[data-bs-theme="dark"] #themeToggle.btn-outline-secondary:hover {
+  background-color: #4c4c4d;
+  border-color: #525253;
+  color: #fff;
+}

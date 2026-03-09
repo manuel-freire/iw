@@ -30,18 +30,18 @@
         <div class="my-3">
             <input id="progress" type="range">
             <div>
-            <button id="loop" type="button" class="btn btn-secondary" title="Loop">
+            <button id="loop" type="button" class="btn btn-primary" title="Loop">
                 <i class="bi bi-arrow-repeat"></i>
             </button>
             <button id="play" type="button" class="btn btn-primary" title="Play">
                 <i class="bi bi-play-fill"></i>
             </button>
-            <button id="pause" type="button" class="btn btn-primary" title="Pause">
-                <i class="bi bi-pause-fill"></i>
-            </button>
             <button id="stop" type="button" class="btn btn-primary" title="Stop">
                 <i class="bi bi-stop-fill"></i>
-            </button></div>
+            </button>
+            <button id="clear" type="button" class="btn btn-primary" title="Clear all notes">
+                <i class="bi bi-trash-fill"></i>
+            </button>
         </div>
         <div th:if="${finished == false}">
             <button type="button" id="tmpSaveButton" class="btn btn-primary">
