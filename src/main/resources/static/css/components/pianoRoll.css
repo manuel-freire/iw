@@ -1,69 +1,67 @@
 
 :root{
-    --white-key-h: 24px;
-    --black-key-h: 16px;
-    --octave-h: calc(7*var(--white-key-h) + 5*var(--black-key-h))
+    --key-h: 24px;
+    --key-color-active: #700070;
+    --key-color-hover: #A030A0;
+    --white-key-color-inactive: #334450;
+    --black-key-color-inactive: #2C3E49;
+    --bg-color: #22282c;
+    --octave-h: calc(12*var(--key-h))
 }
 
 .note-text{
+    margin: 0;
     display: inline-block;
     width: 32px;
-    text-align: end;
+    text-align: start;
+    font-size: small;
 }
 
 .note {
+  height: var(--key-h);
   width: 36px;
   min-width: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-color: gray;
+  border-color: var(--bg-color);
   border-width: 1px;
   border-style: solid;
+  padding-block: 0;
 }
 
+#pianoRoll{
+  background-color: var(--bg-color);
+}
 
-.section-end{
+.measure-end{
     border-right-color: black;
 }
 
-.white-key.active {
+.note.active {
+  border-radius: calc(var(--key-h)/4);
   background-color: #808;
-  border-color: #808;
 }
-
-
-.black-key.active {
-  background-color: #606;
-  border-color: #606;
-}
-
 
 .white-key {
-  height: var(--white-key-h);
-  background-color: #ccc;
+  background-color: var(--white-key-color-inactive)
 }
 
 .black-key {
-  height: var(--black-key-h);
-  background-color: rgb(170, 170, 170);
+  background-color: var(--black-key-color-inactive);
 }
 
-.white-key:hover:not(.active) {
-  background-color: rgb(170, 102, 170);
+.note:hover:not(.active) {
+  border-radius: calc(var(--key-h)/4);
+  background-color: var(--key-color-hover);
 }
 
-.black-key:hover:not(.active) {
-  background-color: rgb(136, 85, 136);
-}
-
-
-.note-roll {
+.key-row {
     margin-block: 0;
     padding-block: 0;
 }
 
 .h-scroll {
-  height: calc(2 * var(--octave-h));
+  max-height: calc(2 * var(--octave-h));
   overflow-y: auto;
   overflow-x: auto;
 
@@ -75,11 +73,11 @@
   display: none;
 }
  */
-.note-roll {
+.key-row {
   display: flex;
 }
 
-.note-text {
-  font-size: small;
+.note:not(.active):not(.show-label) > .note-text {
+  display: none;
 }
 

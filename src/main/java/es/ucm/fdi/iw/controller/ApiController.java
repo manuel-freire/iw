@@ -231,19 +231,18 @@ public class ApiController {
 
   }
 
-  @PostMapping("/game/{lobbyCode}/sequence/update")
-  public MIDISequence.Transfer updateMidiSequence(HttpSession session, @PathVariable String lobbyCode,
-      @RequestBody MIDISequence.Transfer sequenceTransfer) {
-        long sequenceId = ((GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"))).getTrackAssignments()
+  @PostMapping("/game/{lobbyCode}/sequence/addtrack")
+  public MIDISequence.Transfer addTrackToSequence(HttpSession session, @PathVariable String lobbyCode,
+      @RequestBody MIDITrack.Transfer trackTransfer) {
+    GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode).orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
+    long sequenceId = game.getTrackAssignments()
         .get(((User) session.getAttribute("u")).getId());
     MIDISequence sequence = midiSequenceRepository.findById(sequenceId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID"));
-    sequence.getTracks().clear();
-    for (MIDITrack.Transfer t : sequenceTransfer.getTracks()) {
-      sequence.getTracks().add(new MIDITrack(t, sequence));
-    }
+    sequence.getTracks().add(new MIDITrack(trackTransfer, sequence));
+    game.setCurrentRound(game.getCurrentRound()+1);
     midiSequenceRepository.save(sequence);
+    midiGameRepository.save(game);
     return sequence.toTransfer();
   }
 }
