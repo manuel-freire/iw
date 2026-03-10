@@ -21,13 +21,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthorController {
     
+    private static final Logger log = LogManager.getLogger(AuthorController.class);
+
     @Autowired
     private AuthorsRepository authorRepository; 
     
     @GetMapping("/authors")
     public String listAuthors(Model model) {
         List<Authors> authors = authorRepository.findAll();
-        System.out.println("Found " + authors.size() + " authors"); // Add this
+
+        log.debug("Listado de autores solicitado. {} autores encontrados", authors.size());
+        
         model.addAttribute("authorList", authors);
         return "authors"; // returns authors.html template
     }
