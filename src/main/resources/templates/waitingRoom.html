@@ -15,20 +15,7 @@
 
         <main class="flex-shrink-0">
             <h1 class="mb-5" th:text="${gameName}">Nombre del juego</h1>
-            <ul>
-                <li
-                    th:each="item : ${playerList}"
-                    th:text="${item.getUsername()}"
-                ></li>
-            </ul>
-
-            <div th:if="${isOwner}">
-                <form method="POST" th:action="@{./start}">
-                    <button type="submit" class="btn btn-primary"
-                        >Iniciar partida</button
-                    >
-                </form>
-            </div>
+            <th:block th:replace="~{fragments/waiting-room.html :: waiting-room}"/>
         </main>
 
         <th:block th:replace="~{fragments/footer.html :: footer}" />

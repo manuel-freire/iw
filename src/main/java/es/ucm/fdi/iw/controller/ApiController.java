@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -229,6 +230,12 @@ public class ApiController {
     return midiSequenceRepository.findById(sequenceId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID")).toTransfer();
 
+  }
+
+  @GetMapping("/game/{lobbyCode}/sequence/getall")
+  public List<MIDISequence.Transfer> getSongs(HttpSession session, @PathVariable String lobbyCode) {
+    return ((GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"))).getSequences().stream().map(MIDISequence::toTransfer).toList();
   }
 
   @PostMapping("/game/{lobbyCode}/sequence/addtrack")

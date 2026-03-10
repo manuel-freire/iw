@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Waiting Room fragment - rest is empty</title>
+    </head>
+
+    <body>
+        <div th:fragment="waiting-room">
+            <ul>
+                <li th:each="item : ${playerList}" th:text="${item.username}"></li>
+            </ul>
+
+            <div th:if="${isOwner}">
+                <form method="POST" th:action="@{./start}">
+                    <input type="hidden" name="lobbyCode" th:value="${lobbyCode}?:''">
+                    <button type="submit" class="btn btn-primary">Iniciar partida</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

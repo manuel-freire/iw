@@ -104,6 +104,8 @@ class PianoRoll {
     }
 
     createVisualElement(selector, keys) {
+        let container = document.querySelector(selector);
+        container.classList.add("h-scroll");
         const nCols = this.measures * this.beatsPerMeasure;
         for (const k of keys) {
             let keyRow = document.createElement("div");
@@ -141,24 +143,39 @@ class PianoRoll {
                 });
                 keyRow.append(keyElm);
             }
-            document.querySelector(selector).prepend(keyRow);
+            container.prepend(keyRow);
         }
     }
 
+    /**
+     * Binds event listeners to control elements for the piano roll player.
+     * @param {Object} selectors - An object containing CSS selectors for control elements
+     * @param {string} [selectors.playButton] - CSS selector for the play button
+     * @param {string} [selectors.stopButton] - CSS selector for the stop button
+     * @param {string} [selectors.pauseButton] - CSS selector for the pause button
+     * @param {string} [selectors.clearButton] - CSS selector for the clear button
+     * @param {string} [selectors.progressBar] - CSS selector for the progress bar input element
+     * @param {string} [selectors.loopButton] - CSS selector for the loop button
+     * @returns {void}
+     */
     bindControls(selectors) {
         console.log(this);
-        if (selectors.playButton) document.querySelector(selectors.playButton).addEventListener("click", () => this.play());
-        if (selectors.stopButton) document.querySelector(selectors.stopButton).addEventListener("click", () => this.stop());
-        if (selectors.pauseButton) document.querySelector(selectors.pauseButton).addEventListener("click", () => this.pause());
-        if (selectors.clearButton) document.querySelector(selectors.clearButton).addEventListener("click", () => this.clearTrack());
-        if (selectors.progressBar) {
+        if (selectors.playButton && document.querySelector(selectors.playButton))
+            document.querySelector(selectors.playButton).addEventListener("click", () => this.play());
+        if (selectors.stopButton && document.querySelector(selectors.stopButton))
+            document.querySelector(selectors.stopButton).addEventListener("click", () => this.stop());
+        if (selectors.pauseButton && document.querySelector(selectors.pauseButton))
+            document.querySelector(selectors.pauseButton).addEventListener("click", () => this.pause());
+        if (selectors.clearButton && document.querySelector(selectors.clearButton))
+            document.querySelector(selectors.clearButton).addEventListener("click", () => this.clearTrack());
+        if (selectors.progressBar && document.querySelector(selectors.progressBar)) {
             this.progressBar = document.querySelector(selectors.progressBar);
             this.progressBar.min = 0;
             this.progressBar.max = 1;
             this.progressBar.step = 0.01;
             this.progressBar.value = 0;
         }
-        if (selectors.loopButton)
+        if (selectors.loopButton && document.querySelector(selectors.loopButton))
             document.querySelector(selectors.loopButton).addEventListener("click", (e) => {
                 e.currentTarget.classList.toggle("btn-secondary");
                 e.currentTarget.classList.toggle("btn-primary");
