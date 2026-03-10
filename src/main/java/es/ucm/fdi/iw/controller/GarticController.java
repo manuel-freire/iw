@@ -31,7 +31,7 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/gartic")
 public class GarticController {
 
-    private static final Logger log = LogManager.getLogger(UserController.class);
+    private static final Logger log = LogManager.getLogger(GarticController.class);
 
     private final MIDIGameRepository midiGameRepository;
     private final MIDISequenceRepository midiSequenceRepository;
@@ -59,6 +59,7 @@ public class GarticController {
 
     @GetMapping("")
     public String mainPage(HttpSession session, Model model) {
+        log.debug("Rendering main lobby page");
         return "lobby";
     }
 
@@ -67,6 +68,7 @@ public class GarticController {
     public String createLobby(HttpSession session, Model model) throws IOException {
         User u = (User) session.getAttribute("u");
         if (u == null) {
+            log.warn("Attempt to create lobby without being logged in");
             model.addAttribute("showError", true);
             model.addAttribute("errorTitleKey", "lobby.error.notlogged.title");
             model.addAttribute("errorBodyKey", "lobby.error.notlogged.body");
@@ -88,6 +90,7 @@ public class GarticController {
         midiGameRepository.save(game);
 
         session.setAttribute("currentGame", game);
+        log.info("Created lobby {} for user {}", lobbyCode, u.getUsername());
 
         return "redirect:/gartic/lobby/" + lobbyCode;
     }
@@ -104,12 +107,14 @@ public class GarticController {
 
         Optional<MIDIGame> optGame = midiGameRepository.findByLobbyCode(lobbyCode);
         if (optGame.isEmpty()) {
+            log.warn("Lobby not found for code {}", lobbyCode);
             model.addAttribute("showError", true);
             model.addAttribute("errorTitleKey", "lobby.error.notfound.title");
             model.addAttribute("errorBodyKey", "lobby.error.notfound.body");
             return "lobby";
         }
         GarticGame game = (GarticGame)optGame.get();
+        log.debug("User {} accessing lobby {}", u == null ? "anonymous" : u.getUsername(), lobbyCode);
         if(game.getCurrentRound() == game.getTotalRounds()){
             game.setStatus(GarticGameStatus.FINISHED);
             midiGameRepository.save(game);
@@ -120,6 +125,7 @@ public class GarticController {
         model.addAttribute("totalRounds", game.getTotalRounds());
         model.addAttribute("gameStatus", game.getStatus());
         model.addAttribute("playerList", game.getPlayers());
+        log.info("Lobby {} has {} players", lobbyCode, game.getPlayers().size());
         return "gartic";
     }
 
@@ -128,6 +134,7 @@ public class GarticController {
     public String joinLobby(HttpSession session, @RequestParam String lobbyCode, Model model) throws IOException {
         User u = (User) session.getAttribute("u");
         if (u == null) {
+            log.warn("Unauthorized user tried to join lobby {}", lobbyCode);
             model.addAttribute("showError", true);
             model.addAttribute("errorTitleKey", "lobby.error.notlogged.title");
             model.addAttribute("errorBodyKey", "lobby.error.notlogged.body");
@@ -135,12 +142,14 @@ public class GarticController {
         }
         Optional<MIDIGame> optGame = midiGameRepository.findByLobbyCode(lobbyCode);
         if (optGame.isEmpty()) {
+            log.warn("User {} tried to join missing lobby {}", u.getUsername(), lobbyCode);
             model.addAttribute("showError", true);
             model.addAttribute("errorTitleKey", "lobby.error.notfound.title");
             model.addAttribute("errorBodyKey", "lobby.error.notfound.body");
             return "lobby";
         }
         MIDIGame game = optGame.get();
+        log.info("User {} joining lobby {}", u.getUsername(), lobbyCode);
         game.addPlayer(u);
         return "redirect:/gartic/lobby/" + lobbyCode;
     }
@@ -151,7 +160,9 @@ public class GarticController {
         // todos con ws, de momento solo funciona para el owner
         GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
+        log.info("Starting game for lobby {} with {} players", lobbyCode, game.getPlayers().size());
         for (User u : game.getPlayers()) {
+            log.debug("Creating sequence for player {} in lobby {}", u.getUsername(), lobbyCode);
             MIDISequence seq = new MIDISequence();
             seq.setGame(game);
             game.getSequences().add(seq);
