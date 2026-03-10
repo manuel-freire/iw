@@ -32,12 +32,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
+import es.ucm.fdi.iw.model.MIDIInstrument;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.MIDITrack;
 import es.ucm.fdi.iw.model.Message;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
+import es.ucm.fdi.iw.repository.MIDIInstrumentRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
 import io.karatelabs.js.Context;
 import io.karatelabs.js.Interpreter;
@@ -67,10 +69,12 @@ public class ApiController {
 
   private final MIDISequenceRepository midiSequenceRepository;
   private final MIDIGameRepository midiGameRepository;
+  private final MIDIInstrumentRepository midiInstrumentRepository;
 
-  public ApiController(MIDISequenceRepository midiSequenceRepository, MIDIGameRepository midiGameRepository) {
+  public ApiController(MIDISequenceRepository midiSequenceRepository, MIDIGameRepository midiGameRepository, MIDIInstrumentRepository midiInstrumentRepository) {
     this.midiSequenceRepository = midiSequenceRepository;
     this.midiGameRepository = midiGameRepository;
+    this.midiInstrumentRepository = midiInstrumentRepository;
   }
 
   private static final Logger log = LogManager.getLogger(ApiController.class);
@@ -229,6 +233,12 @@ public class ApiController {
         .get(((User) session.getAttribute("u")).getId());
     return midiSequenceRepository.findById(sequenceId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID")).toTransfer();
+
+  }
+
+  @GetMapping("/game/instrument/get/{program}")
+  public MIDIInstrument.Transfer getMidiInstrument(HttpSession session, @PathVariable int program) {
+    return midiInstrumentRepository.findByProgram(program).orElseThrow(()->new IllegalArgumentException("Invalid instrument program")).toTransfer();
 
   }
 

@@ -14,6 +14,11 @@ class PianoRoll {
         this.synth = new ABCJS.synth.CreateSynth();
     }
 
+    setInstrument(program) {
+        this.instrument = program;
+        this.sequence.setInstrument(this.editableTrackIdx, this.instrument);
+    }
+
     setTempo(bpm) {
         this.bpm = bpm;
     }
@@ -159,7 +164,6 @@ class PianoRoll {
      * @returns {void}
      */
     bindControls(selectors) {
-        console.log(this);
         if (selectors.playButton && document.querySelector(selectors.playButton))
             document.querySelector(selectors.playButton).addEventListener("click", () => this.play());
         if (selectors.stopButton && document.querySelector(selectors.stopButton))

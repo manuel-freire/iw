@@ -12,9 +12,7 @@ function fn() {
     var config = {
         env: env,
         myVarName: 'someValue',
-        baseUrl: 'http://localhost:8080',
-        adminUsername: 'user',
-        adminPassword: 'password'
+        baseUrl: 'http://localhost:8080'
     }
 
     /**

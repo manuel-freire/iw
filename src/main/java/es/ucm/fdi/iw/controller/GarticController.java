@@ -1,12 +1,17 @@
 package es.ucm.fdi.iw.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +24,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.ucm.fdi.iw.auxiliar.GameUtils;
 import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
+import es.ucm.fdi.iw.model.MIDIInstrument;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -84,7 +91,10 @@ public class GarticController {
         game.setOwner(u);
         game.addPlayer(u);
         game.setCurrentRound(0);
+        // TODO should be user generated
         game.setTotalRounds(4);
+        List<Integer> roundInstruments = Arrays.asList(128, 34, 1, 56);
+        game.setRoundInstruments(roundInstruments);
         midiGameRepository.save(game);
 
         session.setAttribute("currentGame", game);
@@ -113,6 +123,8 @@ public class GarticController {
         if(game.getCurrentRound() == game.getTotalRounds()){
             game.setStatus(GarticGameStatus.FINISHED);
             midiGameRepository.save(game);
+        } else {
+            model.addAttribute("instrument", game.getRoundInstruments().get(game.getCurrentRound()));
         }
         if (game.getOwner().getId() == u.getId()) 
             model.addAttribute("isOwner", true);
