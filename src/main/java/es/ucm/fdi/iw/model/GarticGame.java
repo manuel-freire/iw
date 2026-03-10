@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.iw.model.SongLayer.LayerType;
@@ -29,6 +30,8 @@ public class GarticGame extends MIDIGame {
     @MapKeyColumn(name = "player_id")
     @Column(name = "seq_id")
     private Map<Long, Long> trackAssignments = new HashMap<>();
+
+    private List<Integer> roundInstruments;
 
     private int currentRound;
 

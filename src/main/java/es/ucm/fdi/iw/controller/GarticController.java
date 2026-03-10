@@ -2,6 +2,7 @@ package es.ucm.fdi.iw.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -92,7 +93,10 @@ public class GarticController {
         game.setOwner(u);
         game.addPlayer(u);
         game.setCurrentRound(0);
+        // TODO should be user generated
         game.setTotalRounds(4);
+        List<Integer> roundInstruments = Arrays.asList(128, 34, 1, 56);
+        game.setRoundInstruments(roundInstruments);
         midiGameRepository.save(game);
 
         session.setAttribute("currentGame", game);
@@ -121,6 +125,8 @@ public class GarticController {
         if(game.getCurrentRound() == game.getTotalRounds()){
             game.setStatus(GarticGameStatus.FINISHED);
             midiGameRepository.save(game);
+        } else {
+            model.addAttribute("instrument", game.getRoundInstruments().get(game.getCurrentRound()));
         }
         if (game.getOwner().getId() == u.getId()) 
             model.addAttribute("isOwner", true);
