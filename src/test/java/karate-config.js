@@ -25,7 +25,7 @@ function fn() {
         // descomentar para chromium bajo linux
         executable: '/usr/bin/chromium',
         //executable: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-         addOptions: ["--remote-allow-origins=*", "--incognito", "--no-sandbox"],
+         addOptions: ["--remote-allow-origins=*", "--incognito",'--disable-gcm','--disable-google-cloud-messaging'],
         showDriverLog: true,
         showBrowser: true
     })
@@ -36,5 +36,8 @@ function fn() {
     } else if (env == 'e2e') {
         // customize
     }
+    //for external testing.
+    karate.configure('connectTimeout', 10000);
+    karate.configure('readTimeout', 30000);
     return config;
 }
