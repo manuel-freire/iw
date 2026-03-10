@@ -21,6 +21,7 @@ import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
 import jakarta.servlet.http.HttpSession;
@@ -78,6 +79,7 @@ public class GarticController {
             lobbyCode = GameUtils.generateRandomCode(6);
         } while (midiGameRepository.existsByLobbyCode(lobbyCode));
 
+        game.setStatus(GarticGameStatus.WAITING);
         game.setLobbyCode(lobbyCode);
         game.setOwner(u);
         game.addPlayer(u);
@@ -87,12 +89,18 @@ public class GarticController {
 
         session.setAttribute("currentGame", game);
 
-        return "redirect:/gartic/lobby/" + lobbyCode + "/";
+        return "redirect:/gartic/lobby/" + lobbyCode;
     }
 
-    @GetMapping("/lobby/{lobbyCode}/")
+    @GetMapping("/lobby/{lobbyCode}")
     public String getLobby(HttpSession session, @PathVariable String lobbyCode, Model model) {
         User u = (User) session.getAttribute("u");
+        if (u == null) {
+            model.addAttribute("showError", true);
+            model.addAttribute("errorTitleKey", "lobby.error.notlogged.title");
+            model.addAttribute("errorBodyKey", "lobby.error.notlogged.body");
+            return "lobby";
+        }
 
         Optional<MIDIGame> optGame = midiGameRepository.findByLobbyCode(lobbyCode);
         if (optGame.isEmpty()) {
@@ -101,12 +109,18 @@ public class GarticController {
             model.addAttribute("errorBodyKey", "lobby.error.notfound.body");
             return "lobby";
         }
-        MIDIGame game = optGame.get();
-        if (game.getOwner().getId() == u.getId()) {
-            model.addAttribute("isOwner", true);
+        GarticGame game = (GarticGame)optGame.get();
+        if(game.getCurrentRound() == game.getTotalRounds()){
+            game.setStatus(GarticGameStatus.FINISHED);
+            midiGameRepository.save(game);
         }
+        if (game.getOwner().getId() == u.getId()) 
+            model.addAttribute("isOwner", true);
+        model.addAttribute("currentRound", game.getCurrentRound());
+        model.addAttribute("totalRounds", game.getTotalRounds());
+        model.addAttribute("gameStatus", game.getStatus());
         model.addAttribute("playerList", game.getPlayers());
-        return "waitingRoom";
+        return "gartic";
     }
 
     @PostMapping("/lobby/join")
@@ -128,37 +142,11 @@ public class GarticController {
         }
         MIDIGame game = optGame.get();
         game.addPlayer(u);
-        return "redirect:/gartic/lobby/" + lobbyCode + "/";
+        return "redirect:/gartic/lobby/" + lobbyCode;
     }
 
-    // TODO esto es tempora, cuando se implementen los websockets estos se
-    // encargaran de mostrar la pantalla apropiada en /lobby/{lobbyCode} de acuerdo
-    // al estado de la partida
-    @GetMapping("/lobby/{lobbyCode}/gamescreen")
-    public String showGameScreen(HttpSession session, @PathVariable String lobbyCode, Model model) {
-        User u = (User) session.getAttribute("u");
-        if (u == null) {
-            model.addAttribute("showError", true);
-            model.addAttribute("errorTitleKey", "lobby.error.notlogged.title");
-            model.addAttribute("errorBodyKey", "lobby.error.notlogged.body");
-            return "lobby";
-        }
-        Optional<MIDIGame> optGame = midiGameRepository.findByLobbyCode(lobbyCode);
-        if (optGame.isEmpty()) {
-            model.addAttribute("showError", true);
-            model.addAttribute("errorTitleKey", "lobby.error.notfound.title");
-            model.addAttribute("errorBodyKey", "lobby.error.notfound.body");
-            return "lobby";
-        }
-        GarticGame game = (GarticGame)optGame.get();
-        model.addAttribute("currentRound", game.getCurrentRound());
-        model.addAttribute("totalRounds", game.getTotalRounds());
-        model.addAttribute("finished", game.getCurrentRound() == game.getTotalRounds());
-        return "gartic";
-    }
-
-    @PostMapping("/lobby/{lobbyCode}/start")
-    public String startGame(HttpSession session, Model model, @PathVariable String lobbyCode) {
+    @PostMapping("/lobby/start")
+    public String startGame(HttpSession session, @RequestParam String lobbyCode, Model model) {
         // TODO esto lo deberia llamar una vez el owner y deberia cambiar la pagina de
         // todos con ws, de momento solo funciona para el owner
         GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
@@ -170,7 +158,8 @@ public class GarticController {
             midiSequenceRepository.save(seq);
             game.getTrackAssignments().put(u.getId(), seq.getId());
         }
+        game.setStatus(GarticGameStatus.PLAYING);
         midiGameRepository.save(game);
-        return "redirect:/gartic/lobby/" + lobbyCode + "/gamescreen";
+        return "redirect:/gartic/lobby/" + lobbyCode;
     }
 }

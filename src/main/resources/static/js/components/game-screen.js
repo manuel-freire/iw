@@ -1,5 +1,3 @@
-const modal = document.querySelector("#exampleModal");
-const bsModal = new bootstrap.Modal(document.querySelector("#exampleModal"));
 const rounds = [
     {
         instrumentName: "Batería",
@@ -167,6 +165,7 @@ const rounds = [
         ],
     },
 ];
+
 async function getSequence() {
     const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/get`);
     return await res.json();
@@ -174,47 +173,48 @@ async function getSequence() {
 
 async function logSequence() {
     const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/get`);
-    sequence = await res.json();
+    const sequence = await res.json();
     console.log(sequence);
 }
-async function setupTracks() {
+async function setupTracks(pr) {
     const sequence = await getSequence();
-    pianoRoll.setFixedTracks(sequence.tracks);
+    pr.setFixedTracks(sequence.tracks);
 }
 
-async function saveSequence() {
+async function saveSequence(pr) {
     const res = await fetch(`/api/game/${document.documentElement.dataset.lobbyCode}/sequence/addtrack`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": config.csrf.value,
         },
-        body: JSON.stringify(pianoRoll.getEditableTrack()),
+        body: JSON.stringify(pr.getEditableTrack()),
     });
     return await res.json();
 }
-let params = {};
-let round = 0;
-if (!gameModel.finished) {
-    round = rounds[gameModel.currentRound];
-    params.instrument = round.instrumentMIDI;
-}
-let pianoRoll = new PianoRoll(params);
 
-let controls = { playButton: "#play", stopButton: "#stop", progressBar: "#progress", loopButton: "#loop", pauseButton: "#pause" };
+const modal = document.querySelector("#instructions-modal");
+const bsModal = new bootstrap.Modal(document.querySelector("#instructions-modal"));
+const round = rounds[gameModel.currentRound];
+const controlSelectors = {
+    playButton: "#play",
+    stopButton: "#stop",
+    progressBar: "#progress",
+    loopButton: "#loop",
+    pauseButton: "#pause",
+    clearButton: "#clear",
+};
 
-if (!gameModel.finished) {
-    controls.clearButton = "#clear"
-    pianoRoll.createVisualElement("#pianoRoll", round.notes);
-    document.querySelector("#exampleModalLabel").textContent = `Ronda ${gameModel.currentRound + 1} de ${gameModel.totalRounds}`;
-    document.querySelector("#exampleModalBody").textContent = `Crea una pista de ${round.instrumentName} para la canción!`;
-    bsModal.show();
-    document.querySelector("#tmpSaveButton").addEventListener("click", async (e) => {
-        let res = await saveSequence();
-        window.location.reload();
-        console.log(res);
-    });
-}
+let pianoRoll = new PianoRoll({ instrument: round.instrumentMIDI });
+pianoRoll.createVisualElement("#piano-roll", round.notes);
+pianoRoll.bindControls(controlSelectors);
+setupTracks(pianoRoll);
+document.querySelector("#instructions-modal-label").textContent = `Ronda ${gameModel.currentRound + 1} de ${gameModel.totalRounds}`;
+document.querySelector("#instructions-modal-body").textContent = `Crea una pista de ${round.instrumentName} para la canción!`;
+bsModal.show();
+document.querySelector("#tmpSaveButton").addEventListener("click", async (e) => {
+    let res = await saveSequence(pianoRoll);
+    window.location.reload();
+    console.log(res);
+});
 
-pianoRoll.bindControls(controls);
-setupTracks();
