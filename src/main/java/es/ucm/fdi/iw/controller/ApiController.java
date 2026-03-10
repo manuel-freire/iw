@@ -232,6 +232,16 @@ public class ApiController {
 
   }
 
+/*   @GetMapping("/game/instrument/get/{program}")
+  public MIDISequence.Transfer getMidiInstrument(HttpSession session, @PathVariable String program) {
+    long sequenceId = ((GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"))).getTrackAssignments()
+        .get(((User) session.getAttribute("u")).getId());
+    return midiSequenceRepository.findById(sequenceId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID")).toTransfer();
+
+  } */
+
   @GetMapping("/game/{lobbyCode}/sequence/getall")
   public List<MIDISequence.Transfer> getSongs(HttpSession session, @PathVariable String lobbyCode) {
     return ((GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)

@@ -1,12 +1,16 @@
 package es.ucm.fdi.iw.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,17 +23,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.ucm.fdi.iw.auxiliar.GameUtils;
 import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
+import es.ucm.fdi.iw.model.MIDIInstrument;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @Controller()
 @RequestMapping("/gartic")
 public class GarticController {
+  @Autowired
+  private EntityManager entityManager;
 
     private static final Logger log = LogManager.getLogger(UserController.class);
 
@@ -161,5 +169,18 @@ public class GarticController {
         game.setStatus(GarticGameStatus.PLAYING);
         midiGameRepository.save(game);
         return "redirect:/gartic/lobby/" + lobbyCode;
+    }
+
+    @GetMapping("/test")
+    @Transactional
+    public void test(){
+        MIDIInstrument a = new MIDIInstrument();
+        a.setInstrumentName("Bateria");
+        a.setProgram(128);
+        List<MIDIInstrument.Note> notes = new ArrayList<MIDIInstrument.Note>();
+        notes.add(new MIDIInstrument.Note(35, "acoustic bass drum", false, true));
+        notes.add(new MIDIInstrument.Note(36, "bass drum 1", false, true));
+        a.setNotes(notes);
+        entityManager.persist(a);
     }
 }
