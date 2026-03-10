@@ -48,3 +48,4 @@ target/
 # Entornos virtuales
 deploy/
 venv/
+karate-config.js
