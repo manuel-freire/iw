@@ -37,8 +37,6 @@ import jakarta.transaction.Transactional;
 @Controller()
 @RequestMapping("/gartic")
 public class GarticController {
-  @Autowired
-  private EntityManager entityManager;
 
     private static final Logger log = LogManager.getLogger(UserController.class);
 
@@ -175,18 +173,5 @@ public class GarticController {
         game.setStatus(GarticGameStatus.PLAYING);
         midiGameRepository.save(game);
         return "redirect:/gartic/lobby/" + lobbyCode;
-    }
-
-    @GetMapping("/test")
-    @Transactional
-    public void test(){
-        MIDIInstrument a = new MIDIInstrument();
-        a.setInstrumentName("Bateria");
-        a.setProgram(128);
-        List<MIDIInstrument.Note> notes = new ArrayList<MIDIInstrument.Note>();
-        notes.add(new MIDIInstrument.Note(35, "acoustic bass drum", false, true));
-        notes.add(new MIDIInstrument.Note(36, "bass drum 1", false, true));
-        a.setNotes(notes);
-        entityManager.persist(a);
     }
 }
