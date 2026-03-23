@@ -50,3 +50,9 @@ deploy/
 venv/
 karate-config.js
 src/test/java/karate-config.js
+
+#logs
+logs/
+
+#MacOS
+.DS_Store

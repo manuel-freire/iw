@@ -35,7 +35,9 @@ public class GarticGame extends MIDIGame {
 
     private int currentRound;
 
-    private int totalRounds; 
+    private int totalRounds;
+
+    private int roundTime;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

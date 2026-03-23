@@ -1,17 +1,16 @@
 package es.ucm.fdi.iw.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,13 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.ucm.fdi.iw.auxiliar.GameUtils;
 import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
-import es.ucm.fdi.iw.model.MIDIInstrument;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -39,6 +36,9 @@ import jakarta.transaction.Transactional;
 public class GarticController {
 
     private static final Logger log = LogManager.getLogger(GarticController.class);
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     private final MIDIGameRepository midiGameRepository;
     private final MIDISequenceRepository midiSequenceRepository;
@@ -50,9 +50,9 @@ public class GarticController {
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
-        User u = (User) session.getAttribute("u");
-        model.addAttribute("u", u);
-        model.addAttribute("logged", u != null);
+        for (String name : new String[] { "u", "url", "ws", "topics"}) {
+          model.addAttribute(name, session.getAttribute(name));
+        }
         model.addAttribute("gameMode", "gartic");
         model.addAttribute("gameName", "Gartic Song");
     }
@@ -95,6 +95,7 @@ public class GarticController {
         game.setCurrentRound(0);
         // TODO should be user generated
         game.setTotalRounds(4);
+        game.setRoundTime(60);
         List<Integer> roundInstruments = Arrays.asList(128, 34, 1, 56);
         game.setRoundInstruments(roundInstruments);
         midiGameRepository.save(game);
@@ -124,6 +125,13 @@ public class GarticController {
             return "lobby";
         }
         GarticGame game = (GarticGame)optGame.get();
+        if (!game.getPlayers().stream().anyMatch(lu->lu.getId() == u.getId())){
+            model.addAttribute("showError", true);
+            model.addAttribute("errorTitleKey", "lobby.error.notjoined.title");
+            model.addAttribute("errorBodyKey", "lobby.error.notjoined.body");
+            return "lobby";
+        }
+
         log.debug("User {} accessing lobby {}", u == null ? "anonymous" : u.getUsername(), lobbyCode);
         if(game.getCurrentRound() == game.getTotalRounds()){
             game.setStatus(GarticGameStatus.FINISHED);
@@ -136,7 +144,7 @@ public class GarticController {
         model.addAttribute("currentRound", game.getCurrentRound());
         model.addAttribute("totalRounds", game.getTotalRounds());
         model.addAttribute("gameStatus", game.getStatus());
-        model.addAttribute("playerList", game.getPlayers());
+        model.addAttribute("playerList", game.getPlayers().stream().map((p)->p.getUsername()).toList());
         log.info("Lobby {} has {} players", lobbyCode, game.getPlayers().size());
         return "gartic";
     }
@@ -163,26 +171,37 @@ public class GarticController {
         MIDIGame game = optGame.get();
         log.info("User {} joining lobby {}", u.getUsername(), lobbyCode);
         game.addPlayer(u);
+        GameUpdate up = new GameUpdate("PLAYERSUPDATED", game.getPlayers().stream().map((p)->p.getUsername()).toList());
+        messagingTemplate.convertAndSend("/topic/gartic/lobby/" + lobbyCode, up);
         return "redirect:/gartic/lobby/" + lobbyCode;
     }
 
-    @PostMapping("/lobby/start")
-    public String startGame(HttpSession session, @RequestParam String lobbyCode, Model model) {
-        // TODO esto lo deberia llamar una vez el owner y deberia cambiar la pagina de
-        // todos con ws, de momento solo funciona para el owner
+    @MessageMapping("/gartic/lobby/{lobbyCode}/start")
+    @Transactional
+    public void startGame(@DestinationVariable String lobbyCode, @Payload StartRequest request) {
+        int userId = request.userId;
         GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
+        if(game.getOwner().getId() != userId){
+            return;
+        }
         log.info("Starting game for lobby {} with {} players", lobbyCode, game.getPlayers().size());
-        for (User u : game.getPlayers()) {
-            log.debug("Creating sequence for player {} in lobby {}", u.getUsername(), lobbyCode);
+        for (User p : game.getPlayers()) {
+            log.debug("Creating sequence for player {} in lobby {}", p.getUsername(), lobbyCode);
             MIDISequence seq = new MIDISequence();
             seq.setGame(game);
             game.getSequences().add(seq);
             midiSequenceRepository.save(seq);
-            game.getTrackAssignments().put(u.getId(), seq.getId());
+            game.getTrackAssignments().put(p.getId(), seq.getId());
         }
         game.setStatus(GarticGameStatus.PLAYING);
-        midiGameRepository.save(game);
-        return "redirect:/gartic/lobby/" + lobbyCode;
+        GameData data = new GameData(game.getCurrentRound(), game.getTotalRounds(), game.getStatus().name(), game.getRoundInstruments().get(game.getCurrentRound()));
+        GameUpdate up = new GameUpdate("GAMESTARTED", data);
+        messagingTemplate.convertAndSend("/topic/gartic/lobby/" + lobbyCode, up);
+    }
+
+    public record GameUpdate(String type, Object data) {}
+    public record StartRequest(int userId) {} 
+    public record GameData(int currentRound, int totalRounds, String status, int instrument) {
     }
 }

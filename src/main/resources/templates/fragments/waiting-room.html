@@ -6,8 +6,9 @@
 
     <body>
         <div th:fragment="waiting-room">
-            <ul>
-                <li th:each="item : ${playerList}" th:text="${item.username}"></li>
+            <h3 th:text="${lobbyCode}"></h3>
+            <ul id="player-list">
+                <li th:each="item : ${playerList}" th:text="${item}"></li>
             </ul>
 
             <div th:if="${isOwner}">
