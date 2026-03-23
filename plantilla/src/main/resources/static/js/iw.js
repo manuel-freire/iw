@@ -65,6 +65,7 @@ const ws = {
  * @param {string} url 
  * @param {string} method (GET|POST)
  * @param {*} data, typically a JSON-izable object, like a Message
+ *                or a FormData, for 100% compatibility with non-JSON endpoints
  * @param {*} headers, to be used instead of defaults, if specified. To send NO headers,
  *  use {}. To send defaults, specify no value, or use false
  * 
@@ -79,18 +80,22 @@ const ws = {
  *  }
  */
 function go(url, method, data = {}, headers = false) {
+    const isFormData = data instanceof FormData;
     let params = {
         method: method, // POST, GET, POST, PUT, DELETE, etc.
-        headers: headers === false ? {
-            "Content-Type": "application/json; charset=utf-8",
-        } : headers,
-        body: data instanceof FormData ? data : JSON.stringify(data)
+        headers: headers || {},
+        body: isFormData ? data : JSON.stringify(data)
     };
     if (method === "GET") {
         // GET requests cannot have body; I could URL-encode, but it would not be used here
         delete params.body;
     } else {
         params.headers["X-CSRF-TOKEN"] = config.csrf.value;
+        if (isFormData && !headers) {
+          // NOTE: must *not* set multipart/form-data, as browser will set it with the correct boundary; and if we set it, it will be sent without boundary, and server will not understand it
+        } else if (!headers) {
+          params.headers["Content-Type"] = "application/json; charset=utf-8";
+        }
     }
     console.log("sending", url, params)
     return fetch(url, params)
