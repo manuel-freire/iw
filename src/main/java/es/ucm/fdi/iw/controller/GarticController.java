@@ -141,8 +141,7 @@ public class GarticController {
         } else {
             model.addAttribute("instrument", game.getRoundInstruments().get(game.getCurrentRound()));
         }
-        if (game.getOwner().getId() == u.getId()) 
-            model.addAttribute("isOwner", true);
+        model.addAttribute("isOwner", game.getOwner().getId() == u.getId());
         model.addAttribute("currentRound", game.getCurrentRound());
         model.addAttribute("totalRounds", game.getTotalRounds());
         model.addAttribute("gameStatus", game.getStatus());
