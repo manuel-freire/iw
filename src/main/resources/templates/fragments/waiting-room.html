@@ -1,22 +1,67 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Waiting Room fragment - rest is empty</title>
+        <title>Waiting Room - Game Lobby</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
 
-    <body>
-        <div th:fragment="waiting-room">
-            <h3 th:text="${lobbyCode}"></h3>
-            <ul id="player-list">
-                <li th:each="item : ${playerList}" th:text="${item}"></li>
-            </ul>
-
-            <div th:if="${isOwner}">
-                <form method="POST" th:action="@{./start}">
-                    <input type="hidden" name="lobbyCode" th:value="${lobbyCode}?:''">
-                    <button type="submit" class="btn btn-primary">Iniciar partida</button>
-                </form>
+    <body class="bg-light">
+        <div th:fragment="waiting-room" class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <!-- Main Card -->
+                    <div class="border-0">
+                        <div class="border-0 rounded-4 overflow-hidden">
+                            <div class="card-header bg-primary text-white text-center py-4">
+                            <h3 class="mb-2">Lobby</h3>
+                            <div class="badge bg-light text-dark mt-2" th:text="'Lobby Code: ' + ${lobbyCode}">
+                                Code: ABC123
+                            </div>
+                            <div class="mt-2 small" th:text="${playerList.size()} + ' player(s) waiting'">
+                                0 player(s) waiting
+                            </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 bg-transparent">
+                            <!-- Players Section -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Players List</h5>
+                                <span class="badge bg-secondary rounded-pill" th:text="${playerList.size()}">0</span>
+                            </div>
+                            
+                            <div class="list-group">
+                                <div th:each="item : ${playerList}" class="list-group-item d-flex bg-transparent align-items-center">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">
+                                        <span th:text="${#strings.substring(item.username, 0, 1)}">U</span>
+                                    </div>
+                                    <span th:text="${item.username}" class="flex-grow-1">Username</span>
+                                    <span th:if="${isOwner and item.username == playerList[0].username}" 
+                                          class="badge bg-warning text-dark">Owner</span>
+                                </div>
+                                
+                                <div th:if="${playerList.empty}" class="list-group-item text-center text-muted py-4">
+                                    Empty
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${isOwner}" class="text-center">
+                                <form method="POST" th:action="@{./start}">
+                                    <input type="hidden" name="lobbyCode" th:value="${lobbyCode}?:''">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        Iniciar partida
+                                    </button>
+                                </form>
+                            </div>
+                            <div th:unless="${isOwner}" class="text-center text-muted small">
+                                Waiting for host to start the game...
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
