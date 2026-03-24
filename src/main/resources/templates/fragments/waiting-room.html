@@ -33,10 +33,10 @@
                                 <div th:each="item : ${playerList}" class="list-group-item d-flex bg-transparent align-items-center">
                                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
                                          style="width: 40px; height: 40px;">
-                                        <span th:text="${#strings.substring(item.username, 0, 1)}">U</span>
+                                        <span th:text="${#strings.substring(item, 0, 1)}">U</span>
                                     </div>
-                                    <span th:text="${item.username}" class="flex-grow-1">Username</span>
-                                    <span th:if="${isOwner and item.username == playerList[0].username}" 
+                                    <span th:text="${item}" class="flex-grow-1">Username</span>
+                                    <span th:if="${isOwner and item == playerList[0]}" 
                                           class="badge bg-warning text-dark">Owner</span>
                                 </div>
                                 
