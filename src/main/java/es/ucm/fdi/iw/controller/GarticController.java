@@ -54,7 +54,7 @@ public class GarticController {
         model.addAttribute("u", u);
         model.addAttribute("logged", u != null);
         model.addAttribute("gameMode", "gartic");
-        model.addAttribute("gameName", "Gartic Song");
+        model.addAttribute("gameName", "Canción Sorpresa");
     }
 
     @ModelAttribute
