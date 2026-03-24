@@ -47,12 +47,9 @@
                         </div>
                         
                         <div th:if="${isOwner}" class="text-center">
-                                <form method="POST" th:action="@{./start}">
-                                    <input type="hidden" name="lobbyCode" th:value="${lobbyCode}?:''">
-                                    <button type="submit" class="btn btn-primary btn-lg px-5">
-                                        Iniciar partida
-                                    </button>
-                                </form>
+                                <button id="start-button" class="btn btn-primary btn-lg px-5">
+                                    Iniciar partida
+                                </button>
                             </div>
                             <div th:unless="${isOwner}" class="text-center text-muted small">
                                 Waiting for host to start the game...
