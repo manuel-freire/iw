@@ -17,18 +17,20 @@ const selectors = {
   playerList: "#player-list",
   waitingRoomTemplate: "#waiting-room",
   gameScreenTemplate: "#game-screen",
+  trackSentTemplate: "#track-sent"
 };
 
 let gameData, pianoRoll;
 
-function subscribeWhenReady(topic) {
+function subscribeWhenReady(lobbyCode) {
   const interval = setInterval(() => {
     if (ws.stompClient && ws.stompClient.connected) {
       try {
-        ws.stompClient.subscribe(topic, (m) => handleMessage(JSON.parse(m.body)));
-        console.log("Hopefully subscribed to " + topic);
+        ws.stompClient.subscribe("/topic/gartic/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
+        ws.stompClient.subscribe("/user/queue/gartic/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)))
+        console.log("Hopefully subscribed to topic and queue");
       } catch (e) {
-        console.log("Error, could not subscribe to " + topic, e);
+        console.log("Error, could not subscribe", e);
       }
       clearInterval(interval);
     }
@@ -45,6 +47,14 @@ function handleMessage(m) {
       showScreen(selectors.gameScreenTemplate);
       gameData = m.data;
       setupGameScreen();
+      break;
+    case "NEWROUND":
+      showScreen(selectors.gameScreenTemplate);
+      gameData = m.data;
+      setupGameScreen();
+      break;
+    case "TRACKRECEIVED":
+      showScreen(selectors.trackSentTemplate);
       break;
   }
 }
@@ -69,6 +79,11 @@ function showScreen(selector) {
 function sendStartRequest() {
   console.log("Sending start request...");
   ws.stompClient.send(`/gartic/lobby/${lobbyCode}/start`, {}, JSON.stringify({ userId: config.userId }));
+}
+
+function sendTrack() {
+  console.log("Sending created track...");
+  ws.stompClient.send(`/gartic/lobby/${lobbyCode}/tracks/post`, {}, JSON.stringify({userId: config.userId, track: pianoRoll.getEditableTrack()}));
 }
 
 async function getInstrument() {
@@ -107,7 +122,8 @@ async function setupPianoRoll(selectors) {
   pianoRoll.setFixedTracks(sequence.tracks);
   pianoRoll.bindControls(selectors);
   document.querySelector(selectors.sendButton).addEventListener("click", async (e) => {
-    let res = await saveSequence(pianoRoll);
+    // let res = await saveSequence(pianoRoll);
+    sendTrack();
   });
 }
 
@@ -131,7 +147,7 @@ function setupGameScreen() {
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
-  subscribeWhenReady("/topic/gartic/lobby/" + lobbyCode);
+  subscribeWhenReady(lobbyCode);
   showScreen(selectors.waitingRoomTemplate);
   setupWaitingRoom();
 });

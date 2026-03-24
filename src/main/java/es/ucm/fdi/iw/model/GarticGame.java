@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,14 @@ public class GarticGame extends MIDIGame {
                      joinColumns = @JoinColumn(name = "game_id"))
     @MapKeyColumn(name = "player_id")
     @Column(name = "seq_id")
-    private Map<Long, Long> trackAssignments = new HashMap<>();
+    private Map<Long, Long> sequenceAssignments = new HashMap<>();
+
+    @ElementCollection
+    @CollectionTable(name = "gartic_track_submissions",
+                     joinColumns = @JoinColumn(name = "game_id"))
+    @MapKeyColumn(name = "player_id")
+    @Column(name = "submitted")
+    private Map<Long, Boolean> trackSubmissions = new LinkedHashMap<>();
 
     private List<Integer> roundInstruments;
 
@@ -42,4 +50,10 @@ public class GarticGame extends MIDIGame {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GarticGameStatus status;
+
+    public void addPlayer(User user) {
+        if (!players.contains(user)) {
+            this.players.add(user);
+        }
+    }
 }
