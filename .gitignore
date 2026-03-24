@@ -50,3 +50,5 @@ deploy/
 venv/
 karate-config.js
 src/test/java/karate-config.js
+
+iw.log
