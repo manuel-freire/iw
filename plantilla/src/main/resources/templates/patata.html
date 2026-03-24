@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>IW: Welcome</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5">Selecciona patatas a comprar</h1>
+
+            <form id="patataForm" th:action="@{/patata}" method="post">
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Cantidad</label>                  
+                    <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                </div>
+                <div class="mb-3">                    
+                    <label for="type" class="form-label">Tipo</label>                  
+                    <select id="type" name="type" class="form-control" required>
+                        <option value="rusa">Patata Rusa</option>
+                        <option value="brava">Patata Brava</option>
+                        <option value="silvestre">Patata Silvestre</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Comprar</button>
+                <button type="submit" id="ajaxSubmit"class="btn btn-primary">Comprar vía <i>AJAX</i> + FormData</button>
+                <button type="submit" id="jsonSubmit"class="btn btn-primary">Comprar vía <i>AJAX</i> + JSON</button>
+            </form>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+    <script>
+        const form = document.getElementById('patataForm');
+        document.getElementById('ajaxSubmit').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita el envío tradicional del formulario
+            go('/patata', 'POST', new FormData(form))
+            .then(data => {
+                console.log('Compra realizada con éxito', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);                
+            });
+        });
+        document.getElementById('jsonSubmit').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita el envío tradicional del formulario
+            const jsonData = {
+                type: document.getElementById('type').value,
+                quantity: parseInt(document.getElementById('quantity').value)
+            };
+            go('/patata', 'POST', jsonData)
+            .then(data => {
+                console.log('Compra realizada con éxito', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);                
+            });
+        });
+    </script>
+</body>
+</html>
