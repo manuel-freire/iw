@@ -20,7 +20,7 @@ const selectors = {
   trackSentTemplate: "#track-sent"
 };
 
-let gameData, pianoRoll;
+let gameData, pianoRoll, roundData;
 
 function subscribeWhenReady(lobbyCode) {
   const interval = setInterval(() => {
@@ -46,16 +46,19 @@ function handleMessage(m) {
     case "GAMESTARTED":
       showScreen(selectors.gameScreenTemplate);
       gameData = m.data;
-      setupGameScreen();
+      requestRoundData();
       break;
     case "NEWROUND":
       showScreen(selectors.gameScreenTemplate);
       gameData = m.data;
-      setupGameScreen();
+      requestRoundData();
       break;
     case "TRACKRECEIVED":
       showScreen(selectors.trackSentTemplate);
       break;
+    case "ROUNDDATA":
+      roundData = m.data;
+      setupGameScreen();
   }
 }
 
@@ -86,37 +89,14 @@ function sendTrack() {
   ws.stompClient.send(`/gartic/lobby/${lobbyCode}/tracks/post`, {}, JSON.stringify({userId: config.userId, track: pianoRoll.getEditableTrack()}));
 }
 
-async function getInstrument() {
-  const res = await fetch(`/api/game/instrument/get/${gameData.instrument}`);
-  return res.json();
-}
-
-async function getSequence() {
-  const res = await fetch(`/api/game/${lobbyCode}/sequence/get`);
-  return res.json();
-}
-
-async function logSequence() {
-  const res = await fetch(`/api/game/${lobbyCode}/sequence/get`);
-  const sequence = await res.json();
-  console.log(sequence);
-}
-
-async function saveSequence(pr) {
-  const res = await fetch(`/api/game/${lobbyCode}/sequence/addtrack`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRF-TOKEN": config.csrf.value,
-    },
-    body: JSON.stringify(pr.getEditableTrack()),
-  });
-  return await res.json();
+function requestRoundData() {
+  console.log("Requesting sequence to server...");
+  ws.stompClient.send(`/gartic/lobby/${lobbyCode}/sequences/get`, {}, JSON.stringify({userId: config.userId}))
 }
 
 async function setupPianoRoll(selectors) {
-  const sequence = await getSequence();
-  const instrumentData = await getInstrument();
+  const sequence = roundData.sequence;
+  const instrumentData = roundData.instrumentData;
   pianoRoll = new PianoRoll({ instrument: instrumentData.program });
   pianoRoll.createVisualElement(selectors.pianoRollContainer, instrumentData.notes);
   pianoRoll.setFixedTracks(sequence.tracks);
@@ -128,7 +108,7 @@ async function setupPianoRoll(selectors) {
 }
 
 async function showInstructionsModal(selectors) {
-  const instrumentData = await getInstrument();
+  const instrumentData = roundData.instrumentData;
   document.querySelector(selectors.instructionsModalLabel).textContent =
     `Ronda ${gameData.currentRound + 1} de ${gameData.totalRounds}`;
   document.querySelector(selectors.instructionsModalBody).textContent =
@@ -144,6 +124,7 @@ function setupWaitingRoom() {
 function setupGameScreen() {
   setupPianoRoll(selectors);
   showInstructionsModal(selectors);
+  console.log(roundData)
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {

@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.ucm.fdi.iw.auxiliar.GameUtils;
 import es.ucm.fdi.iw.model.GarticGame;
 import es.ucm.fdi.iw.model.MIDIGame;
+import es.ucm.fdi.iw.model.MIDIInstrument;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.MIDITrack;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
+import es.ucm.fdi.iw.repository.MIDIInstrumentRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -44,10 +46,12 @@ public class GarticController {
 
     private final MIDIGameRepository midiGameRepository;
     private final MIDISequenceRepository midiSequenceRepository;
+    private final MIDIInstrumentRepository midiInstrumentRepository;
 
-    public GarticController(MIDIGameRepository midiGameRepository, MIDISequenceRepository midiSequenceRepository) {
+    public GarticController(MIDIGameRepository midiGameRepository, MIDISequenceRepository midiSequenceRepository, MIDIInstrumentRepository midiInstrumentRepository) {
         this.midiSequenceRepository = midiSequenceRepository;
         this.midiGameRepository = midiGameRepository;
+        this.midiInstrumentRepository = midiInstrumentRepository;
     }
 
     @ModelAttribute
@@ -179,7 +183,7 @@ public class GarticController {
 
     @MessageMapping("/gartic/lobby/{lobbyCode}/start")
     @Transactional
-    public void startGame(@DestinationVariable String lobbyCode, @Payload StartRequest request) {
+    public void startGame(@DestinationVariable String lobbyCode, @Payload UserRequest request) {
         GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
         if(game.getOwner().getId() != request.userId){
@@ -230,9 +234,23 @@ public class GarticController {
         return new GameUpdate("TRACKRECEIVED", null);
     }
 
-    public record GameUpdate(String type, Object data) {}
-    public record StartRequest(long userId) {} 
-    public record TrackSubmission(long userId, MIDITrack.Transfer track) {}
-    public record GameData(int currentRound, int totalRounds, String status, int instrument) {
+    @MessageMapping("/gartic/lobby/{lobbyCode}/sequences/get")
+    @SendToUser("/queue/gartic/lobby/{lobbyCode}")
+    @Transactional
+    public GameUpdate sendSequence(@DestinationVariable String lobbyCode, @Payload UserRequest request) {
+        GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode).orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
+        long sequenceId = game.getSequenceAssignments()
+            .get(request.userId);
+        MIDISequence.Transfer sequence = midiSequenceRepository.findById(sequenceId)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID")).toTransfer();
+        MIDIInstrument.Transfer instruData = midiInstrumentRepository.findByProgram(game.getRoundInstruments().get(game.getCurrentRound()))
+                                .orElseThrow(() -> new IllegalArgumentException("Invalid Program")).toTransfer();
+        return new GameUpdate("ROUNDDATA", new RoundData(instruData, sequence));
     }
+
+    public record GameUpdate(String type, Object data) {}
+    public record UserRequest(long userId) {} 
+    public record TrackSubmission(long userId, MIDITrack.Transfer track) {}
+    public record GameData(int currentRound, int totalRounds, String status, int instrument) {}
+    public record RoundData(MIDIInstrument.Transfer instrumentData, MIDISequence.Transfer sequence) {}
 }
