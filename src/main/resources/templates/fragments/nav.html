@@ -10,7 +10,7 @@
 <body class="d-flex flex-column h-100">
 
 <header th:fragment="nav">
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
 
             <!-- Logo -->
@@ -132,7 +132,7 @@
                                     th:attr="aria-label=#{nav.unreadMessages}">
                                 ✉️
                                 <span id="nav-unread"
-                                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-theme">
                                     +99
                                     <span class="visually-hidden"
                                           th:text="#{nav.unreadMessages}">
