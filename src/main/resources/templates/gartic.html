@@ -23,20 +23,12 @@
             <span th:text="#{gartic.title}"></span>
         </h1>
         <div id="game-container"></div>
-        <template id="waiting-room">
-            <h3 th:text="${lobbyCode}"></h3>
-            <ul id="player-list">
-                <li th:each="item : ${playerList}" th:text="${item}"></li>
-            </ul>
-
-            <div th:if="${isOwner}">
-                <button id="start-button" class="btn btn-primary">Iniciar partida</button>
-            </div>
-        </template>  
         <template id="track-sent">
             <h3>Se ha enviado la pista</h3>
             <h5>Esperando a los demás jugadores</h5>
         </template>
+        
+        <template id="waiting-room"><th:block th:replace="~{fragments/waiting-room :: waiting-room}"></th:block></template>
         <template id="game-screen">
             <div id="piano-roll"></div>
             <div class="my-3">

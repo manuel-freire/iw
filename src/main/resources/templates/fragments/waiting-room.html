@@ -33,10 +33,10 @@
                                 <div th:each="item : ${playerList}" class="list-group-item d-flex bg-transparent align-items-center">
                                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
                                          style="width: 40px; height: 40px;">
-                                        <span th:text="${#strings.substring(item.username, 0, 1)}">U</span>
+                                        <span th:text="${#strings.substring(item, 0, 1)}">U</span>
                                     </div>
-                                    <span th:text="${item.username}" class="flex-grow-1">Username</span>
-                                    <span th:if="${isOwner and item.username == playerList[0].username}" 
+                                    <span th:text="${item}" class="flex-grow-1">Username</span>
+                                    <span th:if="${isOwner and item == playerList[0]}" 
                                           class="badge bg-warning text-dark">Owner</span>
                                 </div>
                                 
@@ -47,12 +47,9 @@
                         </div>
                         
                         <div th:if="${isOwner}" class="text-center">
-                                <form method="POST" th:action="@{./start}">
-                                    <input type="hidden" name="lobbyCode" th:value="${lobbyCode}?:''">
-                                    <button type="submit" class="btn btn-primary btn-lg px-5">
-                                        Iniciar partida
-                                    </button>
-                                </form>
+                                <button id="start-button" class="btn btn-primary btn-lg px-5">
+                                    Iniciar partida
+                                </button>
                             </div>
                             <div th:unless="${isOwner}" class="text-center text-muted small">
                                 Waiting for host to start the game...
