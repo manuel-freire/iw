@@ -51,4 +51,9 @@ venv/
 karate-config.js
 src/test/java/karate-config.js
 
+#logs
+logs/
 iw.log
+
+#MacOS
+.DS_Store

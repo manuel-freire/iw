@@ -16,9 +16,9 @@ public class MIDIGame {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-    private long id;
+    protected long id;
 
-    private String lobbyCode;
+    protected String lobbyCode;
 
     @ManyToMany
     @JoinTable(
@@ -26,24 +26,18 @@ public class MIDIGame {
         joinColumns = @JoinColumn(name = "game_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> players = new ArrayList<>();
+    protected List<User> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MIDISequence> sequences;
+    protected List<MIDISequence> sequences;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private User owner;
+    protected User owner;
 
-    private boolean isPublic;
+    protected boolean isPublic;
 
-    private boolean finished;
+    protected boolean finished;
 
-    private boolean started;
-
-    public void addPlayer(User user) {
-        if (!players.contains(user)) {
-            players.add(user);
-        }
-    }
+    protected boolean started;
 }

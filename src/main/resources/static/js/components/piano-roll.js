@@ -2,6 +2,7 @@
 
 class PianoRoll {
     constructor(params) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
         this.audioContext = params.audioContext || new AudioContext();
         this.bpm = params.bpm || 140;
         this.instrument = params.instrument || 1;

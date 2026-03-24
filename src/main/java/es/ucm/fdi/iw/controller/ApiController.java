@@ -229,7 +229,7 @@ public class ApiController {
   @GetMapping("/game/{lobbyCode}/sequence/get")
   public MIDISequence.Transfer getMidiSequence(HttpSession session, @PathVariable String lobbyCode) {
     long sequenceId = ((GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"))).getTrackAssignments()
+        .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"))).getSequenceAssignments()
         .get(((User) session.getAttribute("u")).getId());
     return midiSequenceRepository.findById(sequenceId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID")).toTransfer();
@@ -252,7 +252,7 @@ public class ApiController {
   public MIDISequence.Transfer addTrackToSequence(HttpSession session, @PathVariable String lobbyCode,
       @RequestBody MIDITrack.Transfer trackTransfer) {
     GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode).orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
-    long sequenceId = game.getTrackAssignments()
+    long sequenceId = game.getSequenceAssignments()
         .get(((User) session.getAttribute("u")).getId());
     MIDISequence sequence = midiSequenceRepository.findById(sequenceId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID"));
