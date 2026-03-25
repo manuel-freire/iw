@@ -28,6 +28,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Comprar</button>
                 <button type="submit" id="ajaxSubmit"class="btn btn-primary">Comprar vía <i>AJAX</i> + FormData</button>
+                <button type="submit" id="ajaxSubmit2"class="btn btn-primary">Comprar vía <i>AJAX</i> + URLSearchParams</button>
                 <button type="submit" id="jsonSubmit"class="btn btn-primary">Comprar vía <i>AJAX</i> + JSON</button>
             </form>
         </div>
@@ -46,6 +47,13 @@
                 console.error('Error:', error);                
             });
         });
+        document.getElementById('ajaxSubmit2').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita el envío tradicional del formulario
+            go('/patata', 'POST', new URLSearchParams(new FormData(form)))
+            .catch(error => {
+                console.error('Fallo parseando (porque esperaba JSON):', error);                
+            });
+        });        
         document.getElementById('jsonSubmit').addEventListener('click', function(event) {
             event.preventDefault(); // Evita el envío tradicional del formulario
             const jsonData = {

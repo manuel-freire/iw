@@ -81,10 +81,11 @@ const ws = {
  */
 function go(url, method, data = {}, headers = false) {
     const isFormData = data instanceof FormData;
+    const isURLSearchParams = data instanceof URLSearchParams;
     let params = {
         method: method, // POST, GET, POST, PUT, DELETE, etc.
         headers: headers || {},
-        body: isFormData ? data : JSON.stringify(data)
+        body: isFormData ? data : isURLSearchParams ? data : JSON.stringify(data)
     };
     if (method === "GET") {
         // GET requests cannot have body; I could URL-encode, but it would not be used here
@@ -93,6 +94,8 @@ function go(url, method, data = {}, headers = false) {
         params.headers["X-CSRF-TOKEN"] = config.csrf.value;
         if (isFormData && !headers) {
           // NOTE: must *not* set multipart/form-data, as browser will set it with the correct boundary; and if we set it, it will be sent without boundary, and server will not understand it
+        } else if (isURLSearchParams && !headers) {
+          params.headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8";
         } else if (!headers) {
           params.headers["Content-Type"] = "application/json; charset=utf-8";
         }
