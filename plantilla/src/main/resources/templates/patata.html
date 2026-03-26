@@ -27,8 +27,9 @@
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Comprar</button>
-                <button type="submit" id="ajaxSubmit"class="btn btn-primary">Comprar vía <i>AJAX</i> + FormData</button>
-                <button type="submit" id="ajaxSubmit2"class="btn btn-primary">Comprar vía <i>AJAX</i> + URLSearchParams</button>
+                <button type="submit" id="ajaxGet" class="btn btn-primary">GET con <i>AJAX</i> + URLSearchParams</button>
+                <button type="submit" id="ajaxSubmit" class="btn btn-primary">Comprar vía <i>AJAX</i> + FormData</button>
+                <button type="submit" id="ajaxSubmit2" class="btn btn-primary">Comprar vía <i>AJAX</i> + URLSearchParams</button>
                 <button type="submit" id="jsonSubmit"class="btn btn-primary">Comprar vía <i>AJAX</i> + JSON</button>
             </form>
         </div>
@@ -39,7 +40,7 @@
         const form = document.getElementById('patataForm');
         document.getElementById('ajaxSubmit').addEventListener('click', function(event) {
             event.preventDefault(); // Evita el envío tradicional del formulario
-            go('/patata', 'POST', new FormData(form))
+            go(form.action, 'POST', new FormData(form))
             .then(data => {
                 console.log('Compra realizada con éxito', data);
             })
@@ -47,9 +48,22 @@
                 console.error('Error:', error);                
             });
         });
+        document.getElementById('ajaxGet').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita el envío tradicional del formulario
+            go(form.action.replace('patata', 'patata2'), 
+              'GET', new URLSearchParams(new FormData(form)))
+            .then(data => {
+              // OJO: una compra de verdad modifica la BD, y habría que hacerla con POST
+              //      esto es sólo a modo de demostración
+                console.log('Compra realizada con éxito', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);                
+            });
+        });         
         document.getElementById('ajaxSubmit2').addEventListener('click', function(event) {
             event.preventDefault(); // Evita el envío tradicional del formulario
-            go('/patata', 'POST', new URLSearchParams(new FormData(form)))
+            go(form.action, 'POST', new URLSearchParams(new FormData(form)))
             .catch(error => {
                 console.error('Fallo parseando (porque esperaba JSON):', error);                
             });
@@ -60,7 +74,7 @@
                 type: document.getElementById('type').value,
                 quantity: parseInt(document.getElementById('quantity').value)
             };
-            go('/patata', 'POST', jsonData)
+            go(form.action, 'POST', jsonData)
             .then(data => {
                 console.log('Compra realizada con éxito', data);
             })

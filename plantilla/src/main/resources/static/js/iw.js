@@ -60,12 +60,12 @@ const ws = {
 }
 
 /**
- * Sends an "ajax" request using Fetch. Sends JSON and expects JSON back.
+ * Sends an "ajax" request using Fetch. Expects JSON back.
  * 
  * @param {string} url 
  * @param {string} method (GET|POST)
  * @param {*} data, typically a JSON-izable object, like a Message
- *                or a FormData, for 100% compatibility with non-JSON endpoints
+ *                a FormData (sent as multipart) or URLSearchParams (sent as normal form)
  * @param {*} headers, to be used instead of defaults, if specified. To send NO headers,
  *  use {}. To send defaults, specify no value, or use false
  * 
@@ -88,8 +88,9 @@ function go(url, method, data = {}, headers = false) {
         body: isFormData ? data : isURLSearchParams ? data : JSON.stringify(data)
     };
     if (method === "GET") {
-        // GET requests cannot have body; I could URL-encode, but it would not be used here
+        // GET requests cannot have body, so data goes into query params
         delete params.body;
+        url += "?" + new URLSearchParams(data).toString();
     } else {
         params.headers["X-CSRF-TOKEN"] = config.csrf.value;
         if (isFormData && !headers) {

@@ -63,6 +63,16 @@ public class RootController {
   }  
 
   /**
+   * Get con parámetros desde AJAX, devuelve JSON. 
+   */
+  @GetMapping(path="/patata2")
+  @ResponseBody
+  public String getPatata2(@RequestParam String type, @RequestParam int quantity) {      
+      compraPatatas(type, quantity);
+      return "{ \"patata\": \"" + type + "\", \"quantity\": \"" + quantity + "\" }";
+  }
+
+  /**
    * Post AJAX, devuelve JSON, espera multipart/form-data; podría funcionar con un 
    * <form enctype="multipart/form-data">, pero devuelve JSON pensando en JavaScript y FormData
    * 
