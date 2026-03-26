@@ -5,7 +5,15 @@ VALUES (1, TRUE, 'ADMIN,USER', 'a',
 INSERT INTO IWUser (id, enabled, roles, username, password)
 VALUES (2, TRUE, 'USER', 'b',
     '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
-
+INSERT INTO IWUser (id, enabled, roles, username, password)
+VALUES (3, TRUE, 'USER', 'c',
+    '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
+    INSERT INTO IWUser (id, enabled, roles, username, password)
+VALUES (4, TRUE, 'USER', 'd',
+    '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
+    INSERT INTO IWUser (id, enabled, roles, username, password)
+VALUES (5, TRUE, 'USER', 'e',
+    '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W');
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;
 
@@ -146,3 +154,13 @@ VALUES (56, 56, 'Trompeta', '[{"pitch":48,"label":"C3","black":false,"showLabel"
 
 INSERT INTO MIDIINSTRUMENT (id, program, instrument_name, notes)
 VALUES (0, 0, 'Test', '');
+
+--------------------------------------------------
+-- SONGS
+--------------------------------------------------
+INSERT INTO SCORE (ID, USER_ID, TOTAL_POINTS, GAMES_PLAYED, GAMES_WON, CURRENT_STREAK, BEST_STREAK) VALUES
+(1, 1, 1500, 20, 15, 3, 8),
+(2, 2,  980, 15,  8, 1, 5),
+(3, 3,  750, 12,  5, 0, 4),
+(4, 4,  430, 10,  3, 2, 3),
+(5, 5,  210,  5,  1, 0, 1);

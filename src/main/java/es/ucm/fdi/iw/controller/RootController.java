@@ -1,7 +1,9 @@
 package es.ucm.fdi.iw.controller;
 
+import es.ucm.fdi.iw.repository.ScoreRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +18,10 @@ import jakarta.servlet.http.HttpSession;
  */
 @Controller
 public class RootController {
-
     private static final Logger log = LogManager.getLogger(RootController.class);
+
+    @Autowired
+    private ScoreRepository scoreRepository;
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {        
@@ -107,6 +111,7 @@ public class RootController {
 
     @GetMapping("/leaderboard")
     public String leaderboard(Model model) {
+        model.addAttribute("scores", scoreRepository.findAllByOrderByTotalPointsDesc());
         return "leaderboard";
     }
 }
