@@ -4,7 +4,6 @@
         <title>Waiting Room - Game Lobby</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
-
     <body class="bg-light">
         <div th:fragment="waiting-room" class="container py-5">
             <div class="row justify-content-center">
@@ -16,6 +15,19 @@
                                 <div class="badge bg-light text-dark mt-2" th:text="'Lobby Code: ' + ${lobbyCode}">
                                     Code: ABC123
                                 </div>
+                                <div class="d-flex justify-content-center my-3">
+                                    <div id="qrcode"></div>
+                                </div>
+                                <script type="text/javascript">
+                                var qrcode = new QRCode(document.getElementById("qrcode"), {
+                                    text: window.location.href, //this always displays current url so should work in prod :)
+                                    width: 100,
+                                    height: 100,
+                                    colorDark : "#000000",
+                                    colorLight : "#ffffff",
+                                    correctLevel : QRCode.CorrectLevel.H
+                                });
+                                </script>
                                 <div class="mt-2 small" th:text="${playerList.size()} + ' player(s) waiting'">
                                     0 player(s) waiting
                                 </div>
