@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.iw.auxiliar.GameUtils;
 import es.ucm.fdi.iw.model.GarticGame;
+import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.model.MIDIGame;
 import es.ucm.fdi.iw.model.MIDISequence;
 import es.ucm.fdi.iw.model.MIDITrack;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.GarticGame.GarticGameStatus;
 import es.ucm.fdi.iw.repository.MIDIGameRepository;
 import es.ucm.fdi.iw.repository.MIDISequenceRepository;
 import jakarta.servlet.http.HttpSession;
@@ -230,9 +231,14 @@ public class GarticController {
         return new GameUpdate("TRACKRECEIVED", null);
     }
 
+    @MessageMapping("/gartic/lobby/{lobbyCode}/chat")
+    public void chat(@DestinationVariable String lobbyCode, @Payload ChatMessage msg) {
+        messagingTemplate.convertAndSend("/topic/gartic/lobby/" + lobbyCode + "/chat", msg);
+    }
+
     public record GameUpdate(String type, Object data) {}
     public record StartRequest(long userId) {} 
     public record TrackSubmission(long userId, MIDITrack.Transfer track) {}
-    public record GameData(int currentRound, int totalRounds, String status, int instrument) {
-    }
+    public record GameData(int currentRound, int totalRounds, String status, int instrument) {}
+    public record ChatMessage(String username, String text) {}
 }
