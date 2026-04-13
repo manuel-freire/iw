@@ -17,70 +17,77 @@
 
 <main class="flex-shrink-0">
     <div class="container my-5 text-center">
-        <div class="row gx-3">
-            <div class="col-9">
-                <h1 class="mb-4 d-inline-flex align-items-center gap-2">
-                    <i class="bi bi-music-note-beamed"></i>
-                    <span th:text="#{gartic.title}"></span>
-                </h1>
-                <div id="game-container"></div>
-                <template id="track-sent">
-                    <h3>Se ha enviado la pista</h3>
-                    <h5>Esperando a los demás jugadores</h5>
-                </template>
-                
-                <template id="waiting-room"><th:block th:replace="~{fragments/waiting-room :: waiting-room}"></th:block></template>
-                <template id="game-screen">
-                    <div id="piano-roll"></div>
-                    <div class="my-3">
-                        <input id="progress" type="range" />
-                        <div>
-                            <button id="loop" type="button" class="btn btn-secondary" title="Loop">
-                                <i class="bi bi-arrow-repeat"></i>
-                            </button>
-                            <button id="play" type="button" class="btn btn-primary" title="Play">
-                                <i class="bi bi-play-fill"></i>
-                            </button>
-                            <button id="pause" type="button" class="btn btn-primary" title="Pause">
-                                <i class="bi bi-pause-fill"></i>
-                            </button>
-                            <button id="stop" type="button" class="btn btn-primary" title="Stop">
-                                <i class="bi bi-stop-fill"></i>
-                            </button>
-                            <button id="clear" type="button" class="btn btn-primary" title="Clear all notes">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <button type="button" id="tmpSaveButton" class="btn btn-primary">Enviar</button>
-                    </div>
-                    <div class="modal fade" id="instructions-modal" tabindex="-1" aria-labelledby="instructions-modal-label" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="instructions-modal-label"></h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div id="instructions-modal-body" class="modal-body"></div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+        <div class="position-relative d-flex align-items-center justify-content-center mb-4">
+            <h1 class="mb-0 d-inline-flex align-items-center gap-2">
+                <i class="bi bi-music-note-beamed"></i>
+                <span th:text="#{gartic.title}"></span>
+            </h1>
+            <button type="button" class="btn btn-primary position-absolute end-0" data-bs-toggle="offcanvas" data-bs-target="#chat-offcanvas">
+                Chat
+                <span id="chat-button-badge" class="visually-hidden position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">0<span class="visually-hidden">unread messages</span></span>
+            </button>
+        </div>
+        <div id="game-container"></div>
+        <template id="track-sent">
+            <h3>Se ha enviado la pista</h3>
+            <h5>Esperando a los demás jugadores</h5>
+        </template>
+        <template id="waiting-room"><th:block th:replace="~{fragments/waiting-room :: waiting-room}"></th:block></template>
+        <template id="game-screen">
+            <div id="piano-roll"></div>
+            <div class="my-3">
+                <input id="progress" type="range" />
+                <div>
+                    <button id="loop" type="button" class="btn btn-secondary" title="Loop">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                    <button id="play" type="button" class="btn btn-primary" title="Play">
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+                    <button id="pause" type="button" class="btn btn-primary" title="Pause">
+                        <i class="bi bi-pause-fill"></i>
+                    </button>
+                    <button id="stop" type="button" class="btn btn-primary" title="Stop">
+                        <i class="bi bi-stop-fill"></i>
+                    </button>
+                    <button id="clear" type="button" class="btn btn-primary" title="Clear all notes">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </div>
             </div>
-            <div class="col-3 chat-messages">
-                <div class="card">
-                    <div class="card-header fw-bold">Chat del Lobby</div>
-                    <div id="chat-messages" class="card-body chat-messages"></div>
+            <div class="mt-3">
+                <button type="button" id="tmpSaveButton" class="btn btn-primary">Enviar</button>
+            </div>
+            <div class="modal fade" id="instructions-modal" tabindex="-1" aria-labelledby="instructions-modal-label" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="instructions-modal-label"></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div id="instructions-modal-body" class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        
+        <div id="chat-offcanvas" class="offcanvas offcanvas-end" tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Chat del lobby</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column overflow-hidden">
+                <div class="card mx-3 flex-grow-1 d-flex flex-column h-100">
+                    <div id="chat-messages" class="card-body chat-messages overflow-auto" style="min-height: 0;"></div>
                     <div class="card-footer d-flex gap-2">
                         <input id="chat-input" class="form-control" placeholder="Escribe..."/>
                         <button id="chat-send" class="btn btn-primary">Enviar</button>
                     </div>
                 </div>
-            </div>
+            </div>   
         </div>
     </div>
 </main>

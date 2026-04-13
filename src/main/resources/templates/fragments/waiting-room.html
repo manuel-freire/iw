@@ -50,10 +50,10 @@
                                           class="badge bg-warning text-dark">Owner</span>
                                 </div>
                                 
-                                <li th:if="${playerList.empty}" class="text-center text-muted py-4 border rounded ">
+                                <div th:if="${playerList.empty}" class="text-center text-muted py-4 border rounded ">
                                     Empty
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
                         </div>
                         
                         <div th:if="${isOwner}" class="text-center">
