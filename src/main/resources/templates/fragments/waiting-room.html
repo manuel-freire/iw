@@ -28,35 +28,32 @@
                                     correctLevel : QRCode.CorrectLevel.H
                                 });
                                 </script>
-                                <div class="mt-2 small" th:text="${playerList.size()} + ' player(s) waiting'">
-                                    0 player(s) waiting
+                                <div class="mt-2 small">
+                                    <span th:text="${playerList.size()}" class="player-counter">0</span> player(s) waiting
                                 </div>
                             </div>
                         </div>
                         <div class="card-body p-4 bg-transparent">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="mb-0">Players List</h5>
-                                <span class="badge bg-secondary rounded-pill" th:text="${playerList.size()}">0</span>
+                                <span class="badge bg-secondary rounded-pill player-counter" th:text="${playerList.size()}">0</span>
                             </div>
                             
-                            <!-- Player List as UL -->
-                            <ul id="player-list" class="list-unstyled mb-0">
-                                <li th:each="item : ${playerList}" class="mb-2">
-                                    <div class="d-flex align-items-center p-2 border rounded">
-                                        <div class="bg-primary  rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             style="width: 40px; height: 40px;">
-                                            <span th:text="${#strings.substring(item, 0, 1)}">U</span>
-                                        </div>
-                                        <span th:text="${item}" class="flex-grow-1">Username</span>
-                                        <span th:if="${isOwner and item == playerList[0]}" 
-                                              class="badge bg-warning text-dark">Owner</span>
+                            <div class="list-group" id="player-list">
+                                <div th:each="item : ${playerList}" class="list-group-item d-flex bg-transparent align-items-center">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">
+                                        <span th:text="${#strings.substring(item.username, 0, 1)}">U</span>
                                     </div>
-                                </li>
+                                    <span th:text="${item.username}" class="flex-grow-1 text-start">Username</span>
+                                    <span th:if="${item.isOwner}" 
+                                          class="badge bg-warning text-dark">Owner</span>
+                                </div>
                                 
-                                <li th:if="${playerList.empty}" class="text-center text-muted py-4 border rounded ">
+                                <div th:if="${playerList.empty}" class="text-center text-muted py-4 border rounded ">
                                     Empty
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
                         </div>
                         
                         <div th:if="${isOwner}" class="text-center">
@@ -65,7 +62,7 @@
                             </button>
                         </div>
                         <div th:unless="${isOwner}" class="text-center text-muted small">
-                            Waiting for host to start the game...
+                                Waiting for host to start the game...
                         </div>
                     </div>
                 </div>

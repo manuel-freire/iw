@@ -15,10 +15,17 @@ waitForStomp(() => {
             </div>`
         );
         box.scrollTop = box.scrollHeight;
+        const badge = document.querySelector("#chat-button-badge")
+        badge.textContent = parseInt(badge.textContent) + 1
+        badge.classList.remove("visually-hidden")
     });
 
     document.getElementById('chat-send').addEventListener('click', sendChat);
     document.getElementById('chat-input').addEventListener('keydown', e => e.key === 'Enter' && sendChat());
+    document.querySelector("#chat-offcanvas").addEventListener('hide.bs.offcanvas', ()=>{
+        document.querySelector("#chat-button-badge").classList.add("visually-hidden");
+        document.querySelector("#chat-button-badge").textContent = 0;
+    })
 });
 
 function sendChat() {

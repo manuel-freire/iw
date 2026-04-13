@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.lang.NonNull;
+
 /**
  * An authorized user of the system.
  */
@@ -41,6 +43,7 @@ public class User implements Transferable<User.Transfer> {
   private long id;
 
   @Column(nullable = false, unique = true)
+  @NonNull
   private String username;
   @Column(nullable = false)
   private String password;

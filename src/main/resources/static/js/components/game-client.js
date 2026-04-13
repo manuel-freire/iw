@@ -14,6 +14,7 @@ const selectors = {
   instructionsModalLabel: "#instructions-modal-label",
   instructionsModalBody: "#instructions-modal-body",
   sendButton: "#tmpSaveButton",
+  playerCounter: ".player-counter",
   playerList: "#player-list",
   waitingRoomTemplate: "#waiting-room",
   gameScreenTemplate: "#game-screen",
@@ -44,10 +45,6 @@ function handleMessage(m) {
       updatePlayers(m.data);
       break;
     case "GAMESTARTED":
-      showScreen(selectors.gameScreenTemplate);
-      gameData = m.data;
-      setupGameScreen();
-      break;
     case "NEWROUND":
       showScreen(selectors.gameScreenTemplate);
       gameData = m.data;
@@ -62,8 +59,20 @@ function handleMessage(m) {
 function updatePlayers(list) {
   console.log("Updating players...");
   document.querySelector(selectors.playerList).innerHTML = "";
-  list.forEach((element) => {
-    document.querySelector(selectors.playerList).insertAdjacentHTML("beforeend", `<li>${element}</li>`);
+  document.querySelectorAll(selectors.playerCounter).forEach(el => el.textContent = list.length)
+  const ownerBadge = `<span class="badge bg-warning text-dark">Owner</span>`
+  list.forEach((player) => {
+    const html = `
+    <div class="list-group-item d-flex bg-transparent align-items-center">
+      <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+            style="width: 40px; height: 40px;">
+          <span>${player.username.substring(0, 1)}</span>
+      </div>
+      <span class="flex-grow-1 text-start">${player.username}</span>
+      ${player.isOwner ? ownerBadge : ""}
+    </div>
+    `
+    document.querySelector(selectors.playerList).insertAdjacentHTML("beforeend", html);
   });
 }
 
@@ -86,49 +95,20 @@ function sendTrack() {
   ws.stompClient.send(`/gartic/lobby/${lobbyCode}/tracks/post`, {}, JSON.stringify({userId: config.userId, track: pianoRoll.getEditableTrack()}));
 }
 
-async function getInstrument() {
-  const res = await fetch(`/api/game/instrument/get/${gameData.instrument}`);
-  return res.json();
-}
-
-async function getSequence() {
-  const res = await fetch(`/api/game/${lobbyCode}/sequence/get`);
-  return res.json();
-}
-
-async function logSequence() {
-  const res = await fetch(`/api/game/${lobbyCode}/sequence/get`);
-  const sequence = await res.json();
-  console.log(sequence);
-}
-
-async function saveSequence(pr) {
-  const res = await fetch(`/api/game/${lobbyCode}/sequence/addtrack`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRF-TOKEN": config.csrf.value,
-    },
-    body: JSON.stringify(pr.getEditableTrack()),
-  });
-  return await res.json();
-}
-
 async function setupPianoRoll(selectors) {
-  const sequence = await getSequence();
-  const instrumentData = await getInstrument();
+  const sequence = gameData.roundData.sequence;
+  const instrumentData = gameData.roundData.instrumentData;
   pianoRoll = new PianoRoll({ instrument: instrumentData.program });
   pianoRoll.createVisualElement(selectors.pianoRollContainer, instrumentData.notes);
   pianoRoll.setFixedTracks(sequence.tracks);
   pianoRoll.bindControls(selectors);
   document.querySelector(selectors.sendButton).addEventListener("click", async (e) => {
-    // let res = await saveSequence(pianoRoll);
     sendTrack();
   });
 }
 
 async function showInstructionsModal(selectors) {
-  const instrumentData = await getInstrument();
+  const instrumentData = gameData.roundData.instrumentData;
   document.querySelector(selectors.instructionsModalLabel).textContent =
     `Ronda ${gameData.currentRound + 1} de ${gameData.totalRounds}`;
   document.querySelector(selectors.instructionsModalBody).textContent =
@@ -138,12 +118,14 @@ async function showInstructionsModal(selectors) {
 }
 
 function setupWaitingRoom() {
-  document.querySelector(selectors.startButton).onclick = sendStartRequest;
+  if(document.querySelector(selectors.startButton))
+    document.querySelector(selectors.startButton).onclick = sendStartRequest;
 }
 
 function setupGameScreen() {
   setupPianoRoll(selectors);
   showInstructionsModal(selectors);
+  console.log(gameData.roundData)
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
