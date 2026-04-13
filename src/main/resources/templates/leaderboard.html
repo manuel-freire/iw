@@ -4,117 +4,47 @@
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/components/leaderboard.css}"/>
     <th:block th:replace="~{fragments/head :: header}" />
     <title th:text="#{topSongs.pageTitle}"></title>
 </head>
 
 <body class="d-flex flex-column h-100">
-    <header th:replace="~{fragments/nav.html :: nav}"></header>
+<header th:replace="~{fragments/nav.html :: nav}"></header>
+<main class="flex-shrink-0">
+    <div class="container my-5">
+        <h1 class="text-center mb-3">Leaderboard</h1>
 
-    <main class="flex-shrink-0">
-       <div class="container my-5 text-center">
-
-        <h1 class="mb-5" th:text="#{topSongs.title}"></h1>
-
-        <div class="gy-3">
-            <div class="card mb-3">
-                <div class="card-body row align-items-center py-5">
-                    <div class="col col-8">
-                        <span class="fs-3" th:text="#{topSongs.songTitle}"></span>
-                    </div>
-                    <div class="col col-2">                        
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.play}">
-                                <i class="bi bi-play-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.pause}">
-                                <i class="bi bi-pause-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.stop}">
-                                <i class="bi bi-stop-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col col-2">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-danger" th:title="#{topSongs.like}">
-                                <i class="bi bi-hand-thumbs-up-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger" disabled>
-                                123
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-3">
-                <div class="card-body row align-items-center py-5">
-                    <div class="col col-8">
-                        <span class="fs-3" th:text="#{topSongs.songTitle}"></span>
-                    </div>
-                    <div class="col col-2">                        
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.play}">
-                                <i class="bi bi-play-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.pause}">
-                                <i class="bi bi-pause-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.stop}">
-                                <i class="bi bi-stop-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col col-2">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-danger" th:title="#{topSongs.like}">
-                                <i class="bi bi-hand-thumbs-up-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger" disabled>
-                                50
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-3">
-                <div class="card-body row align-items-center py-5">
-                    <div class="col col-8">
-                        <span class="fs-3" th:text="#{topSongs.songTitle}"></span>
-                    </div>
-                    <div class="col col-2">                        
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.play}">
-                                <i class="bi bi-play-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.pause}">
-                                <i class="bi bi-pause-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-primary" th:title="#{topSongs.stop}">
-                                <i class="bi bi-stop-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col col-2">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-danger" th:title="#{topSongs.like}">
-                                <i class="bi bi-hand-thumbs-up-fill"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger" disabled>
-                                4
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div th:if="${#lists.isEmpty(scores)}" class="text-center text-muted py-5">
+            <p>¡Aún no hay puntajes registrados de los jugadores. Sé el primero!</p>
         </div>
 
+        <table th:if="${!#lists.isEmpty(scores)}" class="table table-hover">
+            <thead class="table-info">
+                <tr>
+                    <th class="text-center">Posición</th>
+                    <th class="text-center">Jugador</th>
+                    <th class="text-center">Puntos</th>
+                    <th class="text-center">Partidas</th>
+                    <th class="text-center">Racha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="score, index : ${scores}" th:classappend="${u?.id == score.user.id}?'is-me'">
+                    <td th:text="${index.count}" class="text-center"></td>
+                    <td class="text-center">
+                        <span th:text="${score.user.username}"></span>
+                        <span th:if="${u?.id==score.user.id}" class="badge bg-info text-dark ms-1"></span>
+                    </td>
+                    <td class="text-center fw-bold" th:text="${score.totalPoints}"></td>
+                    <td class="text-center text-muted" th:text="${score.gamesPlayed}"></td>
+                    <td class="text-center" th:text="${score.bestStreak}"></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    </main>
-
-    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</main>
+<th:block th:replace="~{fragments/footer.html :: footer}"/>
 </body>
 
 </html>
