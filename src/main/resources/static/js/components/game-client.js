@@ -16,9 +16,11 @@ const selectors = {
   sendButton: "#tmpSaveButton",
   playerCounter: ".player-counter",
   playerList: "#player-list",
+  endScreenCardsContainer: "#end-screen-cards-container",
   waitingRoomTemplate: "#waiting-room",
   gameScreenTemplate: "#game-screen",
-  trackSentTemplate: "#track-sent"
+  trackSentTemplate: "#track-sent",
+  endScreenTemplate: "#end-screen"
 };
 
 let gameData, pianoRoll;
@@ -53,6 +55,9 @@ function handleMessage(m) {
     case "TRACKRECEIVED":
       showScreen(selectors.trackSentTemplate);
       break;
+    case "GAMEENDED":
+      showScreen(selectors.endScreenTemplate);
+      setupEndScreen(m.data);
   }
 }
 
@@ -126,6 +131,59 @@ function setupGameScreen() {
   setupPianoRoll(selectors);
   showInstructionsModal(selectors);
   console.log(gameData.roundData)
+}
+
+function createCardHTML(params) {
+  const html = `
+    <div class="card mb-3">
+      <div class="card-body row align-items-center py-5">
+        <div class="col col-8">
+          <input id="${params.progressBarId}" type="range" class="form-range">
+        </div>
+        <div class="col col-4">                        
+          <div class="btn-group" role="group">
+            <button id="${params.playButtonId}" type="button" class="btn btn-primary" th:title="#{topSongs.play}">
+              <i class="bi bi-play-fill"></i>
+            </button>
+            <button id="${params.pauseButtonId}" type="button" class="btn btn-primary" th:title="#{topSongs.pause}">
+              <i class="bi bi-pause-fill"></i>
+            </button>
+            <button id="${params.stopButtonId}" type="button" class="btn btn-primary" th:title="#{topSongs.stop}">
+              <i class="bi bi-stop-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+        `;
+  return html;
+}
+
+function setupCards(sequences) {
+  for (let i in sequences) {
+    document.querySelector(selectors.endScreenCardsContainer).insertAdjacentHTML(
+      "beforeend",
+      createCardHTML({
+        progressBarId: `progressBarEnd${i}`,
+        playButtonId: `playButtonEnd${i}`,
+        pauseButtonId: `pauseButtonEnd${i}`,
+        stopButtonId: `stopButtonEnd${i}`,
+      }),
+    );
+    let pr = new PianoRoll({});
+    pr.setFixedTracks(sequences[i].tracks);
+    pr.bindControls({
+      playButton: `#playButtonEnd${i}`,
+      pauseButton: `#pauseButtonEnd${i}`,
+      stopButton: `#stopButtonEnd${i}`,
+      progressBar: `#progressBarEnd${i}`,
+    });
+  }
+}
+
+function setupEndScreen(sequences){
+  console.log(sequences)
+  setupCards(sequences)
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
