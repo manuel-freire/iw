@@ -43,6 +43,21 @@
                 </div>
                 
                 <div th:if="${isOwner}" class="text-center">
+                    <div class="mx-5 px-3">
+                        <div class="mb-3">
+                            <label for="select-rounds" class="form-label">Numero de rondas</label>
+                            <select id="select-rounds" class="form-select">
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select> 
+                        </div>
+                        <label for="instrument-select-container" class="form-label">Instrumentos</label>
+                        <div id="instrument-select-container">
+                            
+                        </div>
+                    </div>
                     <button id="start-button" class="btn btn-primary btn-lg px-5">
                         Iniciar partida
                     </button>
