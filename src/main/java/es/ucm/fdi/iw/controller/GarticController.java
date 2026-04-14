@@ -101,7 +101,6 @@ public class GarticController {
         game.setOwner(u);
         game.addPlayer(u);
         game.setCurrentRound(0);
-        // TODO should be user generated
         game.setTotalRounds(4);
         game.setRoundTime(60);
         List<Integer> roundInstruments = Arrays.asList(128, 34, 1, 56);
@@ -187,7 +186,7 @@ public class GarticController {
 
     @MessageMapping("/gartic/lobby/{lobbyCode}/start")
     @Transactional
-    public void startGame(@DestinationVariable String lobbyCode, @Payload UserRequest request) {
+    public void startGame(@DestinationVariable String lobbyCode, @Payload GameStartRequest request) {
         // Obtenemos la partida
         GarticGame game = (GarticGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
@@ -197,6 +196,8 @@ public class GarticController {
         log.info("Starting game for lobby {} with {} players", lobbyCode, game.getPlayers().size());
         // Indicamos que la partida ha iniciado
         game.setStatus(GarticGameStatus.PLAYING);
+        game.setTotalRounds(request.totalRounds);
+        game.setRoundInstruments(request.roundInstruments);
         for (User p : game.getPlayers()) {
             log.debug("Creating sequence for player {} in lobby {}", p.getUsername(), lobbyCode);
             // Creamos una secuencia vacia para cada jugador
@@ -276,6 +277,7 @@ public class GarticController {
 
     public record GameUpdate(String type, Object data) {}
     public record UserRequest(long userId) {} 
+    public record GameStartRequest(long userId, int totalRounds, List<Integer> roundInstruments) {} 
     public record TrackSubmission(long userId, MIDITrack.Transfer track) {}
     public record RoundData(MIDIInstrument.Transfer instrumentData, MIDISequence.Transfer sequence) {}
     public record GameData(int currentRound, int totalRounds, String status, RoundData roundData) {}
