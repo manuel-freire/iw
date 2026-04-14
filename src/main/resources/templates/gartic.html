@@ -17,6 +17,7 @@
 
 <main class="flex-shrink-0">
     <div class="container my-5 text-center">
+        <!-- Cabecera -->
         <div class="position-relative d-flex align-items-center justify-content-center mb-4">
             <h1 class="mb-0 d-inline-flex align-items-center gap-2">
                 <i class="bi bi-music-note-beamed"></i>
@@ -27,12 +28,21 @@
                 <span id="chat-button-badge" class="visually-hidden position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">0<span class="visually-hidden">unread messages</span></span>
             </button>
         </div>
+        <!-- Contenedor del juego -->
         <div id="game-container"></div>
+
+        <!-- Pantalla de pista enviada -->
         <template id="track-sent">
             <h3>Se ha enviado la pista</h3>
             <h5>Esperando a los demás jugadores</h5>
         </template>
+
+        <!-- Sala de espera -->
         <template id="waiting-room"><th:block th:replace="~{fragments/waiting-room :: waiting-room}"></th:block></template>
+
+        <!-- Pantalla final -->
+        <template id="end-screen"><th:block th:replace="~{fragments/end-screen :: end-screen}"></th:block></template>
+        
         <template id="game-screen">
             <div id="piano-roll"></div>
             <div class="my-3">

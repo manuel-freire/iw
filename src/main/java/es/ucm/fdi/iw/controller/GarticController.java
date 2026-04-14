@@ -239,6 +239,12 @@ public class GarticController {
             // Todos los jugadores han acabado
             // Actualizamos la ronda
             game.setCurrentRound(game.getCurrentRound() + 1);
+            // El juego ha acabado
+            if (game.getCurrentRound() == game.getTotalRounds()) {
+                messagingTemplate.convertAndSend("/topic/gartic/lobby/" + lobbyCode, new GameUpdate("GAMEENDED",
+                        game.getSequences().stream().map(MIDISequence::toTransfer).toList()));
+                return new GameUpdate("NULL", null);
+            }
             // Ponemos que ningun jugador ha enviado su track
             game.getTrackSubmissions().replaceAll((k, v) -> false);
             // Desplazamos las secuencias de cada jugador
