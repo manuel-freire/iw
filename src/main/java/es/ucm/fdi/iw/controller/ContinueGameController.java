@@ -219,8 +219,6 @@ public class ContinueGameController {
         ContinueGame game = (ContinueGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
         game.getTrackSubmissions().put(submission.userId, true);
-        midiSequenceRepository.save(sequence);
-        midiGameRepository.save(game);
         if (!game.getTrackSubmissions().containsValue(false)) {
             // Todos los jugadores han acabado
             // Actualizamos la ronda
@@ -258,6 +256,8 @@ public class ContinueGameController {
             MIDISequence sequence = midiSequenceRepository.findById(bestSequenceId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID"));
             sequence.getTracks().add(new MIDITrack(submission.track, sequence));
+            midiSequenceRepository.save(sequence);
+            midiGameRepository.save(game);
             // Notificamos que empieza una nueva ronda y enviamos a cada jugador su nueva
             // secuencia
             for (User p : game.getPlayers()) {
