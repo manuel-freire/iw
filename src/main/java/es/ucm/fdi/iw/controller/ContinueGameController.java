@@ -175,7 +175,7 @@ public class ContinueGameController {
         messagingTemplate.convertAndSend("/topic/continue/lobby/" + lobbyCode, up);
         return "redirect:/continue/lobby/" + lobbyCode;
     }
-    @MessageMapping("/gartic/lobby/{lobbyCode}/start")
+    @MessageMapping("/continue/lobby/{lobbyCode}/start")
     @Transactional
     public void startGame(@DestinationVariable String lobbyCode, @Payload GameStartRequest request) {
         // Obtenemos la partida
@@ -240,7 +240,8 @@ public class ContinueGameController {
             // Ponemos que ningun jugador ha enviado su track
             game.getTrackSubmissions().replaceAll((k, v) -> false);
             // Desplazamos las secuencias de cada jugador
-            game.setSequenceAssignments(GameUtils.shiftValuesRight(game.getSequenceAssignments()));
+            //TODO:esto aqui no se deberia hacer, necesitamos iniciar un voto por el mejor track
+            //game.setSequenceAssignments(GameUtils.shiftValuesRight(game.getSequenceAssignments()));
             // Notificamos que empieza una nueva ronda y enviamos a cada jugador su nueva
             // secuencia
             for (User p : game.getPlayers()) {
