@@ -218,12 +218,6 @@ public class ContinueGameController {
         // Obtenemos la partida
         ContinueGame game = (ContinueGame) midiGameRepository.findByLobbyCode(lobbyCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid lobby code"));
-        // Anadimos el nuevo track a la secuencia
-        long sequenceId = game.getSequenceAssignments()
-                .get(submission.userId);
-        MIDISequence sequence = midiSequenceRepository.findById(sequenceId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID"));
-        sequence.getTracks().add(new MIDITrack(submission.track, sequence));
         game.getTrackSubmissions().put(submission.userId, true);
         midiSequenceRepository.save(sequence);
         midiGameRepository.save(game);
@@ -242,6 +236,28 @@ public class ContinueGameController {
             // Desplazamos las secuencias de cada jugador
             //TODO:esto aqui no se deberia hacer, necesitamos iniciar un voto por el mejor track
             //game.setSequenceAssignments(GameUtils.shiftValuesRight(game.getSequenceAssignments()));
+
+            Integer maxVotes=0;
+            long bestSequenceId=-1;
+            for (User p : game.getPlayers())
+            {
+                long playerSequenceId = game.getSequenceAssignments()
+                        .get(p.getId());
+                MIDISequence seq = midiSequenceRepository.findById(playerSequenceId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID"));
+                Integer votes = game.get_sequenceVotes().get(playerSequenceId);
+                if (votes != null) {
+                    maxVotes = Math.max(votes, maxVotes);
+                    if(maxVotes==votes)
+                    {
+                        bestSequenceId=playerSequenceId;
+                    }
+                }
+            }
+            // Anadimos el mejor track a la secuencia
+            MIDISequence sequence = midiSequenceRepository.findById(bestSequenceId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid sequence ID"));
+            sequence.getTracks().add(new MIDITrack(submission.track, sequence));
             // Notificamos que empieza una nueva ronda y enviamos a cada jugador su nueva
             // secuencia
             for (User p : game.getPlayers()) {

@@ -31,6 +31,15 @@ public class ContinueGame extends MIDIGame {
     @Column(name = "seq_id")
     private Map<Long, Long> sequenceAssignments = new HashMap<>();
 
+    //esto es donde guardamos los votos.
+     @ElementCollection
+    @CollectionTable(name = "continue_seq_votes",
+                     joinColumns = @JoinColumn(name = "game_id"))
+    @Column(name = "seq_id")
+    private Map<Long, Integer> _sequenceVotes = new HashMap<>();
+
+    //
+    
     @ElementCollection
     @CollectionTable(name = "continue_track_submissions",
                      joinColumns = @JoinColumn(name = "game_id"))
