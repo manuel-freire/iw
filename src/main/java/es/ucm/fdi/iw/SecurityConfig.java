@@ -67,6 +67,8 @@ public class SecurityConfig {
 					"/", 
 					"/error", 
 					"/about", 
+					"/login",
+					"/register",
 					"/authors", 
 					"/games/**", 
 					"/lobby/**",
