@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title th:text="#{register.pageTitle}">IW: Register</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <form class="form-signin" method="post" th:action="@{/register}">
+                <h2 class="form-signin-heading" th:text="#{register.title}">Create account</h2>
+                <p th:if="${registerError != false}" class="error" th:text="#{${registerError}}">
+                    Error al registrar el usuario
+                </p>
+                <p>
+                    <label for="username" class="visually-hidden" th:text="#{register.username}">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" th:placeholder="#{register.username}" required="required"
+                        th:value="${registerUser.username}">
+                </p>
+                <p>
+                    <label for="firstName" class="visually-hidden" th:text="#{register.firstName}">First name</label>
+                    <input type="text" id="firstName" name="firstName" class="form-control" th:placeholder="#{register.firstName}"
+                        th:value="${registerUser.firstName}">
+                </p>
+                <p>
+                    <label for="lastName" class="visually-hidden" th:text="#{register.lastName}">Last name</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" th:placeholder="#{register.lastName}"
+                        th:value="${registerUser.lastName}">
+                </p>
+                <p>
+                    <label for="password" class="visually-hidden" th:text="#{register.password}">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" th:placeholder="#{register.password}" required="required">
+                </p>
+                <p>
+                    <label for="pass2" class="visually-hidden" th:text="#{register.repeatPassword}">Repeat password</label>
+                    <input type="password" id="pass2" name="pass2" class="form-control" th:placeholder="#{register.repeatPassword}" required="required">
+                </p>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{register.submit}">Register</button>
+                <p class="mt-3 mb-0">
+                    <a th:href="@{/login}" th:text="#{register.loginLink}">Already have an account?</a>
+                </p>
+            </form>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
