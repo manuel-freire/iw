@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" th:data-lobby-code="${lobbyCode}">
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <th:block th:replace="~{fragments/head :: header}" />
     <title th:text="#{continue.pageTitle}"></title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
     <link rel="stylesheet" th:href="@{/css/components/pianoRoll.css}" href="/css/components/pianoRoll.css">
 </head>
 
@@ -14,112 +17,62 @@
 
 <main class="flex-shrink-0">
     <div class="container my-5 text-center">
-
-        <h1 class="mb-4 d-inline-flex align-items-center gap-2">
-            <i class="bi bi-play-fill"></i>
-            <span th:text="#{continue.title}"></span>
-        </h1>
-
-        <form>
-            <div class="row">
-                <label class="col-2 col-form-label" for="tempo">Tempo</label>
-                <div class="col-3">                    
-                    <input class="form-control" type="number" id="tempo">
-                </div>
-                <label class="col-2 col-form-label" for="inst">Instrumento</label>
-                <div class="col-3">                    
-                    <select id="inst" class="form-select">
-                        <option value="0">Piano de cola acústico</option>
-                        <option value="25">Guitarra acústica (acero)</option>
-                        <option value="31">aaaaaa</option>
-                        <option value="33">Bajo eléctrico (finger)</option>
-                        <option value="48">Conjunto de cuerdas</option>
-                        <option value="56">Trompeta</option>
-                        <option value="73">Flauta</option>
-                        <option value="52">Coro (voces “aahs”)</option>
-                        <option value="81">Sintetizador lead (diente de sierra)</option>
-                        <option value="89">Pad de sintetizador (cálido)</option>
-                    </select>
-                </div>
-                <div class="col-2">
-                    <button type="button" id="btnForm" class="btn btn-primary float-end">OK</button>
-                </div>
-            </div>
-            
-            
-            
-        </form>
-        <div id="pianoRoll" class="h-scroll">
-
+        <!-- Cabecera -->
+        <div class="position-relative d-flex align-items-center justify-content-center mb-4">
+            <h1 class="mb-0 d-inline-flex align-items-center gap-2">
+                <i class="bi bi-music-note-beamed"></i>
+                <span th:text="#{gartic.title}"></span>
+            </h1>
+            <button type="button" class="btn btn-primary position-absolute end-0" data-bs-toggle="offcanvas" data-bs-target="#chat-offcanvas">
+                Chat
+                <span id="chat-button-badge" class="visually-hidden position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">0<span class="visually-hidden">unread messages</span></span>
+            </button>
         </div>
+        <!-- Contenedor del juego -->
+        <div id="game-container"></div>
 
-        <button id="loop" type="button" class="btn btn-primary" title="Loop">
-            <i class="bi bi-arrow-repeat"></i>
-        </button>
-        <button id="play" type="button" class="btn btn-primary" title="Play">
-            <i class="bi bi-play-fill"></i>
-        </button>
-        <button id="stop" type="button" class="btn btn-primary" title="Stop">
-            <i class="bi bi-stop-fill"></i>
-        </button>
+        <!-- Pantalla de pista enviada -->
+        <template id="track-sent">
+            <h3>Se ha enviado la pista</h3>
+            <h5>Esperando a los demás jugadores</h5>
+        </template>
 
+        <!-- Sala de espera -->
+        <template id="waiting-room"><th:block th:replace="~{fragments/waiting-room :: waiting-room}"></th:block></template>
+
+        <!-- Pantalla final -->
+        <template id="end-screen"><th:block th:replace="~{fragments/end-screen :: end-screen}"></th:block></template>
         
-
-        <button class="btn btn-primary"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasExample"
-                aria-controls="offcanvasExample"
-                th:text="#{continue.playersButton}">
-        </button>
-
-    </div>
-
-    <div class="offcanvas offcanvas-start"
-         tabindex="-1"
-         id="offcanvasExample"
-         aria-labelledby="offcanvasExampleLabel">
-
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title"
-                id="offcanvasExampleLabel"
-                th:text="#{continue.playersTitle}">
-            </h5>
-
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="offcanvas"
-                    aria-label="Close">
-            </button>
-        </div>
-
-        <div class="offcanvas-body">
-            <button id="inviteButton"
-                    class="btn btn-primary"
-                    th:text="#{continue.inviteButton}">
-            </button>
-
-            <div class="mt-3">
-                <ul id="playerList">
-                    <li th:text="#{continue.player1}"></li>
-                </ul>
+        <!-- Pantalla de juego -->
+        <template id="game-screen"><th:block th:replace="~{fragments/game-screen :: game-screen}"></th:block></template>
+        
+        <div id="chat-offcanvas" class="offcanvas offcanvas-end" tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Chat del lobby</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
+            <div class="offcanvas-body d-flex flex-column overflow-hidden">
+                <div class="card mx-3 flex-grow-1 d-flex flex-column h-100">
+                    <div id="chat-messages" class="card-body chat-messages overflow-auto" style="min-height: 0;"></div>
+                    <div class="card-footer d-flex gap-2">
+                        <input id="chat-input" class="form-control" placeholder="Escribe..."/>
+                        <button id="chat-send" class="btn btn-primary">Enviar</button>
+                    </div>
+                </div>
+            </div>   
         </div>
     </div>
 </main>
 
 <th:block th:replace="~{fragments/footer.html :: footer}" />
-
-<script>
-    let n = 1;
-    document.querySelector("#inviteButton").addEventListener("click", e => {
-        document.querySelector("#playerList")
-            .insertAdjacentHTML("beforeend", `<li>Jugador${n + 1}</li>`);
-        n += 1;
-    });
-</script>
-<script th:src="@{/js/abcjs-basic.js}" src="/js/abcjs-basic-min.js" ></script>
-<script th:src="@{/js/components/pianoRoll.js}" src="/js/components/pianoRoll.js" defer></script>
-
 </body>
+<script type="text/javascript">
+    const isOwner = "[[${isOwner}]]"=="true"
+    const lobbyCode = "[[${lobbyCode}?:'']]"
+    const username  = "[[${u?.username}?:'Unknown']]"
+</script>
+<script th:src="@{/js/components/game-client.js}" src="/js/components/game-client.js" defer></script>
+<script th:src="@{/js/components/piano-roll.js}" src="/js/components/piano-roll.js" defer></script>
+<script th:src="@{/js/abcjs-basic-min.js}" src="/js/abcjs-basic-min.js" defer></script>
+<script th:src="@{/js/components/game-chat.js}" src="/js/components/game-chat.js" defer></script>
 </html>
