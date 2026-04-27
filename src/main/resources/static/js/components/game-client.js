@@ -30,14 +30,28 @@ let gameData,
   availableInstruments = null;
 
 function subscribeWhenReady(lobbyCode) {
+  const currentUrl = window.location.href;
   const interval = setInterval(() => {
     if (ws.stompClient && ws.stompClient.connected) {
-      try {
-        ws.stompClient.subscribe("/topic/gartic/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
-        ws.stompClient.subscribe("/user/queue/gartic/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
-        console.log("Hopefully subscribed to topic and queue");
-      } catch (e) {
-        console.log("Error, could not subscribe", e);
+      if(currentUrl.includes("continue"))
+        {
+          try {
+          ws.stompClient.subscribe("/topic/continue/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
+          ws.stompClient.subscribe("/user/queue/continue/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
+          console.log("Hopefully subscribed to topic and queue");
+        } catch (e) {
+          console.log("Error, could not subscribe", e);
+        }
+      }
+      else
+      {
+          try {
+          ws.stompClient.subscribe("/topic/gartic/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
+          ws.stompClient.subscribe("/user/queue/gartic/lobby/" + lobbyCode, (m) => handleMessage(JSON.parse(m.body)));
+          console.log("Hopefully subscribed to topic and queue");
+          } catch (e) {
+            console.log("Error, could not subscribe", e);
+          }
       }
       clearInterval(interval);
     }
@@ -96,6 +110,7 @@ function showScreen(selector) {
 
 function sendStartRequest() {
   console.log("Sending start request...");
+  const currentUrl = window.location.href;
   let body = {
     userId: config.userId,
     totalRounds: parseInt(document.querySelector(selectors.numberOfRoundsSelector).value),
@@ -103,16 +118,35 @@ function sendStartRequest() {
   };
   for (let i = 0; i < body.totalRounds; i++)
     body.roundInstruments.push(parseInt(document.querySelector(`#select-instrument-round-${i}`).value));
-  ws.stompClient.send(`/gartic/lobby/${lobbyCode}/start`, {}, JSON.stringify(body));
+  if (currentUrl.includes("continue"))
+  {
+    ws.stompClient.send(`/continue/lobby/${lobbyCode}/start`, {}, JSON.stringify(body));
+  }
+  else
+  {
+    ws.stompClient.send(`/gartic/lobby/${lobbyCode}/start`, {}, JSON.stringify(body));
+  }
 }
 
 function sendTrack() {
   console.log("Sending created track...");
-  ws.stompClient.send(
-    `/gartic/lobby/${lobbyCode}/tracks/post`,
-    {},
-    JSON.stringify({ userId: config.userId, track: pianoRoll.getEditableTrack() }),
-  );
+  const currentUrl = window.location.href;
+  if(currentUrl.includes("continue"))
+  {
+    ws.stompClient.send(
+      `/continue/lobby/${lobbyCode}/tracks/post`,
+      {},
+      JSON.stringify({ userId: config.userId, track: pianoRoll.getEditableTrack() }),
+    );
+  }
+  else
+  {
+    ws.stompClient.send(
+      `/gartic/lobby/${lobbyCode}/tracks/post`,
+      {},
+      JSON.stringify({ userId: config.userId, track: pianoRoll.getEditableTrack() }),
+    );
+  }
 }
 
 async function setupPianoRoll(selectors) {
